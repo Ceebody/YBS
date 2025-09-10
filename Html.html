@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>HTML & CSS Quiz</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: orangered;
+      margin: 0;
+      padding: 20px;
+    }
+    h1, h2 {
+      text-align: center;
+      color: #333;
+    }
+    .question {
+      background: #fff;
+      padding: 15px;
+      margin: 15px 0;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      line-height: 1.6;
+      border: 2px solid gold;
+    label {
+      display: block;
+      margin: 5px 0;
+    }
+    button {
+      display: block;
+      margin: 20px auto;
+      padding: 10px 20px;
+      border: none;
+      background: #4CAF50;
+      color: white;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #45a049;
+    }
+    #result {
+      text-align: center;
+      font-size: 20px;
+      margin-top: 20px;
+      font-weight: bold;
+    }
+    #teacherMode {
+      display: none;
+      background: #ffe4b5;
+      padding: 15px;
+      margin: 20px 0;
+      border-radius: 8px;
+    }
+    input[type="text"] {
+      width: 90%;
+      padding: 8px;
+      margin: 5px 0;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>HTML & CSS Quiz</h1>
+  <h2>Answer all questions below</h2>
+
+  <div id="quiz"></div>
+
+  <h2>Short Answer Questions</h2>
+  <div id="shortQuiz"></div>
+
+  <button onclick="submitQuiz()">Submit Answers</button>
+
+  <div id="result"></div>
+
+  <!-- Teacher mode -->
+  <div style="text-align:center; margin-top:30px;">
+    <button onclick="enterTeacherMode()">Enter Teacher Mode</button>
+  </div>
+
+  <div id="teacherMode">
+    <h2>✅ Teacher Mode</h2>
+    <p>Correct Answers:</p>
+    <ul id="answersList"></ul>
+  </div>
+
+  <script>
+    // Multiple choice questions (escaped tags)
+    const questions = [
+      { q: "1. What does HTML stand for?", options: ["Hyper Text Markup Language", "High Text Machine Language", "Hyperlinks and Text Mark Language", "Home Tool Markup Language"], answer: 0 },
+      { q: "2. Which tag is used to create a hyperlink?", options: ["&lt;a&gt;", "&lt;p&gt;", "&lt;link&gt;", "&lt;url&gt;"], answer: 0 },
+      { q: "3. Which tag is used for the largest heading?", options: ["&lt;h6&gt;", "&lt;h1&gt;", "&lt;head&gt;", "&lt;title&gt;"], answer: 1 },
+      { q: "4. CSS is used for?", options: ["Adding colors and styles", "Storing data", "Programming logic", "Making tables"], answer: 0 },
+      { q: "5. Which CSS property changes text color?", options: ["font-color", "color", "text-style", "font-style"], answer: 1 },
+      { q: "6. Which tag is used for an image?", options: ["&lt;img&gt;", "&lt;src&gt;", "&lt;picture&gt;", "&lt;image&gt;"], answer: 0 },
+      { q: "7. In CSS, which symbol is used for an ID?", options: ["#", ".", "*", "&"], answer: 0 },
+      { q: "8. Which tag makes a numbered list?", options: ["&lt;ol&gt;", "&lt;ul&gt;", "&lt;li&gt;", "&lt;list&gt;"], answer: 0 },
+      { q: "9. Which HTML element is used for a paragraph?", options: ["&lt;para&gt;", "&lt;text&gt;", "&lt;p&gt;", "&lt;pg&gt;"], answer: 2 },
+      { q: "10. Which CSS property sets the background color?", options: ["bgcolor", "background-color", "color", "background-style"], answer: 1 },
+      { q: "11. Which tag creates a table?", options: ["&lt;table&gt;", "&lt;tab&gt;", "&lt;grid&gt;", "&lt;t&gt;"], answer: 0 },
+      { q: "12. Which CSS property makes text bold?", options: ["font-weight", "font-bold", "text-bold", "bold"], answer: 0 },
+      { q: "13. Which HTML tag creates a line break?", options: ["&lt;lb&gt;", "&lt;br&gt;", "&lt;line&gt;", "&lt;break&gt;"], answer: 1 },
+      { q: "14. CSS stands for?", options: ["Color Style Sheets", "Cascading Style Sheets", "Creative Style System", "Computer Style Sheets"], answer: 1 },
+      { q: "15. Which tag is used to display a list item?", options: ["&lt;list&gt;", "&lt;li&gt;", "&lt;item&gt;", "&lt;ol&gt;"], answer: 1 },
+      { q: "16. Which HTML tag displays italic text?", options: ["&lt;i&gt;", "&lt;italic&gt;", "&lt;em&gt;", "&lt;it&gt;"], answer: 0 },
+      { q: "17. Which property changes font size?", options: ["font-size", "text-size", "size", "font"], answer: 0 },
+      { q: "18. Which HTML element is used to play video?", options: ["&lt;media&gt;", "&lt;movie&gt;", "&lt;video&gt;", "&lt;play&gt;"], answer: 2 },
+      { q: "19. Which CSS property adds space inside a box?", options: ["padding", "margin", "spacing", "gap"], answer: 0 },
+      { q: "20. Which HTML tag creates a form?", options: ["&lt;form&gt;", "&lt;input&gt;", "&lt;submit&gt;", "&lt;frm&gt;"], answer: 0 }
+    ];
+
+    // Short answer questions
+    const shortQuestions = [
+      { q: "21. What is the correct tag for the smallest heading?", answers: ["<h6>", "h6"] },
+      { q: "22. Write the CSS property used to change background color.", answers: ["background-color", "background colour"] },
+      { q: "23. What tag is used to insert a line break?", answers: ["<br>", "br"] },
+      { q: "24. Write the HTML tag for inserting a hyperlink.", answers: ["<a href>", "a href"] },
+      { q: "25. Which CSS property is used to change the text size?", answers: ["font-size", "fontsize"] }
+    ];
+
+    // Render multiple choice
+    const quizDiv = document.getElementById("quiz");
+    questions.forEach((item, index) => {
+      let div = document.createElement("div");
+      div.className = "question";
+      div.innerHTML = `<p>${item.q}</p>`;
+      item.options.forEach((opt, i) => {
+        div.innerHTML += `
+          <label>
+            <input type="radio" name="q${index}" value="${i}"> ${opt}
+          </label>`;
+      });
+      quizDiv.appendChild(div);
+    });
+
+    // Render short answer
+    const shortDiv = document.getElementById("shortQuiz");
+    shortQuestions.forEach((item, index) => {
+      let div = document.createElement("div");
+      div.className = "question";
+      div.innerHTML = `<p>${item.q}</p>
+                       <input type="text" id="sq${index}">`;
+      shortDiv.appendChild(div);
+    });
+
+    // Submit and check answers
+    function submitQuiz() {
+      let score = 0;
+
+      // MCQs
+      questions.forEach((item, index) => {
+        let selected = document.querySelector(`input[name="q${index}"]:checked`);
+        if (selected && parseInt(selected.value) === item.answer) {
+          score += 4; // 20 × 4 = 80
+        }
+      });
+
+      // Short answer
+      shortQuestions.forEach((item, index) => {
+        let ans = document.getElementById(`sq${index}`).value.trim().toLowerCase();
+        if (item.answers.some(a => a.toLowerCase() === ans)) {
+          score += 4; // 5 × 4 = 20
+        }
+      });
+
+      document.getElementById("result").innerText = `You scored ${score}% out of 100%`;
+    }
+
+    // Teacher mode
+    function enterTeacherMode() {
+      let pass = prompt("Enter Teacher Passkey:");
+      if (pass === "0213") {
+        document.getElementById("teacherMode").style.display = "block";
+        let list = document.getElementById("answersList");
+        list.innerHTML = "";
+        questions.forEach((item) => {
+          let li = document.createElement("li");
+          li.textContent = item.q + " → " + item.options[item.answer].replace(/&lt;/g, "<").replace(/&gt;/g, ">");
+          list.appendChild(li);
+        });
+        shortQuestions.forEach((item) => {
+          let li = document.createElement("li");
+          li.textContent = item.q + " → " + item.answers.join(" / ");
+          list.appendChild(li);
+        });
+      } else {
+        alert("Wrong passkey!Make sureyou are authorized");
+      }
+    }
+  </script>
+  <footer>
+    <p>Yeriel Bracha Coding Club <br> ©2025</p>
+  </footer>
+
+  <style>
+    footer {
+      text-align: center;
+      margin-top: 40px;
+      padding: 15px;
+      background: #333;
+      color: white;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+  </style>
+  </style>
+</body>
+</html>
