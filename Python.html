@@ -3,151 +3,52 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Python: Input, Output & Loops — Quiz</title>
+  <title>Python Quiz — Input, Output & Loops</title>
   <style>
-    :root{
-      --bg:#f6f8fb;
-      --card:orangered;
-      --accent:#0b6ef6;
-      --muted:#6b7280;
-      --good:#16a34a;
-      --bad:#dc2626;
-      --maxw:880px;
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;
-      background:linear-gradient(180deg, #eef2ff 0%, var(--bg) 100%);
-      color:#0f172a;
-      display:flex;
-      justify-content:center;
-      padding:28px 16px;
-      -webkit-font-smoothing:antialiased;
-    }
-    .wrap{
-      width:100%;
-      max-width:var(--maxw);
-    }
-    header{
-      margin-bottom:18px;
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:12px;
-    }
-    h1{
-      margin:0;
-      font-size:20px;
-    }
-    p.lead{margin:6px 0 0;color:var(--muted);font-size:14px}
-    .card{
-      background:var(--card);
-      border-radius:12px;
-      box-shadow:0 6px 30px rgba(12,16,32,0.08);
-      padding:18px;
-      margin-bottom:14px;
-    }
-    form .q{
-      border-radius:8px;
-      padding:12px;
-      margin-bottom:10px;
-      background:linear-gradient(180deg, #fff 0%, #fbfdff 100%);
-      border:1px solid #eef2ff;
-    }
-    .q h3{
-      margin:0 0 8px 0;
-      font-size:15px;
-    }
-    .opts{display:flex;flex-direction:column;gap:6px}
-    label.option{
-      display:flex;
-      gap:10px;
-      align-items:center;
-      cursor:pointer;
-      padding:8px;
-      border-radius:8px;
-      transition:background .12s, border-color .12s;
-      border:1px solid transparent;
-    }
-    label.option:hover{background:#f3f7ff}
-    input[type="radio"]{width:18px;height:18px}
-    .controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;align-items:center}
-    button{
-      background:var(--accent);
-      color:white;
-      border:0;
-      padding:10px 14px;
-      border-radius:8px;
-      cursor:pointer;
-      font-weight:600;
-    }
-    button.secondary{
-      background:#eef2ff;color:var(--accent);
-      box-shadow:none;border:1px solid rgba(11,110,246,0.12)
-    }
-    .results{
-      display:flex;
-      gap:12px;
-      align-items:center;
-      flex-wrap:wrap;
-      margin-top:12px;
-    }
-    .score{
-      font-size:18px;
-      font-weight:700;
-    }
-    .feedback{margin-top:12px}
-    .ans-key{font-size:13px;color:var(--muted);margin-top:8px}
-    .correct{color:var(--good);font-weight:700}
-    .incorrect{color:var(--bad);font-weight:700}
-    .small{font-size:13px;color:var(--muted)}
-    footer{margin-top:18px;text-align:center;color:var(--muted);font-size:13px}
-    @media (max-width:640px){
-      .controls{flex-direction:column;align-items:stretch}
-      button{width:100%}
-    }
-    .explain{margin-top:8px;padding:8px;border-radius:8px;background:#fbfbff;border:1px solid #eef2ff;font-size:13px}
+    body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:20px;background:gold;}
+    .wrap{max-width:900px;margin:auto}
+    .card{background:brown;padding:18px;margin-bottom:15px;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,0.1)}
+    h1{margin-top:0}
+    .q{margin-bottom:12px;padding:10px;border-radius:8px;background:#fafcff;border:1px solid #e5e7eb}
+    .q h3{margin:0 0 6px;font-size:15px}
+    label{display:block;margin:5px 0;padding:6px;border-radius:6px;cursor:pointer}
+    label:hover{background:#f3f7ff}
+    input[type="radio"]{margin-right:6px}
+    button{margin:5px;padding:10px 14px;border:none;border-radius:6px;cursor:pointer;font-weight:600}
+    button.primary{background:#0b6ef6;color:white}
+    button.secondary{background:#eef2ff;color:#0b6ef6}
+    .results{margin-top:12px;font-weight:700}
+    .explain{margin-top:6px;padding:6px;background:#f9fafb;border-left:3px solid #ddd;font-size:13px;border-radius:4px}
     .hidden{display:none}
+    .ans-key{margin-top:12px;font-size:13px;color:#374151}
+    .correct{color:green}
+    .incorrect{color:red}
+    .controls{margin-top:10px;display:flex;flex-wrap:wrap;gap:8px}
   </style>
 </head>
 <body>
   <div class="wrap">
-    <header>
-      <div>
-        <h1>CODING COMPETITION PRELIMINARY</h1>
-        <p class="lead">20 Multiple choice questions to test your basic knowledge in python.</p>
-      </div>
-      <div class="small">Instructions: Choose one answer per question — then Submit.</div>
-    </header>
+    <h1>Python Quiz: Input, Output & Loops</h1>
+    <p>Answer all 20 multiple-choice questions. Teacher explanations and answer key are locked until Teacher Mode is enabled.</p>
 
     <div class="card">
-      <form id="quizForm">
-        <!-- Questions will be injected here by JS -->
-      </form>
+      <form id="quizForm"></form>
 
       <div class="controls">
-        <button id="submitBtn" type="button">Submit</button>
-        <button id="showKeyBtn" class="secondary" type="button">Show Answer Key</button>
-        <button id="resetBtn" class="secondary" type="button">Reset</button>
-        <div class="results" id="results" aria-live="polite"></div>
+        <button type="button" id="submitBtn" class="primary">Submit</button>
+        <button type="button" id="resetBtn" class="secondary">Reset</button>
+        <button type="button" id="teacherBtn" class="secondary">Teacher Mode</button>
       </div>
 
-      <div class="feedback" id="feedback"></div>
+      <div class="results" id="results"></div>
       <div class="ans-key hidden card" id="answerKey">
         <strong>Answer Key</strong>
-        <div class="ans-list small" id="ansList" style="margin-top:8px;"></div>
+        <div id="ansList" style="margin-top:8px"></div>
       </div>
     </div>
-
-    <footer>All rights reserved. A Yeriel Bracha School Property — open for coding knowledge in python language. ©</footer>
   </div>
 
-  <script>
-/*
-  Quiz data: 20 MCQs on Input, Output & Loops.
-  Format: {q: "question text", choices: ["a","b","c","d"], answer: index (0..3) , explanation: "short"}
-*/
+<script>
 const quiz = [
   { q: "1. Which function is used to take input from the user in Python?", choices:["get()","scanf()","input()","read()"], answer:2, explanation:"Use input() in Python."},
   { q: "2. What is the default data type returned by input()?", choices:["int","str","float","list"], answer:1, explanation:"input() returns a string."},
@@ -176,146 +77,102 @@ const quiz = [
   { q: "20. What is the output? for i in range(1,4): print('Loop', i)\nelse:\n  print('Finished')", choices:["Loop 1 Loop 2 Loop 3","Loop 1 Loop 2 Loop 3 Finished","Finished only","Error"], answer:1, explanation:"Loop prints 1..3 then else runs."}
 ];
 
-// helper to build HTML for questions
 const form = document.getElementById('quizForm');
 
+// build questions
 quiz.forEach((item,index) => {
   const qdiv = document.createElement('div');
   qdiv.className = 'q';
-  qdiv.id = 'q'+(index+1);
 
   const h = document.createElement('h3');
   h.innerText = item.q;
   qdiv.appendChild(h);
 
-  const opts = document.createElement('div');
-  opts.className = 'opts';
-
   item.choices.forEach((choice, cidx) => {
-    const id = `q${index}_opt${cidx}`;
     const label = document.createElement('label');
-    label.className = 'option';
-    label.htmlFor = id;
-
     const radio = document.createElement('input');
     radio.type = 'radio';
     radio.name = 'q'+index;
-    radio.id = id;
     radio.value = cidx;
-
-    const span = document.createElement('span');
-    span.innerText = choice;
-
     label.appendChild(radio);
-    label.appendChild(span);
-    opts.appendChild(label);
+    label.appendChild(document.createTextNode(choice));
+    qdiv.appendChild(label);
   });
 
-  qdiv.appendChild(opts);
-
-  // placeholder for per-question result after submit
   const explain = document.createElement('div');
   explain.className = 'explain hidden';
-  explain.id = `explain-${index}`;
+  explain.id = 'explain-'+index;
   qdiv.appendChild(explain);
 
   form.appendChild(qdiv);
 });
 
-// controls
 const submitBtn = document.getElementById('submitBtn');
 const resetBtn = document.getElementById('resetBtn');
 const resultsDiv = document.getElementById('results');
-const feedbackDiv = document.getElementById('feedback');
 const answerKeyDiv = document.getElementById('answerKey');
 const ansListDiv = document.getElementById('ansList');
-const showKeyBtn = document.getElementById('showKeyBtn');
+const teacherBtn = document.getElementById('teacherBtn');
+
+let teacherMode = false;
 
 function gradeQuiz(){
   let score = 0;
-  let total = quiz.length;
-  resultsDiv.innerHTML = '';
-  feedbackDiv.innerHTML = '';
-
   quiz.forEach((item, idx) => {
     const chosen = document.querySelector(`input[name="q${idx}"]:checked`);
-    const explainEl = document.getElementById(`explain-${idx}`);
-    explainEl.classList.remove('hidden');
-    explainEl.innerHTML = ''; // reset
-
-    if(chosen){
-      const val = Number(chosen.value);
-      if(val === item.answer){
-        score++;
-        explainEl.innerHTML = `<span class="correct">Correct</span> — ${item.explanation}`;
-      } else {
-        // show selected + correct
-        explainEl.innerHTML = `<span class="incorrect">Incorrect</span> — You chose: <strong>${item.choices[val]}</strong>. Correct: <strong>${item.choices[item.answer]}</strong>. ${item.explanation}`;
-      }
-    } else {
-      explainEl.innerHTML = `<span class="incorrect">No answer selected</span> — Correct: <strong>${item.choices[item.answer]}</strong>. ${item.explanation}`;
+    const explain = document.getElementById('explain-'+idx);
+    explain.classList.add('hidden'); // hide by default unless teacher mode
+    if(chosen && Number(chosen.value) === item.answer){
+      score++;
     }
   });
-
-  const pct = Math.round((score/total)*100);
-  resultsDiv.innerHTML = `<div class="score">Score: ${score} / ${total} (${pct}%)</div>`;
-
-  // brief comment
-  const comment = document.createElement('div');
-  comment.className = 'small';
-  if(pct === 100) comment.innerText = "Perfect! Excellent work.";
-  else if(pct >= 75) comment.innerText = "Great job — a little more review and you'll be perfect!";
-  else if(pct >= 50) comment.innerText = "Good effort — review the explanations and try again.";
-  else comment.innerText = "Keep practicing — review the lesson on input/output & loops.";
-
-  resultsDiv.appendChild(comment);
-
-  // reveal answer key automatically
-  populateAnswerKey();
-  answerKeyDiv.classList.remove('hidden');
-
-  // scroll results into view
-  answerKeyDiv.scrollIntoView({behavior:'smooth', block:'center'});
+  const pct = Math.round(score/quiz.length*100);
+  resultsDiv.innerText = `Score: ${score} / ${quiz.length} (${pct}%)`;
+  if(teacherMode) showExplanationsAndKey();
 }
 
-function populateAnswerKey(){
+function showExplanationsAndKey(){
+  quiz.forEach((item, idx) => {
+    const chosen = document.querySelector(`input[name="q${idx}"]:checked`);
+    const explain = document.getElementById('explain-'+idx);
+    explain.classList.remove('hidden');
+    if(chosen){
+      const val = Number(chosen.value);
+      explain.innerHTML = (val===item.answer)
+        ? `<span class="correct">Correct</span> — ${item.explanation}`
+        : `<span class="incorrect">Incorrect</span>. Correct: ${item.choices[item.answer]}. ${item.explanation}`;
+    } else {
+      explain.innerHTML = `<span class="incorrect">No answer</span>. Correct: ${item.choices[item.answer]}. ${item.explanation}`;
+    }
+  });
+  // answer key
   ansListDiv.innerHTML = '';
-  quiz.forEach((item, i) => {
-    const div = document.createElement('div');
-    div.innerHTML = `<strong>Q${i+1}:</strong> ${item.choices[item.answer]}`;
+  quiz.forEach((item,i)=>{
+    const div=document.createElement('div');
+    div.innerHTML=`<strong>Q${i+1}:</strong> ${item.choices[item.answer]}`;
     ansListDiv.appendChild(div);
   });
+  answerKeyDiv.classList.remove('hidden');
 }
 
 submitBtn.addEventListener('click', gradeQuiz);
-
-resetBtn.addEventListener('click', () => {
-  // clear all radios
-  document.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
-  document.querySelectorAll('.explain').forEach(e => e.classList.add('hidden'));
-  resultsDiv.innerHTML = '';
-  feedbackDiv.innerHTML = '';
+resetBtn.addEventListener('click', ()=>{
+  document.querySelectorAll('input[type=radio]').forEach(r=>r.checked=false);
+  document.querySelectorAll('.explain').forEach(e=>e.classList.add('hidden'));
+  resultsDiv.innerText='';
   answerKeyDiv.classList.add('hidden');
-  window.scrollTo({top:0, behavior:'smooth'});
 });
 
-showKeyBtn.addEventListener('click', () => {
-  if(answerKeyDiv.classList.contains('hidden')){
-    populateAnswerKey();
-    answerKeyDiv.classList.remove('hidden');
-    showKeyBtn.innerText = 'Hide Answer Key';
-  } else {
-    answerKeyDiv.classList.add('hidden');
-    showKeyBtn.innerText = 'Show Answer Key';
-  }
-});
-
-// optional: allow pressing Enter to submit when focused on last element
-document.addEventListener('keydown', (e) => {
-  if(e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+teacherBtn.addEventListener('click', ()=>{
+  const pass = prompt("Enter Teacher Passcode:");
+  if(pass === "0212"){
+    teacherMode = true;
+    alert("Teacher Mode Activated!");
     gradeQuiz();
+  } else {
+    alert("Wrong passcode.");
   }
 });
-  </script>
+</script>
 </body>
-</html>
+  </html>
