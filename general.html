@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Coding Quiz</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: orange;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .wrap {
+      width: 90%;
+      max-width: 800px;
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    h1, h2 {
+      text-align: center;
+    }
+    .hidden { display: none; }
+    .controls {
+      margin-top: 15px;
+      text-align: center;
+    }
+    button {
+      padding: 10px 18px;
+      margin: 5px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button.primary { background: #4CAF50; color: white; }
+    button.secondary { background: #ddd; }
+    #timer { font-weight: bold; text-align: right; margin-bottom: 10px; }
+    .results { margin-top: 20px; padding: 15px; border-radius: 8px; background: #eef; }
+    .summary {
+      margin-top: 20px;
+      padding: 10px;
+      border-top: 2px solid #ccc;
+    }
+    .correct { color: green; font-weight: bold; }
+    .wrong { color: red; font-weight: bold; }
+    footer {
+      text-align: center;
+      margin-top: 40px;
+      padding: 15px;
+      background: #333;
+      color: white;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <!-- Welcome Page -->
+    <div id="welcomePage">
+      <h1>Welcome to the Coding Quiz!</h1>
+      <p>This quiz will test your knowledge of <strong>coding basics</strong> and <strong>online safety</strong>.</p>
+      <p><marquee>Just select the correct answer</marquee></p>
+      <p>You will have <strong>15 minutes</strong> to answer <strong>25 questions</strong>.</p>
+      <p>Use <strong>Next</strong> and <strong>Previous</strong> to move. Click <strong>Submit</strong> when done.</p>
+      <div class="controls">
+        <button class="primary" id="startBtn">Start Quiz</button>
+      </div>
+    </div>
+
+    <!-- Quiz Area -->
+    <div id="quizArea" class="hidden">
+      <div id="timer"></div>
+      <div id="question"></div>
+      <div id="options"></div>
+      <input type="text" id="shortAnswer" class="hidden" placeholder="Type your answer here" />
+
+      <div class="controls">
+        <button type="button" id="prevBtn" class="primary">Previous</button>
+        <button type="button" id="nextBtn" class="primary">Next</button>
+        <button type="button" id="submitBtn" class="primary hidden">Submit Quiz</button>
+      </div>
+    </div>
+
+    <!-- Results Area -->
+    <div id="results" class="results hidden"></div>
+
+    <!-- Footer -->
+    <footer>
+      <p>Yeriel Bracha Coding Club <br> ©2025</p>
+    </footer>
+  </div>
+
+<script>
+  // ======================
+  // QUIZ DATA (sample - replace with yours)
+  // ======================
+  const quizData = [
+    { q: "1. What does the word 'coding' mean?", options: ["Talking to computers", "Drawing pictures", "Cooking food", "Playing games"], answer: "Talking to computers" },
+    { q: "2. Which of these is a programming language?", options: ["Python", "Banana", "English", "Soccer"], answer: "Python" },
+    { q: "3. Why do people learn coding?", options: ["To tell computers what to do", "To cook faster", "To ride bicycles", "To wash clothes"], answer: "To tell computers what to do" },
+    { q: "4. Which of these is NOT a coding language?", options: ["Scratch", "Python", "WhatsApp", "Java"], answer: "WhatsApp" },
+    { type: "mcq", question: "5. Which device do we mostly use to write code?", options: ["Phone", "Laptop/Computer", "TV", "Radio"], answer: "Laptop/Computer" },
+    { q: "6. What does a website like Google use coding for?", options: ["To search information", "To make soup", "To drive cars", "To play football"], answer: "To search information" },
+    { q: "7. What should you do if someone asks for your password online?", options: ["Share it quickly", "Keep it secret", "Write it on Facebook", "Give it to friends"], answer: "Keep it secret" },
+    { q: "8. Which of these is the safest password?", options: ["12345", "password", "MyName", "A3t!9b$2"], answer: "A3t!9b$2" },
+    { q: "9. What does the green padlock on a website mean?", options: ["Website is safe/secure", "Website is for gaming", "It is locked forever", "It is a picture"], answer: "Website is safe/secure" },
+    { q: "10. If a stranger sends you a link to click, what should you do?", options: ["Click it fast", "Ignore or delete it", "Send it to all your friends", "Download it"], answer: "Ignore or delete it" },
+    { q: "11. Which one is an example of an app made with coding?", options: ["Facebook", "Notebook", "Cup", "Ball"], answer: "Facebook" },
+    { q: "12. Coding helps us to…", options: ["Build apps and games", "Cook jollof rice", "Run faster", "Sing songs"], answer: "Build apps and games" },
+    { q: "13. Which one is a loop in coding?", options: ["Repeat action", "One-time action", "Sleeping", "Clapping"], answer: "Repeat action" },
+    { q: "14. Why should we avoid weak passwords?", options: ["Hackers can guess them", "They are too long", "They are too funny", "They are expensive"], answer: "Hackers can guess them" },
+    { q: "15. Which one is an example of good online behavior?", options: ["Cyberbullying", "Sharing fake news", "Respecting others online", "Shouting at people"], answer: "Respecting others online" },
+    { q: "16. Coding is like giving…", options: ["Instructions to a computer", "Food to a child", "Water to a plant", "Money to a friend"], answer: "Instructions to a computer" },
+    { q: "17. Which company makes Windows computers?", options: ["Apple", "Microsoft", "Google", "Samsung"], answer: "Microsoft" },
+    { q: "18. Which one is a web browser?", options: ["Google Chrome", "WhatsApp", "Facebook", "Instagram"], answer: "Google Chrome" },
+    { q: "19. Which of these should you NOT share online?", options: ["Your favorite color", "Your school homework", "Your password", "Your pet’s name"], answer: "Your password" },
+    { q: "20. What is phishing?", options: ["Catching fish", "An online trick to steal info", "Building apps", "Playing games"], answer: "An online trick to steal info" },
+
+    // Short answer questions
+    { q: "21. Write an if statement to check if age is greater than 18",input: true, answer: "if age > 18:" },
+    { q: "22. Write an if statement to check if score equals 100",input: true,  answer: "if score == 100:" },
+    { q: "23. Write an if statement to check if name is 'Alice'",input: true,  answer: "if name == 'Alice':" },
+    { q: "24. Write an if statement to check if number is less than 10",input: true, answer: "if number < 10:" },
+    { q: "25. Write an if statement to check if password is not equal to '1234'",input: true, answer: "if password != '1234':" }
+  ];
+
+
+  // ======================
+  // QUIZ LOGIC
+  // ======================
+  let currentQuestion = 0;
+  let answers = [];
+  let timer;
+  let timeLeft = 15 * 60; // 15 minutes
+
+  const welcomePage = document.getElementById("welcomePage");
+  const quizArea = document.getElementById("quizArea");
+  const resultsDiv = document.getElementById("results");
+  const questionDiv = document.getElementById("question");
+  const optionsDiv = document.getElementById("options");
+  const shortAnswer = document.getElementById("shortAnswer");
+  const prevBtn = document.getElementById("prevBtn");
+  const nextBtn = document.getElementById("nextBtn");
+  const submitBtn = document.getElementById("submitBtn");
+  const timerDiv = document.getElementById("timer");
+
+  document.getElementById("startBtn").addEventListener("click", startQuiz);
+
+  function startQuiz() {
+    welcomePage.classList.add("hidden");
+    quizArea.classList.remove("hidden");
+    loadQuestion();
+    startTimer();
+  }
+
+  function loadQuestion() {
+    const q = quizData[currentQuestion];
+    questionDiv.innerHTML = `<h2>Q${currentQuestion+1}: ${q.q}</h2>`;
+    optionsDiv.innerHTML = "";
+    shortAnswer.classList.add("hidden");
+
+    if (q.options) {
+      q.options.forEach(opt => {
+        const btn = document.createElement("button");
+        btn.textContent = opt;
+        btn.className = "secondary";
+        btn.onclick = () => saveAnswer(opt);
+        if (answers[currentQuestion] === opt) {
+          btn.style.background = "#4CAF50";
+          btn.style.color = "white";
+        }
+        optionsDiv.appendChild(btn);
+      });
+    } else if (q.input) {
+      shortAnswer.classList.remove("hidden");
+      shortAnswer.value = answers[currentQuestion] || "";
+      shortAnswer.oninput = () => saveAnswer(shortAnswer.value);
+    }
+
+    prevBtn.disabled = currentQuestion === 0;
+    nextBtn.classList.toggle("hidden", currentQuestion === quizData.length - 1);
+    submitBtn.classList.toggle("hidden", currentQuestion !== quizData.length - 1);
+  }
+
+  function saveAnswer(ans) {
+    answers[currentQuestion] = ans;
+    loadQuestion();
+  }
+
+  nextBtn.onclick = () => {
+    if (!shortAnswer.classList.contains("hidden")) saveAnswer(shortAnswer.value);
+    if (currentQuestion < quizData.length - 1) {
+      currentQuestion++;
+      loadQuestion();
+    }
+  };
+
+  prevBtn.onclick = () => {
+    if (!shortAnswer.classList.contains("hidden")) saveAnswer(shortAnswer.value);
+    if (currentQuestion > 0) {
+      currentQuestion--;
+      loadQuestion();
+    }
+  };
+
+  submitBtn.onclick = finishQuiz;
+
+  function startTimer() {
+    timer = setInterval(() => {
+      timeLeft--;
+      let mins = Math.floor(timeLeft / 60);
+      let secs = timeLeft % 60;
+      timerDiv.textContent = `Time Left: ${mins}:${secs.toString().padStart(2,"0")}`;
+      if (timeLeft <= 0) {
+        clearInterval(timer);
+        finishQuiz();
+      }
+    }, 1000);
+  }
+
+  function finishQuiz() {
+    clearInterval(timer);
+    quizArea.classList.add("hidden");
+    resultsDiv.classList.remove("hidden");
+
+    let score = 0;
+    let summaryHTML = "<div class='summary'><h3>Summary</h3>";
+
+    quizData.forEach((q, i) => {
+      let userAns = answers[i] || "(no answer)";
+      let correctFlag = false;
+
+      if (q.options && userAns === q.answer) correctFlag = true;
+      if (q.input && userAns.trim().toLowerCase() === q.answer.trim().toLowerCase()) correctFlag = true;
+      if (correctFlag) score++;
+
+      summaryHTML += `<p><strong>Q${i+1}:</strong> ${q.q}<br>
+      Your answer: <span class="${correctFlag ? 'correct':'wrong'}">${userAns}</span><br>
+      Correct answer: <span class="correct">${q.answer}</span></p>`;
+    });
+
+    const percentage = ((score / quizData.length) * 100).toFixed(2);
+
+    summaryHTML += "</div>";
+
+    resultsDiv.innerHTML = `
+      <h2>Quiz Completed!</h2>
+      <p>Your Score: <strong>${score} / ${quizData.length}</strong> (${percentage}%)</p>
+      ${summaryHTML}
+    `;
+  }
+</script>
+</body>
+</html>
