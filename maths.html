@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>QUIZZILLA</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: orange;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .wrap {
+      width: 90%;
+      max-width: 800px;
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    h1, h2 {
+      text-align: center;
+    }
+    .hidden { display: none; }
+    .controls {
+      margin-top: 15px;
+      text-align: center;
+    }
+    button {
+      padding: 10px 18px;
+      margin: 5px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button.primary { background: #4CAF50; color: white; }
+    button.secondary { background: #ddd; }
+    #timer { font-weight: bold; text-align: right; margin-bottom: 10px; }
+    .results { margin-top: 20px; padding: 15px; border-radius: 8px; background: #eef; }
+    .summary {
+      margin-top: 20px;
+      padding: 10px;
+      border-top: 2px solid #ccc;
+    }
+    .correct { color: green; font-weight: bold; }
+    .wrong { color: red; font-weight: bold; }
+    footer {
+      text-align: center;
+      margin-top: 40px;
+      padding: 15px;
+      background: #333;
+      color: white;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <!-- Welcome Page -->
+    <div id="welcomePage">
+      <h1>Welcome to the Quizzilla!</h1>
+      <p>This quiz will test your knowledge of <strong>Rounding of numbers</strong>.</p>
+      <p>You will have <strong>15 minutes</strong> to answer <strong>40 questions</strong>.</p>
+      <p>Use <strong>Next</strong> and <strong>Previous</strong> to move. Click <strong>Submit</strong> when done.</p>
+      <div class="controls">
+        <button class="primary" id="startBtn">Start Quiz</button>
+      </div>
+    </div>
+
+    <!-- Quiz Area -->
+    <div id="quizArea" class="hidden">
+      <div id="timer"></div>
+      <div id="question"></div>
+      <div id="options"></div>
+      <input type="text" id="shortAnswer" class="hidden" placeholder="Type your answer here" />
+
+      <div class="controls">
+        <button type="button" id="prevBtn" class="secondary">Previous</button>
+        <button type="button" id="nextBtn" class="primary">Next</button>
+        <button type="button" id="submitBtn" class="primary hidden">Submit Quiz</button>
+      </div>
+    </div>
+
+    <!-- Results Area -->
+    <div id="results" class="results hidden"></div>
+
+    <!-- Footer -->
+    <footer>
+      <p>Yeriel Bracha Coding Club <br> ©2025</p>
+    </footer>
+  </div>
+
+<script>
+  // ======================
+  // QUIZ DATA (sample - replace with yours)
+  // ======================
+  const quizData = [
+  { q: "1. Round 43 to the nearest ten.", options: ["40", "45", "50", "30"], answer: "40" },
+  { q: "2. Round 67 to the nearest ten.", options: ["60", "65", "70", "80"], answer: "70" },
+  { q: "3. Round 128 to the nearest ten.", options: ["120", "125", "130", "140"], answer: "130" },
+  { q: "4. Round 356 to the nearest hundred.", options: ["300", "350", "360", "400"], answer: "400" },
+  { q: "5. Round 842 to the nearest hundred.", options: ["800", "840", "850", "900"], answer: "800" },
+  { q: "6. Round 1,249 to the nearest hundred.", options: ["1200", "1240", "1250", "1300"], answer: "1200" },
+  { q: "7. Round 1,249 to the nearest thousand.", options: ["1000", "1200", "1300", "2000"], answer: "1000" },
+  { q: "8. Round 1,750 to the nearest thousand.", options: ["1000", "1500", "2000", "1800"], answer: "2000" },
+  { q: "9. Round 5,432 to the nearest thousand.", options: ["5000", "5400", "5430", "6000"], answer: "5000" },
+  { q: "10. Round 5,432 to the nearest hundred.", options: ["5000", "5400", "5430", "6000"], answer: "5400" },
+
+  { q: "11. Round 89 to the nearest ten.", options: ["80", "85", "90", "100"], answer: "90" },
+  { q: "12. Round 145 to the nearest hundred.", options: ["100", "140", "150", "200"], answer: "100" },
+  { q: "13. Round 145 to the nearest ten.", options: ["140", "145", "150", "160"], answer: "150" },
+  { q: "14. Round 2,555 to the nearest thousand.", options: ["2000", "2500", "3000", "2600"], answer: "3000" },
+  { q: "15. Round 2,555 to the nearest hundred.", options: ["2500", "2600", "2000", "3000"], answer: "2600" },
+  { q: "16. Round 9,999 to the nearest thousand.", options: ["9000", "10000", "11000", "9500"], answer: "10000" },
+  { q: "17. Round 9,999 to the nearest hundred.", options: ["9000", "9900", "10000", "11000"], answer: "10000" },
+  { q: "18. Round 9,999 to the nearest ten.", options: ["9990", "9995", "10000", "9900"], answer: "10000" },
+  { q: "19. Round 3,450 to the nearest hundred.", options: ["3000", "3400", "3450", "3500"], answer: "3500" },
+  { q: "20. Round 3,450 to the nearest thousand.", options: ["3000", "3400", "3500", "4000"], answer: "3000" },
+
+  { q: "21. Round 76 to the nearest ten.", options: ["70", "75", "80", "90"], answer: "80" },
+  { q: "22. Round 321 to the nearest hundred.", options: ["300", "320", "350", "400"], answer: "300" },
+  { q: "23. Round 321 to the nearest ten.", options: ["320", "330", "300", "310"], answer: "320" },
+  { q: "24. Round 8,650 to the nearest hundred.", options: ["8600", "8650", "8700", "9000"], answer: "8700" },
+  { q: "25. Round 8,650 to the nearest thousand.", options: ["8000", "8650", "8700", "9000"], answer: "9000" },
+  { q: "26. Round 74 to the nearest ten.", options: ["70", "74", "80", "75"], answer: "70" },
+  { q: "27. Round 199 to the nearest ten.", options: ["190", "195", "200", "210"], answer: "200" },
+  { q: "28. Round 199 to the nearest hundred.", options: ["100", "150", "200", "300"], answer: "200" },
+  { q: "29. Round 7,501 to the nearest thousand.", options: ["7000", "7500", "8000", "7600"], answer: "8000" },
+  { q: "30. Round 7,501 to the nearest hundred.", options: ["7500", "7600", "7700", "8000"], answer: "7500" },
+
+  { q: "31. Round 462 to the nearest ten.", options: ["460", "462", "470", "450"], answer: "460" },
+  { q: "32. Round 462 to the nearest hundred.", options: ["400", "460", "500", "470"], answer: "500" },
+  { q: "33. Round 5,005 to the nearest thousand.", options: ["5000", "5100", "5500", "6000"], answer: "5000" },
+  { q: "34. Round 5,005 to the nearest hundred.", options: ["5000", "5010", "5100", "5500"], answer: "5000" },
+  { q: "35. Round 12,499 to the nearest thousand.", options: ["12000", "12400", "12500", "13000"], answer: "12000" },
+  { q: "36. Round 12,499 to the nearest hundred.", options: ["12400", "12490", "12500", "12000"], answer: "12400" },
+  { q: "37. Round 88 to the nearest ten.", options: ["80", "85", "90", "100"], answer: "90" },
+  { q: "38. Round 88 to the nearest hundred.", options: ["0", "80", "100", "200"], answer: "100" },
+  { q: "39. Round 999 to the nearest thousand.", options: ["0", "900", "1000", "1100"], answer: "1000" },
+  { q: "40. Round 999 to the nearest hundred.", options: ["900", "950", "1000", "1100"], answer: "1000" }
+];
+  // ======================
+  // QUIZ LOGIC
+  // ======================
+  let currentQuestion = 0;
+  let answers = [];
+  let timer;
+  let timeLeft = 15 * 60; // 15 minutes
+
+  const welcomePage = document.getElementById("welcomePage");
+  const quizArea = document.getElementById("quizArea");
+  const resultsDiv = document.getElementById("results");
+  const questionDiv = document.getElementById("question");
+  const optionsDiv = document.getElementById("options");
+  const shortAnswer = document.getElementById("shortAnswer");
+  const prevBtn = document.getElementById("prevBtn");
+  const nextBtn = document.getElementById("nextBtn");
+  const submitBtn = document.getElementById("submitBtn");
+  const timerDiv = document.getElementById("timer");
+
+  document.getElementById("startBtn").addEventListener("click", startQuiz);
+
+  function startQuiz() {
+    welcomePage.classList.add("hidden");
+    quizArea.classList.remove("hidden");
+    loadQuestion();
+    startTimer();
+  }
+
+  function loadQuestion() {
+    const q = quizData[currentQuestion];
+    questionDiv.innerHTML = `<h2>Q${currentQuestion+1}: ${q.q}</h2>`;
+    optionsDiv.innerHTML = "";
+    shortAnswer.classList.add("hidden");
+
+    if (q.options) {
+      q.options.forEach(opt => {
+        const btn = document.createElement("button");
+        btn.textContent = opt;
+        btn.className = "secondary";
+        btn.onclick = () => saveAnswer(opt);
+        if (answers[currentQuestion] === opt) {
+          btn.style.background = "#4CAF50";
+          btn.style.color = "white";
+        }
+        optionsDiv.appendChild(btn);
+      });
+    } else if (q.input) {
+      shortAnswer.classList.remove("hidden");
+      shortAnswer.value = answers[currentQuestion] || "";
+      shortAnswer.oninput = () => saveAnswer(shortAnswer.value);
+    }
+
+    prevBtn.disabled = currentQuestion === 0;
+    nextBtn.classList.toggle("hidden", currentQuestion === quizData.length - 1);
+    submitBtn.classList.toggle("hidden", currentQuestion !== quizData.length - 1);
+  }
+
+  function saveAnswer(ans) {
+    answers[currentQuestion] = ans;
+    loadQuestion();
+  }
+
+  nextBtn.onclick = () => {
+    if (!shortAnswer.classList.contains("hidden")) saveAnswer(shortAnswer.value);
+    if (currentQuestion < quizData.length - 1) {
+      currentQuestion++;
+      loadQuestion();
+    }
+  };
+
+  prevBtn.onclick = () => {
+    if (!shortAnswer.classList.contains("hidden")) saveAnswer(shortAnswer.value);
+    if (currentQuestion > 0) {
+      currentQuestion--;
+      loadQuestion();
+    }
+  };
+
+  submitBtn.onclick = finishQuiz;
+
+  function startTimer() {
+    timer = setInterval(() => {
+      timeLeft--;
+      let mins = Math.floor(timeLeft / 60);
+      let secs = timeLeft % 60;
+      timerDiv.textContent = `Time Left: ${mins}:${secs.toString().padStart(2,"0")}`;
+      if (timeLeft <= 0) {
+        clearInterval(timer);
+        finishQuiz();
+      }
+    }, 1000);
+  }
+
+  function finishQuiz() {
+    clearInterval(timer);
+    quizArea.classList.add("hidden");
+    resultsDiv.classList.remove("hidden");
+
+    let score = 0;
+    let summaryHTML = "<div class='summary'><h3>Summary</h3>";
+
+    quizData.forEach((q, i) => {
+      let userAns = answers[i] || "(no answer)";
+      let correctFlag = false;
+
+      if (q.options && userAns === q.answer) correctFlag = true;
+      if (q.input && userAns.trim().toLowerCase() === q.answer.trim().toLowerCase()) correctFlag = true;
+      if (correctFlag) score++;
+
+      summaryHTML += `<p><strong>Q${i+1}:</strong> ${q.q}<br>
+      Your answer: <span class="${correctFlag ? 'correct':'wrong'}">${userAns}</span><br>
+      Correct answer: <span class="correct">${q.answer}</span></p>`;
+    });
+
+    const percentage = ((score / quizData.length) * 100).toFixed(2);
+
+    summaryHTML += "</div>";
+
+    resultsDiv.innerHTML = `
+      <h2>Quiz Completed!</h2>
+      <p>Your Score: <strong>${score} / ${quizData.length}</strong> (${percentage}%)</p>
+      ${summaryHTML}
+    `;
+  }
+</script>
+</body>
+</html>
