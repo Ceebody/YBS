@@ -101,35 +101,51 @@
   // ======================
   // QUIZ DATA (sample - replace with yours)
   // ======================
-  const quizData = [
-    { q: "1. What does the word 'coding' mean?", options: ["Talking to computers", "Drawing pictures", "Cooking food", "Playing games"], answer: "Talking to computers" },
-    { q: "2. Which of these is a programming language?", options: ["Python", "Banana", "English", "Soccer"], answer: "Python" },
-    { q: "3. Why do people learn coding?", options: ["To tell computers what to do", "To cook faster", "To ride bicycles", "To wash clothes"], answer: "To tell computers what to do" },
-    { q: "4. Which of these is NOT a coding language?", options: ["Scratch", "Python", "WhatsApp", "Java"], answer: "WhatsApp" },
-    { q: "5. Which device do we mostly use to write code?", options: ["Phone", "Laptop/Computer", "TV", "Radio"], answer: "Laptop/Computer" },
-    { q: "6. What does a website like Google use coding for?", options: ["To search information", "To make soup", "To drive cars", "To play football"], answer: "To search information" },
-    { q: "7. What should you do if someone asks for your password online?", options: ["Share it quickly", "Keep it secret", "Write it on Facebook", "Give it to friends"], answer: "Keep it secret" },
-    { q: "8. Which of these is the safest password?", options: ["12345", "password", "MyName", "A3t!9b$2"], answer: "A3t!9b$2" },
-    { q: "9. What does the green padlock on a website mean?", options: ["Website is safe/secure", "Website is for gaming", "It is locked forever", "It is a picture"], answer: "Website is safe/secure" },
-    { q: "10. If a stranger sends you a link to click, what should you do?", options: ["Click it fast", "Ignore or delete it", "Send it to all your friends", "Download it"], answer: "Ignore or delete it" },
-    { q: "11. Which one is an example of an app made with coding?", options: ["Facebook", "Notebook", "Cup", "Ball"], answer: "Facebook" },
-    { q: "12. Coding helps us to…", options: ["Build apps and games", "Cook jollof rice", "Run faster", "Sing songs"], answer: "Build apps and games" },
-    { q: "13. Which one is a loop in coding?", options: ["Repeat action", "One-time action", "Sleeping", "Clapping"], answer: "Repeat action" },
-    { q: "14. Why should we avoid weak passwords?", options: ["Hackers can guess them", "They are too long", "They are too funny", "They are expensive"], answer: "Hackers can guess them" },
-    { q: "15. Which one is an example of good online behavior?", options: ["Cyberbullying", "Sharing fake news", "Respecting others online", "Shouting at people"], answer: "Respecting others online" },
-    { q: "16. Coding is like giving…", options: ["Instructions to a computer", "Food to a child", "Water to a plant", "Money to a friend"], answer: "Instructions to a computer" },
-    { q: "17. Which company makes Windows computers?", options: ["Apple", "Microsoft", "Google", "Samsung"], answer: "Microsoft" },
-    { q: "18. Which one is a web browser?", options: ["Google Chrome", "WhatsApp", "Facebook", "Instagram"], answer: "Google Chrome" },
-    { q: "19. Which of these should you NOT share online?", options: ["Your favorite color", "Your school homework", "Your password", "Your pet’s name"], answer: "Your password" },
-    { q: "20. What is phishing?", options: ["Catching fish", "An online trick to steal info", "Building apps", "Playing games"], answer: "An online trick to steal info" },
+ const quizData = [
+  { q: "1. Which feature is common in fifth-generation computers?", options: ["Vacuum tubes", "Artificial Intelligence", "Punch cards", "Mechanical gears"], answer: "Artificial Intelligence" },
+  { q: "2. What is the name of Google’s quantum processor?", options: ["Pentium", "Sycamore", "Ryzen", "Neuralink"], answer: "Sycamore" },
+  { q: "3. Which of these is an advantage of parallel processing?", options: ["Slows down work", "Processes tasks one after another", "Handles many tasks at the same time", "Requires no electricity"], answer: "Handles many tasks at the same time" },
+  { q: "4. Which component of the computer captures input like typing or voice?", options: ["Hardware", "Software", "Peopleware", "Firewall"], answer: "Hardware" },
+  { q: "5. A teacher using a computer to enter exam scores is an example of:", options: ["Hardware", "Software", "Peopleware", "Firmware"], answer: "Peopleware" },
+  { q: "6. Which is an example of system software?", options: ["Microsoft Word", "Windows 10", "WhatsApp", "Facebook"], answer: "Windows 10" },
+  { q: "7. Which of the following best describes perceptual computing?", options: ["Computers that only use numbers", "Computers that interact using human senses", "Computers that cannot recognize humans", "Computers built with vacuum tubes"], answer: "Computers that interact using human senses" },
+  { q: "8. Face recognition on a phone is an example of:", options: ["AI and perceptual computing", "Mechanical computing", "Analog computing", "Random computing"], answer: "AI and perceptual computing" },
+  { q: "9. In a computer, which hardware part is mainly responsible for processing instructions?", options: ["Keyboard", "Monitor", "CPU", "Printer"], answer: "CPU" },
+  { q: "10. Which statement is true about peopleware?", options: ["It is software installed in the computer", "It refers to the human users of a computer", "It is another word for hardware", "It is a type of antivirus"], answer: "It refers to the human users of a computer" },
+  { q: "11. What does RAM store?", options: ["Permanent data", "Temporary working data", "Passwords only", "Printers"], answer: "Temporary working data" },
+  { q: "12. Which of these is NOT an input device?", options: ["Keyboard", "Scanner", "Monitor", "Mouse"], answer: "Monitor" },
+  { q: "13. Why is quantum computing powerful?", options: ["It uses vacuum tubes", "It can process many possibilities at the same time", "It only works with numbers 1 and 0", "It replaces peopleware"], answer: "It can process many possibilities at the same time" },
+  { q: "14. What is the main difference between classical and quantum computers?", options: ["Quantum computers use transistors", "Classical computers are always faster", "Quantum computers use qubits instead of bits", "Classical computers can think"], answer: "Quantum computers use qubits instead of bits" },
+  { q: "15. Which of these is NOT a benefit of personalizing a computer?", options: ["Improves comfort", "Makes computer unique", "Saves time", "Damages the computer"], answer: "Damages the computer" },
+  { q: "16. Which option is an example of personalizing a computer?", options: ["Changing desktop background", "Cleaning the keyboard", "Buying a new mouse", "Switching off the monitor"], answer: "Changing desktop background" },
+  { q: "17. A student sets a profile picture on their computer account. This is an example of:", options: ["Hardware personalization", "Software personalization", "Peopleware personalization", "Password hacking"], answer: "Software personalization" },
+  { q: "18. Why is peopleware important in computing?", options: ["They make hardware", "They decide what the computer should do", "They power the CPU", "They replace system software"], answer: "They decide what the computer should do" },
+  { q: "19. Which hardware is most important for parallel processing?", options: ["Speakers", "Printers", "GPUs", "Monitors"], answer: "GPUs" },
+  { q: "20. An AI assistant like Siri or Alexa works because of:", options: ["Hardware + Software + Peopleware", "Only Hardware", "Only Software", "Only Peopleware"], answer: "Hardware + Software + Peopleware" }
+  { q: "21. Which feature is common in fifth-generation computers?", options: ["Vacuum tubes", "Artificial Intelligence", "Punch cards", "Mechanical gears"], answer: "Artificial Intelligence" },
+  { q: "22. What is the name of Google’s quantum processor?", options: ["Pentium", "Sycamore", "Ryzen", "Neuralink"], answer: "Sycamore" },
+  { q: "23. Which of these is an advantage of parallel processing?", options: ["Slows down work", "Processes tasks one after another", "Handles many tasks at the same time", "Requires no electricity"], answer: "Handles many tasks at the same time" },
+  { q: "24. Which component of the computer captures input like typing or voice?", options: ["Hardware", "Software", "Peopleware", "Firewall"], answer: "Hardware" },
+  { q: "25. What is a quantum computer mainly used for?", options: ["Playing games", "Solving complex problems quickly", "Typing letters", "Printing documents"], answer: "Solving complex problems quickly" },
+  { q: "26. Which of the following is NOT a feature of fifth-generation computers?", options: ["Artificial Intelligence", "Parallel processing", "Vacuum tube technology", "Quantum computing"], answer: "Vacuum tube technology" },
+  { q: "27. In a computer system, what is software?", options: ["The physical parts of the computer", "The instructions/programs that run the computer", "The power supply", "The mouse and keyboard"], answer: "The instructions/programs that run the computer" },
+  { q: "28. Which of these is an example of system software?", options: ["Microsoft Word", "Google Chrome", "Windows Operating System", "Instagram"], answer: "Windows Operating System" },
+  { q: "29. Which of these is an example of application software?", options: ["Linux OS", "Microsoft Excel", "BIOS", "Device drivers"], answer: "Microsoft Excel" },
+  { q: "30. Which part of the computer system does the monitor belong to?", options: ["Input devices", "Output devices", "Storage devices", "System software"], answer: "Output devices" },
+  { q: "31. Which Windows 8 feature provides quick access to settings and search?", options: ["Charms bar", "Taskbar", "Start menu", "Desktop icons"], answer: "Charms bar" },
+  { q: "32. Which option in the Charms bar allows you to search for files and apps?", options: ["Search", "Devices", "Settings", "Share"], answer: "Search" },
+  { q: "33. Which option in the Charms bar allows you to adjust brightness and volume?", options: ["Search", "Share", "Devices", "Settings"], answer: "Settings" },
+  { q: "34. In file management, what does ‘copy’ do?", options: ["Removes a file", "Creates a duplicate of a file", "Renames a file", "Deletes a file"], answer: "Creates a duplicate of a file" },
+  { q: "35. In file management, what does ‘move’ mean?", options: ["Delete a file permanently", "Change a file’s name", "Transfer a file from one location to another", "Create a shortcut"], answer: "Transfer a file from one location to another" },
+  { q: "36. What is the difference between delete and recycle bin?", options: ["Delete keeps files forever", "Deleted files always vanish", "Recycle Bin stores deleted files temporarily", "Recycle Bin is for storing software"], answer: "Recycle Bin stores deleted files temporarily" },
+  { q: "37. Which shortcut is used to rename a file in Windows?", options: ["F1", "F2", "Ctrl + C", "Alt + Tab"], answer: "F2" },
+  { q: "38. What is an example of hardware storage device?", options: ["Google Docs", "Flash Drive", "Microsoft Paint", "Antivirus"], answer: "Flash Drive" },
+  { q: "39. What is the main function of an operating system?", options: ["To connect the mouse and keyboard", "To manage hardware and software resources", "To browse the internet", "To print documents"], answer: "To manage hardware and software resources" },
+  { q: "40. Which of these is NOT an example of application software?", options: ["MS PowerPoint", "CorelDraw", "Device Drivers", "Google Chrome"], answer: "Device Drivers" }
+];
 
-    // Short answer questions
-    { q: "21. Write an if statement to check if age is greater than 18",input: true, answer: "if age > 18:" },
-    { q: "22. Write an if statement to check if score equals 100",input: true,  answer: "if score == 100:" },
-    { q: "23. Write an if statement to check if name is 'Alice'",input: true,  answer: "if name == 'Alice':" },
-    { q: "24. Write an if statement to check if number is less than 10",input: true, answer: "if number < 10:" },
-    { q: "25. Write an if statement to check if password is not equal to '1234'",input: true, answer: "if password != '1234':" }
-  ];
+
+
 
 
   // ======================
@@ -259,4 +275,5 @@
 </script>
 </body>
 </html>
+
 
