@@ -89,37 +89,108 @@
 
   <script>
     // Multiple choice questions (escaped tags)
-    const questions = [
-      { q: "1. What does HTML stand for?", options: ["Hyper Text Markup Language", "High Text Machine Language", "Hyperlinks and Text Mark Language", "Home Tool Markup Language"], answer: 0 },
-      { q: "2. Which tag is used to create a hyperlink?", options: ["&lt;a&gt;", "&lt;p&gt;", "&lt;link&gt;", "&lt;url&gt;"], answer: 0 },
-      { q: "3. Which tag is used for the largest heading?", options: ["&lt;h6&gt;", "&lt;h1&gt;", "&lt;head&gt;", "&lt;title&gt;"], answer: 1 },
-      { q: "4. CSS is used for?", options: ["Adding colors and styles", "Storing data", "Programming logic", "Making tables"], answer: 0 },
-      { q: "5. Which CSS property changes text color?", options: ["font-color", "color", "text-style", "font-style"], answer: 1 },
-      { q: "6. Which tag is used for an image?", options: ["&lt;img&gt;", "&lt;src&gt;", "&lt;picture&gt;", "&lt;image&gt;"], answer: 0 },
-      { q: "7. In CSS, which symbol is used for an ID?", options: ["#", ".", "*", "&"], answer: 0 },
-      { q: "8. Which tag makes a numbered list?", options: ["&lt;ol&gt;", "&lt;ul&gt;", "&lt;li&gt;", "&lt;list&gt;"], answer: 0 },
-      { q: "9. Which HTML element is used for a paragraph?", options: ["&lt;para&gt;", "&lt;text&gt;", "&lt;p&gt;", "&lt;pg&gt;"], answer: 2 },
-      { q: "10. Which CSS property sets the background color?", options: ["bgcolor", "background-color", "color", "background-style"], answer: 1 },
-      { q: "11. Which tag creates a table?", options: ["&lt;table&gt;", "&lt;tab&gt;", "&lt;grid&gt;", "&lt;t&gt;"], answer: 0 },
-      { q: "12. Which CSS property makes text bold?", options: ["font-weight", "font-bold", "text-bold", "bold"], answer: 0 },
-      { q: "13. Which HTML tag creates a line break?", options: ["&lt;lb&gt;", "&lt;br&gt;", "&lt;line&gt;", "&lt;break&gt;"], answer: 1 },
-      { q: "14. CSS stands for?", options: ["Color Style Sheets", "Cascading Style Sheets", "Creative Style System", "Computer Style Sheets"], answer: 1 },
-      { q: "15. Which tag is used to display a list item?", options: ["&lt;list&gt;", "&lt;li&gt;", "&lt;item&gt;", "&lt;ol&gt;"], answer: 1 },
-      { q: "16. Which HTML tag displays italic text?", options: ["&lt;i&gt;", "&lt;italic&gt;", "&lt;em&gt;", "&lt;it&gt;"], answer: 0 },
-      { q: "17. Which property changes font size?", options: ["font-size", "text-size", "size", "font"], answer: 0 },
-      { q: "18. Which HTML element is used to play video?", options: ["&lt;media&gt;", "&lt;movie&gt;", "&lt;video&gt;", "&lt;play&gt;"], answer: 2 },
-      { q: "19. Which CSS property adds space inside a box?", options: ["padding", "margin", "spacing", "gap"], answer: 0 },
-      { q: "20. Which HTML tag creates a form?", options: ["&lt;form&gt;", "&lt;input&gt;", "&lt;submit&gt;", "&lt;frm&gt;"], answer: 0 }
-    ];
-
-    // Short answer questions
-    const shortQuestions = [
-      { q: "21. What is the correct tag for the smallest heading?", answers: ["<h6>", "h6"] },
-      { q: "22. Write the CSS property used to change background color.", answers: ["background-color", "background colour"] },
-      { q: "23. What tag is used to insert a line break?", answers: ["<br>", "br"] },
-      { q: "24. Write the HTML tag for inserting a hyperlink.", answers: ["<a href>", "a href"] },
-      { q: "25. Which CSS property is used to change the text size?", answers: ["font-size", "fontsize"] }
-    ];
+    const quizData = [
+  {
+    q: "1. What is a user account?",
+    options: ["A computer game", "A login profile that allows someone to use the computer", "A type of software", "A storage device"],
+    answer: "A login profile that allows someone to use the computer"
+  },
+  {
+    q: "2. Which type of account has full control over the computer?",
+    options: ["Guest", "Administrator", "Standard", "Temporary"],
+    answer: "Administrator"
+  },
+  {
+    q: "3. Which account is best for visitors?",
+    options: ["Administrator", "Standard", "Guest", "Developer"],
+    answer: "Guest"
+  },
+  {
+    q: "4. What can a standard user NOT do?",
+    options: ["Open programs", "Install new software for all users", "Save files", "Use the internet"],
+    answer: "Install new software for all users"
+  },
+  {
+    q: "5. What permission allows a user to only view a file?",
+    options: ["Read", "Write", "Execute", "Full Control"],
+    answer: "Read"
+  },
+  {
+    q: "6. What is the role of an administrator?",
+    options: ["Play games", "Control and manage the computer", "Listen to music", "Browse the web only"],
+    answer: "Control and manage the computer"
+  },
+  {
+    q: "7. A guest account is usually _____?",
+    options: ["Permanent", "Temporary", "Hidden", "Password-free forever"],
+    answer: "Temporary"
+  },
+  {
+    q: "8. Which of the following is a permission level?",
+    options: ["Copy", "Rename", "Execute", "Print"],
+    answer: "Execute"
+  },
+  {
+    q: "9. Which account type is safest for children?",
+    options: ["Administrator", "Standard", "Guest", "Hidden"],
+    answer: "Standard"
+  },
+  {
+    q: "10. What is the highest level of permission?",
+    options: ["Read", "Write", "Execute", "Full Control"],
+    answer: "Full Control"
+  },
+  {
+    q: "11. Why do computers have different user accounts?",
+    options: ["To decorate the desktop", "To allow many users with different access levels", "To play different songs", "To make the screen colorful"],
+    answer: "To allow many users with different access levels"
+  },
+  {
+    q: "12. What happens if a guest tries to install software?",
+    options: ["The software installs easily", "The system blocks it", "The system deletes the guest account", "The system restarts"],
+    answer: "The system blocks it"
+  },
+  {
+    q: "13. Which of these is NOT a type of account?",
+    options: ["Administrator", "Guest", "Standard", "Superstudent"],
+    answer: "Superstudent"
+  },
+  {
+    q: "14. Which permission allows editing the content of a file?",
+    options: ["Read", "Write", "Execute", "View"],
+    answer: "Write"
+  },
+  {
+    q: "15. The administrator can create or delete other users. True or False?",
+    options: ["True", "False"],
+    answer: "True"
+  },
+  {
+    q: "16. A user who can only open and read a file has which permission?",
+    options: ["Write", "Read", "Execute", "Full Control"],
+    answer: "Read"
+  },
+  {
+    q: "17. What tab is used to check file permissions on Windows?",
+    options: ["General", "Security", "View", "Network"],
+    answer: "Security"
+  },
+  {
+    q: "18. Why is it risky to give everyone administrator access?",
+    options: ["They can delete or change important files", "They will slow down the computer", "It makes the screen dark", "It blocks internet access"],
+    answer: "They can delete or change important files"
+  },
+  {
+    q: "19. What is the main advantage of user accounts?",
+    options: ["They help organize and protect user data", "They make the computer slower", "They increase the computer’s weight", "They remove viruses"],
+    answer: "They help organize and protect user data"
+  },
+  {
+    q: "20. If a file can be opened but not changed, it means the user has ____ permission.",
+    options: ["Full Control", "Write", "Read", "Execute"],
+    answer: "Read"
+  }
+];
 
     // Render multiple choice
     const quizDiv = document.getElementById("quiz");
