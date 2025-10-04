@@ -102,45 +102,26 @@
   // QUIZ DATA (sample - replace with yours)
   // ======================
  const quizData = [
-  { q: "1. Which feature is common in fifth-generation computers?", options: ["Vacuum tubes", "Artificial Intelligence", "Punch cards", "Mechanical gears"], answer: "Artificial Intelligence" },
-  { q: "2. What is the name of Google’s quantum processor?", options: ["Pentium", "Sycamore", "Ryzen", "Neuralink"], answer: "Sycamore" },
-  { q: "3. Which of these is an advantage of parallel processing?", options: ["Slows down work", "Processes tasks one after another", "Handles many tasks at the same time", "Requires no electricity"], answer: "Handles many tasks at the same time" },
-  { q: "4. Which component of the computer captures input like typing or voice?", options: ["Hardware", "Software", "Peopleware", "Firewall"], answer: "Hardware" },
-  { q: "5. A teacher using a computer to enter exam scores is an example of:", options: ["Hardware", "Software", "Peopleware", "Firmware"], answer: "Peopleware" },
-  { q: "6. Which is an example of system software?", options: ["Microsoft Word", "Windows 10", "WhatsApp", "Facebook"], answer: "Windows 10" },
-  { q: "7. Which of the following best describes perceptual computing?", options: ["Computers that only use numbers", "Computers that interact using human senses", "Computers that cannot recognize humans", "Computers built with vacuum tubes"], answer: "Computers that interact using human senses" },
-  { q: "8. Face recognition on a phone is an example of:", options: ["AI and perceptual computing", "Mechanical computing", "Analog computing", "Random computing"], answer: "AI and perceptual computing" },
-  { q: "9. In a computer, which hardware part is mainly responsible for processing instructions?", options: ["Keyboard", "Monitor", "CPU", "Printer"], answer: "CPU" },
-  { q: "10. Which statement is true about peopleware?", options: ["It is software installed in the computer", "It refers to the human users of a computer", "It is another word for hardware", "It is a type of antivirus"], answer: "It refers to the human users of a computer" },
-  { q: "11. What does RAM store?", options: ["Permanent data", "Temporary working data", "Passwords only", "Printers"], answer: "Temporary working data" },
-  { q: "12. Which of these is NOT an input device?", options: ["Keyboard", "Scanner", "Monitor", "Mouse"], answer: "Monitor" },
-  { q: "13. Why is quantum computing powerful?", options: ["It uses vacuum tubes", "It can process many possibilities at the same time", "It only works with numbers 1 and 0", "It replaces peopleware"], answer: "It can process many possibilities at the same time" },
-  { q: "14. What is the main difference between classical and quantum computers?", options: ["Quantum computers use transistors", "Classical computers are always faster", "Quantum computers use qubits instead of bits", "Classical computers can think"], answer: "Quantum computers use qubits instead of bits" },
-  { q: "15. Which of these is NOT a benefit of personalizing a computer?", options: ["Improves comfort", "Makes computer unique", "Saves time", "Damages the computer"], answer: "Damages the computer" },
-  { q: "16. Which option is an example of personalizing a computer?", options: ["Changing desktop background", "Cleaning the keyboard", "Buying a new mouse", "Switching off the monitor"], answer: "Changing desktop background" },
-  { q: "17. A student sets a profile picture on their computer account. This is an example of:", options: ["Hardware personalization", "Software personalization", "Peopleware personalization", "Password hacking"], answer: "Software personalization" },
-  { q: "18. Why is peopleware important in computing?", options: ["They make hardware", "They decide what the computer should do", "They power the CPU", "They replace system software"], answer: "They decide what the computer should do" },
-  { q: "19. Which hardware is most important for parallel processing?", options: ["Speakers", "Printers", "GPUs", "Monitors"], answer: "GPUs" },
-  { q: "20. An AI assistant like Siri or Alexa works because of:", options: ["Hardware + Software + Peopleware", "Only Hardware", "Only Software", "Only Peopleware"], answer: "Hardware + Software + Peopleware" },
-  { q: "21. Which feature is common in fifth-generation computers?", options: ["Vacuum tubes", "Artificial Intelligence", "Punch cards", "Mechanical gears"], answer: "Artificial Intelligence" },
-  { q: "23. Which of these is an advantage of parallel processing?", options: ["Slows down work", "Processes tasks one after another", "Handles many tasks at the same time", "Requires no electricity"], answer: "Handles many tasks at the same time" },
-  { q: "24. Which component of the computer captures input like typing or voice?", options: ["Hardware", "Software", "Peopleware", "Firewall"], answer: "Hardware" },
-  { q: "25. What is a quantum computer mainly used for?", options: ["Playing games", "Solving complex problems quickly", "Typing letters", "Printing documents"], answer: "Solving complex problems quickly" },
-  { q: "26. Which of the following is NOT a feature of fifth-generation computers?", options: ["Artificial Intelligence", "Parallel processing", "Vacuum tube technology", "Quantum computing"], answer: "Vacuum tube technology" },
-  { q: "27. In a computer system, what is software?", options: ["The physical parts of the computer", "The instructions/programs that run the computer", "The power supply", "The mouse and keyboard"], answer: "The instructions/programs that run the computer" },
-  { q: "28. Which of these is an example of system software?", options: ["Microsoft Word", "Google Chrome", "Windows Operating System", "Instagram"], answer: "Windows Operating System" },
-  { q: "29. Which of these is an example of application software?", options: ["Linux OS", "Microsoft Excel", "BIOS", "Device drivers"], answer: "Microsoft Excel" },
-  { q: "30. Which part of the computer system does the monitor belong to?", options: ["Input devices", "Output devices", "Storage devices", "System software"], answer: "Output devices" },
-  { q: "31. Which Windows 8 feature provides quick access to settings and search?", options: ["Charms bar", "Taskbar", "Start menu", "Desktop icons"], answer: "Charms bar" },
-  { q: "32. Which option in the Charms bar allows you to search for files and apps?", options: ["Search", "Devices", "Settings", "Share"], answer: "Search" },
-  { q: "33. Which option in the Charms bar allows you to adjust brightness and volume?", options: ["Search", "Share", "Devices", "Settings"], answer: "Settings" },
-  { q: "34. In file management, what does ‘copy’ do?", options: ["Removes a file", "Creates a duplicate of a file", "Renames a file", "Deletes a file"], answer: "Creates a duplicate of a file" },
-  { q: "35. In file management, what does ‘move’ mean?", options: ["Delete a file permanently", "Change a file’s name", "Transfer a file from one location to another", "Create a shortcut"], answer: "Transfer a file from one location to another" },
-  { q: "36. What is the difference between delete and recycle bin?", options: ["Delete keeps files forever", "Deleted files always vanish", "Recycle Bin stores deleted files temporarily", "Recycle Bin is for storing software"], answer: "Recycle Bin stores deleted files temporarily" },
-  { q: "37. Which shortcut is used to rename a file in Windows?", options: ["F1", "F2", "Ctrl + C", "Alt + Tab"], answer: "F2" },
-  { q: "38. What is an example of hardware storage device?", options: ["Google Docs", "Flash Drive", "Microsoft Paint", "Antivirus"], answer: "Flash Drive" },
-  { q: "39. What is the main function of an operating system?", options: ["To connect the mouse and keyboard", "To manage hardware and software resources", "To browse the internet", "To print documents"], answer: "To manage hardware and software resources" },
-  { q: "40. Which of these is NOT an example of application software?", options: ["MS PowerPoint", "CorelDraw", "Device Drivers", "Google Chrome"], answer: "Device Drivers" }
+  { q: "1. What is disk defragmentation used for?", options: ["Deleting files", "Rearranging scattered files for faster access", "Compressing folders", "Formatting the disk"], answer: "Rearranging scattered files for faster access" },
+  { q: "2. What happens when files on a disk become fragmented?", options: ["They disappear", "They become scattered across the disk", "They are compressed automatically", "They are deleted"], answer: "They become scattered across the disk" },
+  { q: "3. Which tool is used in Windows to perform disk defragmentation?", options: ["Recycle Bin", "Optimize Drives", "Task Manager", "Command Prompt"], answer: "Optimize Drives" },
+  { q: "4. One advantage of disk defragmentation is that it ____.", options: ["Deletes unwanted files", "Makes the computer faster", "Increases virus risk", "Reduces disk space"], answer: "Makes the computer faster" },
+  { q: "5. Which of the following is a disadvantage of disk defragmentation?", options: ["It takes time to complete", "It deletes all files", "It adds more storage space", "It formats the computer"], answer: "It takes time to complete" },
+  { q: "6. File compression helps to ____.", options: ["Increase file size", "Reduce file size", "Erase files permanently", "Make files larger"], answer: "Reduce file size" },
+  { q: "7. What is the common file extension for compressed folders?", options: [".exe", ".docx", ".zip", ".mp3"], answer: ".zip" },
+  { q: "8. Which of the following is an advantage of file compression?", options: ["Files become more secure", "Files take up less space", "Files cannot be opened", "Files disappear after use"], answer: "Files take up less space" },
+  { q: "9. What is one disadvantage of file compression?", options: ["It deletes the file", "The file must be extracted before use", "It increases the file size", "It damages the disk"], answer: "The file must be extracted before use" },
+  { q: "10. What does 'extracting' a file mean?", options: ["Deleting a file", "Opening a compressed file for use", "Hiding a file", "Formatting the disk"], answer: "Opening a compressed file for use" },
+  { q: "11. Disk partitioning means ____.", options: ["Deleting folders", "Dividing a disk into sections", "Connecting disks together", "Copying software to a drive"], answer: "Dividing a disk into sections" },
+  { q: "12. A disk can have partitions such as ____.", options: ["A:, B:", "C:, D:", "E:, F:, G:", "Only C:"], answer: "C:, D:" },
+  { q: "13. Which of the following is an advantage of disk partitioning?", options: ["It organizes files and data", "It deletes viruses", "It damages files", "It makes files disappear"], answer: "It organizes files and data" },
+  { q: "14. Which is a disadvantage of disk partitioning?", options: ["It helps organize data", "It may cause data loss if done wrongly", "It makes copying faster", "It increases memory size"], answer: "It may cause data loss if done wrongly" },
+  { q: "15. Which Windows tool is used for disk partitioning?", options: ["Task Scheduler", "Disk Management", "Recycle Bin", "Windows Defender"], answer: "Disk Management" },
+  { q: "16. Why should you not defragment a modern SSD drive?", options: ["It is too slow", "It can reduce its lifespan", "It will delete files", "It has no storage"], answer: "It can reduce its lifespan" },
+  { q: "17. Which of these is an example of a practical file management task?", options: ["Running a race", "Compressing a folder", "Playing music", "Shutting down the computer"], answer: "Compressing a folder" },
+  { q: "18. When a user wants to send a large project file by email, which technique is most useful?", options: ["Defragmenting the disk", "Compressing the file", "Partitioning the disk", "Formatting the drive"], answer: "Compressing the file" },
+  { q: "19. Why is disk defragmentation important for old hard drives?", options: ["It deletes old programs", "It makes data easier to read", "It formats the drive", "It changes file names"], answer: "It makes data easier to read" },
+  { q: "20. Which of the following groups are all file management techniques?", options: ["Copy, Delete, Rename", "Defragment, Compress, Partition", "Cut, Paste, Print", "Restart, Sleep, Shutdown"], answer: "Defragment, Compress, Partition" }
 ];
 
 
@@ -274,6 +255,7 @@
 </script>
 </body>
 </html>
+
 
 
 
