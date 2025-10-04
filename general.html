@@ -102,26 +102,106 @@
   // QUIZ DATA (sample - replace with yours)
   // ======================
  const quizData = [
-  { q: "1. What is disk defragmentation used for?", options: ["Deleting files", "Rearranging scattered files for faster access", "Compressing folders", "Formatting the disk"], answer: "Rearranging scattered files for faster access" },
-  { q: "2. What happens when files on a disk become fragmented?", options: ["They disappear", "They become scattered across the disk", "They are compressed automatically", "They are deleted"], answer: "They become scattered across the disk" },
-  { q: "3. Which tool is used in Windows to perform disk defragmentation?", options: ["Recycle Bin", "Optimize Drives", "Task Manager", "Command Prompt"], answer: "Optimize Drives" },
-  { q: "4. One advantage of disk defragmentation is that it ____.", options: ["Deletes unwanted files", "Makes the computer faster", "Increases virus risk", "Reduces disk space"], answer: "Makes the computer faster" },
-  { q: "5. Which of the following is a disadvantage of disk defragmentation?", options: ["It takes time to complete", "It deletes all files", "It adds more storage space", "It formats the computer"], answer: "It takes time to complete" },
-  { q: "6. File compression helps to ____.", options: ["Increase file size", "Reduce file size", "Erase files permanently", "Make files larger"], answer: "Reduce file size" },
-  { q: "7. What is the common file extension for compressed folders?", options: [".exe", ".docx", ".zip", ".mp3"], answer: ".zip" },
-  { q: "8. Which of the following is an advantage of file compression?", options: ["Files become more secure", "Files take up less space", "Files cannot be opened", "Files disappear after use"], answer: "Files take up less space" },
-  { q: "9. What is one disadvantage of file compression?", options: ["It deletes the file", "The file must be extracted before use", "It increases the file size", "It damages the disk"], answer: "The file must be extracted before use" },
-  { q: "10. What does 'extracting' a file mean?", options: ["Deleting a file", "Opening a compressed file for use", "Hiding a file", "Formatting the disk"], answer: "Opening a compressed file for use" },
-  { q: "11. Disk partitioning means ____.", options: ["Deleting folders", "Dividing a disk into sections", "Connecting disks together", "Copying software to a drive"], answer: "Dividing a disk into sections" },
-  { q: "12. A disk can have partitions such as ____.", options: ["A:, B:", "C:, D:", "E:, F:, G:", "Only C:"], answer: "C:, D:" },
-  { q: "13. Which of the following is an advantage of disk partitioning?", options: ["It organizes files and data", "It deletes viruses", "It damages files", "It makes files disappear"], answer: "It organizes files and data" },
-  { q: "14. Which is a disadvantage of disk partitioning?", options: ["It helps organize data", "It may cause data loss if done wrongly", "It makes copying faster", "It increases memory size"], answer: "It may cause data loss if done wrongly" },
-  { q: "15. Which Windows tool is used for disk partitioning?", options: ["Task Scheduler", "Disk Management", "Recycle Bin", "Windows Defender"], answer: "Disk Management" },
-  { q: "16. Why should you not defragment a modern SSD drive?", options: ["It is too slow", "It can reduce its lifespan", "It will delete files", "It has no storage"], answer: "It can reduce its lifespan" },
-  { q: "17. Which of these is an example of a practical file management task?", options: ["Running a race", "Compressing a folder", "Playing music", "Shutting down the computer"], answer: "Compressing a folder" },
-  { q: "18. When a user wants to send a large project file by email, which technique is most useful?", options: ["Defragmenting the disk", "Compressing the file", "Partitioning the disk", "Formatting the drive"], answer: "Compressing the file" },
-  { q: "19. Why is disk defragmentation important for old hard drives?", options: ["It deletes old programs", "It makes data easier to read", "It formats the drive", "It changes file names"], answer: "It makes data easier to read" },
-  { q: "20. Which of the following groups are all file management techniques?", options: ["Copy, Delete, Rename", "Defragment, Compress, Partition", "Cut, Paste, Print", "Restart, Sleep, Shutdown"], answer: "Defragment, Compress, Partition" }
+  {
+    q: "1. What is a user account?",
+    options: ["A computer game", "A login profile that allows someone to use the computer", "A type of software", "A storage device"],
+    answer: "A login profile that allows someone to use the computer"
+  },
+  {
+    q: "2. Which type of account has full control over the computer?",
+    options: ["Guest", "Administrator", "Standard", "Temporary"],
+    answer: "Administrator"
+  },
+  {
+    q: "3. Which account is best for visitors?",
+    options: ["Administrator", "Standard", "Guest", "Developer"],
+    answer: "Guest"
+  },
+  {
+    q: "4. What can a standard user NOT do?",
+    options: ["Open programs", "Install new software for all users", "Save files", "Use the internet"],
+    answer: "Install new software for all users"
+  },
+  {
+    q: "5. What permission allows a user to only view a file?",
+    options: ["Read", "Write", "Execute", "Full Control"],
+    answer: "Read"
+  },
+  {
+    q: "6. What is the role of an administrator?",
+    options: ["Play games", "Control and manage the computer", "Listen to music", "Browse the web only"],
+    answer: "Control and manage the computer"
+  },
+  {
+    q: "7. A guest account is usually _____?",
+    options: ["Permanent", "Temporary", "Hidden", "Password-free forever"],
+    answer: "Temporary"
+  },
+  {
+    q: "8. Which of the following is a permission level?",
+    options: ["Copy", "Rename", "Execute", "Print"],
+    answer: "Execute"
+  },
+  {
+    q: "9. Which account type is safest for children?",
+    options: ["Administrator", "Standard", "Guest", "Hidden"],
+    answer: "Standard"
+  },
+  {
+    q: "10. What is the highest level of permission?",
+    options: ["Read", "Write", "Execute", "Full Control"],
+    answer: "Full Control"
+  },
+  {
+    q: "11. Why do computers have different user accounts?",
+    options: ["To decorate the desktop", "To allow many users with different access levels", "To play different songs", "To make the screen colorful"],
+    answer: "To allow many users with different access levels"
+  },
+  {
+    q: "12. What happens if a guest tries to install software?",
+    options: ["The software installs easily", "The system blocks it", "The system deletes the guest account", "The system restarts"],
+    answer: "The system blocks it"
+  },
+  {
+    q: "13. Which of these is NOT a type of account?",
+    options: ["Administrator", "Guest", "Standard", "Superstudent"],
+    answer: "Superstudent"
+  },
+  {
+    q: "14. Which permission allows editing the content of a file?",
+    options: ["Read", "Write", "Execute", "View"],
+    answer: "Write"
+  },
+  {
+    q: "15. The administrator can create or delete other users. True or False?",
+    options: ["True", "False"],
+    answer: "True"
+  },
+  {
+    q: "16. A user who can only open and read a file has which permission?",
+    options: ["Write", "Read", "Execute", "Full Control"],
+    answer: "Read"
+  },
+  {
+    q: "17. What tab is used to check file permissions on Windows?",
+    options: ["General", "Security", "View", "Network"],
+    answer: "Security"
+  },
+  {
+    q: "18. Why is it risky to give everyone administrator access?",
+    options: ["They can delete or change important files", "They will slow down the computer", "It makes the screen dark", "It blocks internet access"],
+    answer: "They can delete or change important files"
+  },
+  {
+    q: "19. What is the main advantage of user accounts?",
+    options: ["They help organize and protect user data", "They make the computer slower", "They increase the computer’s weight", "They remove viruses"],
+    answer: "They help organize and protect user data"
+  },
+  {
+    q: "20. If a file can be opened but not changed, it means the user has ____ permission.",
+    options: ["Full Control", "Write", "Read", "Execute"],
+    answer: "Read"
+  }
 ];
 
 
@@ -255,6 +335,7 @@
 </script>
 </body>
 </html>
+
 
 
 
