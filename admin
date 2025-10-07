@@ -1,1 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin - Quiz Results</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f7f7f7;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background: #2e8b57;
+      color: white;
+      padding: 15px;
+      text-align: center;
+    }
+    .container {
+      max-width: 900px;
+      margin: 20px auto;
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    h2 { color: #333; }
+    ul { list-style: none; padding: 0; }
+    li {
+      background: #f0f0f0;
+      padding: 10px;
+      margin: 5px 0;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    li:hover { background: #c4f0c4; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+    th, td {
+      padding: 10px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+    th { background: #2e8b57; color: white; }
+    .back-btn {
+      display: inline-block;
+      margin-top: 15px;
+      padding: 10px 16px;
+      background: #333;
+      color: white;
+      border-radius: 8px;
+      text-decoration: none;
+    }
+    .back-btn:hover { background: #555; }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Admin Dashboard - Quiz Results</h1>
+  </header>
+
+  <div class="container">
+    <h2>Available Dates</h2>
+    <ul id="dateList"></ul>
+
+    <div id="resultsArea" class="hidden">
+      <h2>Results for <span id="selectedDate"></span></h2>
+      <table id="resultsTable">
+        <thead>
+          <tr>
+            <th>Student Name</th>
+            <th>Score</th>
+            <th>Percentage</th>
+            <th>Time Submitted</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <a href="#" class="back-btn" id="backBtn">← Back to Dates</a>
+    </div>
+  </div>
+
+  <script type="module">
+    // ===============================
+    // Import Firebase SDK
+    // ===============================
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+
+    // ✅ Your Firebase Config
+    const firebaseConfig = {
+      apiKey: "AIzaSyCY9oturc9bql33PSUkfNUptcHXla2RWN4",
+      authDomain: "tracha-xx.firebaseapp.com",
+      databaseURL: "https://tracha-xx-default-rtdb.firebaseio.com",
+      projectId: "tracha-xx",
+      storageBucket: "tracha-xx.appspot.com",
+      messagingSenderId: "914440906583",
+      appId: "1:914440906583:web:YOUR_APP_ID_HERE"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    const dateList = document.getElementById("dateList");
+    const resultsArea = document.getElementById("resultsArea");
+    const resultsTable = document.getElementById("resultsTable").querySelector("tbody");
+    const selectedDateSpan = document.getElementById("selectedDate");
+    const backBtn = document.getElementById("backBtn");
+
+    // ===============================
+    // Fetch and Group Results by Date
+    // ===============================
+    const quizRef = ref(db, "quizResults");
+    onValue(quizRef, (snapshot) => {
+      const data = snapshot.val();
+      if (!data) {
+        dateList.innerHTML = "<li>No quiz results found yet.</li>";
+        return;
+      }
+
+      const grouped = {};
+      Object.values(data).forEach(entry => {
+        if (!entry.timestamp) return;
+        const dateOnly = new Date(entry.timestamp).toISOString().split("T")[0];
+        if (!grouped[dateOnly]) grouped[dateOnly] = [];
+        grouped[dateOnly].push(entry);
+      });
+
+      // Display all available dates
+      dateList.innerHTML = "";
+      Object.keys(grouped)
+        .sort((a, b) => new Date(b) - new Date(a)) // latest first
+        .forEach(date => {
+          const li = document.createElement("li");
+          li.textContent = date;
+          li.onclick = () => showResults(date, grouped[date]);
+          dateList.appendChild(li);
+        });
+    });
+
+    // ===============================
+    // Show results for selected date
+    // ===============================
+    function showResults(date, results) {
+      selectedDateSpan.textContent = date;
+      resultsTable.innerHTML = "";
+
+      results.forEach(r => {
+        const row = document.createElement("tr");
+        const time = new Date(r.timestamp).toLocaleTimeString();
+        row.innerHTML = `
+          <td>${r.name || "N/A"}</td>
+          <td>${r.score || 0}/${r.totalQuestions || "-"}</td>
+          <td>${r.percentage || 0}%</td>
+          <td>${time}</td>
+        `;
+        resultsTable.appendChild(row);
+      });
+
+      dateList.style.display = "none";
+      resultsArea.classList.remove("hidden");
+    }
+
+    backBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      resultsArea.classList.add("hidden");
+      dateList.style.display = "block";
+    });
+  </script>
+</body>
+</html>
 
