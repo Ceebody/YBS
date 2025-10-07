@@ -102,7 +102,7 @@
       <h1>Welcome Quizzilla!</h1>
       <p>This quiz will test your knowledge of <strong>Word Processing</strong> <stong>Formatting tools</stong>.</p>
       <p><marquee>Just select the correct answer</marquee></p>
-      <p>You will have <strong>10 minutes</strong> to answer <strong>20 questions</strong>.</p>
+      <p>You will have <strong>40 minutes</strong> to answer <strong>20 questions</strong>.</p>
       <p>Use <strong>Next</strong> and <strong>Previous</strong> to move, Click <strong>Submit</strong> when done.</p>
       <div class="controls">
         <button class="primary" id="startBtn">Sure, Let's Start Quiz</button>
@@ -211,7 +211,7 @@
   let currentQuestion = 0;
   let answers = [];
   let timer;
-  let timeLeft = 10 * 60; 
+  let timeLeft = 40 * 60; 
   const lockDuration = 12 * 60 * 60 * 1000;
 
   const namePage = document.getElementById("namePage");
@@ -383,4 +383,5 @@
 </script>
 </body>
 </html>
+
 
