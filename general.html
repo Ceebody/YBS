@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- ✅ Added for mobile scaling -->
   <title>Coding Quiz</title>
   <style>
     body {
@@ -25,17 +26,19 @@
     h1, h2 { text-align: center; }
     .hidden { display: none; }
     .controls {
-      margin-top: 15px;
+      margin-top: 20px;
       text-align: center;
     }
     button {
-      padding: 10px 18px;
-      margin: 5px;
+      padding: 15px 25px; /* ✅ Larger buttons */
+      margin: 10px;
       border: none;
-      border-radius: 8px;
+      border-radius: 10px;
       cursor: pointer;
-      font-size: 16px;
+      font-size: 18px; /* ✅ Easier to tap */
+      transition: 0.2s;
     }
+    button:hover { transform: scale(1.05); }
     button.primary { background: #4CAF50; color: white; }
     button.secondary { background: #ddd; }
     #timer { font-weight: bold; text-align: right; margin-bottom: 10px; }
@@ -57,13 +60,26 @@
       font-size: 14px;
     }
     input {
-      padding: 10px;
+      padding: 12px;
       width: 90%;
-      margin: 10px auto;
+      margin: 15px auto;
       display: block;
       border-radius: 8px;
       border: 1px solid #ccc;
       font-size: 16px;
+    }
+
+    /* ✅ Countdown Animation */
+    #countdownScreen {
+      text-align: center;
+      font-size: 60px;
+      font-weight: bold;
+      color: #4CAF50;
+      animation: fade 1s ease-in-out infinite;
+    }
+    @keyframes fade {
+      0%, 100% { opacity: 0; }
+      50% { opacity: 1; }
     }
   </style>
 </head>
@@ -93,6 +109,9 @@
       </div>
     </div>
 
+    <!-- ✅ Countdown Screen -->
+    <div id="countdownScreen" class="hidden"></div>
+
     <!-- Quiz Area -->
     <div id="quizArea" class="hidden">
       <div id="timer"></div>
@@ -119,11 +138,9 @@
      Firebase Setup
 ============================== -->
 <script type="module">
-  // ✅ Import Firebase SDKs
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
   import { getDatabase, ref, get, set } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
 
-  // ✅ Firebase Config (Replace with your real project info)
   const firebaseConfig = {
     apiKey: "AIzaSyCY9oturc9bql33PSUkfNUptcHXla2RWN4",
     authDomain: "tracha-xx.firebaseapp.com",
@@ -131,48 +148,75 @@
     projectId: "tracha-xx",
     storageBucket: "tracha-xx.appspot.com",
     messagingSenderId: "914440906583",
-    appId: "1:914440906583:web:123abc456xyz" // optional placeholder
+    appId: "1:914440906583:web:123abc456xyz"
   };
 
   const app = initializeApp(firebaseConfig);
   const db = getDatabase(app);
 
-  // QUIZ DATA
-  const quizData = [
-    { q: "1. A computer is an __________ machine that can store and process information.", options: ["manual", "electronic", "mechanical", "magical"], answer: "electronic" },
-    { q: "2. The main screen that appears after the computer starts is called the ________.", options: ["keyboard", "desktop", "monitor", "menu"], answer: "desktop" },
-    { q: "3. Which part of the computer shows pictures and videos?", options: ["mouse", "printer", "monitor", "keyboard"], answer: "monitor" },
-    { q: "4. The brain of the computer is called the ________.", options: ["CPU", "mouse", "speaker", "screen"], answer: "CPU" },
-    { q: "5. Which of these is an input device?", options: ["speaker", "printer", "keyboard", "projector"], answer: "keyboard" },
-    { q: "6. A device that helps us hear sound from the computer is called a ________.", options: ["scanner", "speaker", "keyboard", "printer"], answer: "speaker" },
-    { q: "7. Which device is used to print work on paper?", options: ["monitor", "mouse", "printer", "CPU"], answer: "printer" },
-    { q: "8. What is the use of a mouse?", options: ["to move and click items", "to type words", "to print documents", "to play sound"], answer: "to move and click items" },
-    { q: "9. The desktop background is the ________ you see behind all the icons.", options: ["file", "color or picture", "keyboard", "program"], answer: "color or picture" },
-    { q: "10. To change the desktop background, we right-click and choose ________.", options: ["Copy", "Paste", "Personalize", "Delete"], answer: "Personalize" },
-    { q: "11. Icons on the desktop are small ________ that represent programs or files.", options: ["songs", "pictures", "boxes", "letters"], answer: "pictures" },
-    { q: "12. A folder helps to ________ files on the computer.", options: ["delete", "open", "organize", "close"], answer: "organize" },
-    { q: "13. Which of the following is a storage device?", options: ["flash drive", "speaker", "monitor", "mouse"], answer: "flash drive" },
-    { q: "14. To create a new folder, you right-click, point to New, and click ________.", options: ["File", "Folder", "Icon", "Program"], answer: "Folder" },
-    { q: "15. The Recycle Bin is used to keep ________ files.", options: ["new", "saved", "deleted", "open"], answer: "deleted" },
-    { q: "16. What does a scanner do?", options: ["copies pictures into the computer", "prints documents", "plays music", "stores videos"], answer: "copies pictures into the computer" },
-    { q: "17. A folder on the desktop looks like a ________.", options: ["bag", "box", "yellow envelope", "book"], answer: "yellow envelope" },
-    { q: "18. Which of the following helps to store and move files easily?", options: ["mouse", "flash drive", "speaker", "monitor"], answer: "flash drive" },
-    { q: "19. To rename a folder, right-click the folder and choose ________.", options: ["Open", "Rename", "Move", "Delete"], answer: "Rename" },
-    { q: "20. Why should we keep the desktop tidy?", options: ["To look neat and find items easily", "To confuse the user", "To make it slow", "To hide folders"], answer: "To look neat and find items easily" }
-  ];
+ const quizData = [
+  { q: "1. Which file format preserves document layout and is best for sharing final copies?", options: [".docx", ".txt", ".pdf", ".rtf"], answer: ".pdf" },
+  { q: "2. What does 'track changes' allow you to do in a word processor?", options: ["Automatically fix grammar", "See and accept/reject edits", "Save to cloud", "Convert to PDF"], answer: "See and accept/reject edits" },
+  { q: "3. Which feature creates identical letters addressed to many people using a data list?", options: ["Macro", "Mail merge", "Template", "Style"], answer: "Mail merge" },
+  { q: "4. To make all headings the same font and size quickly, you should use:", options: ["Find & Replace", "Format Painter", "Styles", "Page Layout"], answer: "Styles" },
+  { q: "5. Which option places text around an inserted picture?", options: ["Wrap Text", "Crop", "Compress Image", "Align Center"], answer: "Wrap Text" },
+  { q: "6. A section break is used to:", options: ["Change page margins for part of a document", "Remove headers forever", "Save a file", "Insert a table"], answer: "Change page margins for part of a document" },
+  { q: "7. Which command gives a quick count of words, characters and pages?", options: ["Word Count", "Spell Check", "Format Painter", "Track Changes"], answer: "Word Count" },
+  { q: "8. Which shortcut key usually copies selected text to the clipboard?", options: ["Ctrl + V", "Ctrl + C", "Ctrl + X", "Ctrl + Z"], answer: "Ctrl + C" },
+  { q: "9. To format many paragraphs with the same look (spacing, font, indentation) use:", options: ["Paragraph styles", "Page size", "Header", "Footer"], answer: "Paragraph styles" },
+  { q: "10. 'Paste Special' is useful when you want to:", options: ["Paste with specific formatting options", "Paste repeatedly without change", "Paste all files", "Paste as an image only"], answer: "Paste with specific formatting options" },
+  { q: "11. Which element appears at the top of every page and can show the document title?", options: ["Footer", "Header", "Margin", "Ruler"], answer: "Header" },
+  { q: "12. What does the 'Format Painter' tool do?", options: ["Search for text", "Copy formatting from one place to another", "Insert a picture", "Count words"], answer: "Copy formatting from one place to another" },
+  { q: "13. Which is the best way to create an automatic table of contents?", options: ["Use manual headings", "Use heading styles and Insert TOC", "Type it manually", "Use columns"], answer: "Use heading styles and Insert TOC" },
+  { q: "14. Why use page orientation 'Landscape'?", options: ["Long text pages", "Better for wide tables or charts", "To save ink", "To add headers"], answer: "Better for wide tables or charts" },
+  { q: "15. What is a template in word processing?", options: ["A blank file format", "A preformatted document you can reuse", "A picture file", "A printer setup"], answer: "A preformatted document you can reuse" },
+  { q: "16. When would you use 'Find and Replace'?", options: ["To change many words at once", "To insert a table", "To change page margins", "To check spelling"], answer: "To change many words at once" },
+  { q: "17. Which is NOT a good use of headers/footers?", options: ["Page numbers", "Author name", "Main body text", "Document title"], answer: "Main body text" },
+  { q: "18. A hanging indent is often used for:", options: ["Paragraph spacing", "Bibliography/reference lists", "Page numbering", "Adding images"], answer: "Bibliography/reference lists" },
+  { q: "19. Which tool suggests synonyms for a selected word?", options: ["Spell check", "Thesaurus", "Grammar check", "Word count"], answer: "Thesaurus" },
+  { q: "20. What should you do before printing many copies of a long document?", options: ["Check Page Setup and Print Preview", "Close the document", "Delete images", "Disable Track Changes"], answer: "Check Page Setup and Print Preview" },
+  { q: "21. 'Column' formatting is most useful for:", options: ["Writing code", "Newspaper-style text and brochures", "Page numbering", "Inserting footnotes"], answer: "Newspaper-style text and brochures" },
+  { q: "22. Which file extension is the native editable format for most modern word processors?", options: [".pdf", ".jpg", ".docx", ".mp3"], answer: ".docx" },
+  { q: "23. Which feature helps multiple people edit the same document online at once?", options: ["Track Changes only", "Co-authoring / Collaboration", "Mail merge", "Watermark"], answer: "Co-authoring / Collaboration" },
+  { q: "24. To protect a document so other users cannot change it, you can:", options: ["Delete it", "Set it to Read-only or add a password", "Print it", "Change the font"], answer: "Set it to Read-only or add a password" },
+  { q: "25. What is the purpose of 'styles pane'?", options: ["Show all installed fonts", "Manage and apply document styles consistently", "Insert tables", "Format pictures"], answer: "Manage and apply document styles consistently" },
+  { q: "26. Which option lets you add explanatory notes at the bottom of a page?", options: ["Header", "Footer", "Footnote", "Bookmark"], answer: "Footnote" },
+  { q: "27. Which is a benefit of using templates for school assignments?", options: ["They prevent saving", "They provide consistent layout and save time", "They increase file size unnecessarily", "They delete comments"], answer: "They provide consistent layout and save time" },
+  { q: "28. If headings don't show in the Navigation Pane, you should:", options: ["Convert headings to heading styles", "Restart the computer", "Uninstall the program", "Use a different font"], answer: "Convert headings to heading styles" },
+  { q: "29. What does 'merge cells' do in a table?", options: ["Split a cell into many", "Combine two or more cells into one", "Sort the table", "Delete the table"], answer: "Combine two or more cells into one" },
+  { q: "30. Which setting helps keep the left margin and right margin equal when typing?", options: ["Justify alignment", "Center alignment", "Left alignment", "Right alignment"], answer: "Justify alignment" },
+  { q: "31. How does 'AutoCorrect' help users?", options: ["Automatically checks grammar", "Replaces common typing errors with correct text", "Counts words", "Prints documents"], answer: "Replaces common typing errors with correct text" },
+  { q: "32. To ensure important headings start on a new page, use:", options: ["Paragraph spacing", "Page break or Section break", "Column break", "Track Changes"], answer: "Page break or Section break" },
+  { q: "33. What is the main purpose of a watermark?", options: ["Decorate the page", "Show confidential or draft status and protect ownership", "Change the font", "Reduce file size"], answer: "Show confidential or draft status and protect ownership" },
+  { q: "34. Which printing option prints multiple pages on one sheet to save paper?", options: ["Duplex (double-sided)", "Scale to paper", "Multiple pages per sheet (N-up)", "Collate"], answer: "Multiple pages per sheet (N-up)" },
+  { q: "35. Why use 'Replace formatting' in Find & Replace?", options: ["To change text and its format throughout the document", "To find images", "To export file", "To insert page numbers"], answer: "To change text and its format throughout the document" },
+  { q: "36. Which feature helps create numbered lists that continue across sections correctly?", options: ["Manual numbering", "Multilevel lists with proper style settings", "Typing numbers by hand", "Inserting text boxes"], answer: "Multilevel lists with proper style settings" },
+  { q: "37. Which is correct when preparing a formal report header?", options: ["Use decorative fonts and bright colors", "Include title, author, date and page number using styles", "Put everything on the footer", "Use random alignment"], answer: "Include title, author, date and page number using styles" },
+  { q: "38. 'Compare documents' feature is useful to:", options: ["Merge images", "See differences between two versions", "Add word count", "Encrypt a file"], answer: "See differences between two versions" },
+  { q: "39. If an image slows down the file, what can you do?", options: ["Insert more images", "Compress the image", "Convert document to plain text", "Remove all headings"], answer: "Compress the image" },
+  { q: "40. A 'bookmark' in a document is used to:", options: ["Save the document", "Mark a place to return to quickly", "Print the document", "Insert a footnote"], answer: "Mark a place to return to quickly" },
+  { q: "41. Which normal practice improves accessibility for visually impaired readers?", options: ["Use tiny fonts", "Use descriptive headings and alt-text for images", "Only use images to convey meaning", "Remove headings"], answer: "Use descriptive headings and alt-text for images" },
+  { q: "42. Why is saving different versions of a document useful?", options: ["It confuses users", "It keeps a history and allows rollback to earlier drafts", "It increases file corruption", "It hides changes"], answer: "It keeps a history and allows rollback to earlier drafts" },
+  { q: "43. What is the advantage of using 'styles' over manual formatting each heading?", options: ["Styles can't be changed", "Styles allow consistent global changes quickly", "Styles slow the document", "Styles remove pictures"], answer: "Styles allow consistent global changes quickly" },
+  { q: "44. Which tool helps you reorganize large documents by moving sections easily?", options: ["Navigation Pane", "Clipboard", "Spell check", "Thesaurus"], answer: "Navigation Pane" },
+  { q: "45. What is the best practice when inserting tables from Excel into a report?", options: ["Paste as editable table or embed spreadsheet for updates", "Paste as picture only", "Type the numbers manually", "Use very large fonts"], answer: "Paste as editable table or embed spreadsheet for updates" },
+  { q: "46. Which keyboard shortcut usually undoes the last action?", options: ["Ctrl + Y", "Ctrl + Z", "Ctrl + X", "Ctrl + P"], answer: "Ctrl + Z" },
+  { q: "47. Why add metadata (title, author, keywords) to your document properties?", options: ["To slow saving", "To help search and identify documents later", "To hide the document", "To encrypt the file"], answer: "To help search and identify documents later" },
+  { q: "48. When collaborating, why is commenting preferred to direct edits by others?", options: ["Comments allow discussion without changing original text", "Comments delete text", "Comments hide changes", "Comments change the font"], answer: "Comments allow discussion without changing original text" },
+  { q: "49. What does 'Protect Document' / 'Restrict Editing' allow an author to do?", options: ["Make the document editable by everyone", "Limit who can change content and what they can change", "Delete the document", "Convert to PDF only"], answer: "Limit who can change content and what they can change" },
+  { q: "50. Which is the best step to prepare a document for print distribution?", options: ["Ignore page setup", "Check margins, fonts, resolution of images and use Print Preview", "Remove headings", "Save as temporary file"], answer: "Check margins, fonts, resolution of images and use Print Preview" }
+];
 
-  // ==============================
-  // VARIABLES
-  // ==============================
   let studentName = "";
   let currentQuestion = 0;
   let answers = [];
   let timer;
-  let timeLeft = 10 * 60; // 10 minutes
-  const lockDuration = 12 * 60 * 60 * 1000; // 12 hours in milliseconds
+  let timeLeft = 10 * 60; 
+  const lockDuration = 12 * 60 * 60 * 1000;
 
   const namePage = document.getElementById("namePage");
   const welcomePage = document.getElementById("welcomePage");
+  const countdownScreen = document.getElementById("countdownScreen");
   const quizArea = document.getElementById("quizArea");
   const resultsDiv = document.getElementById("results");
   const questionDiv = document.getElementById("question");
@@ -184,7 +228,6 @@
   const timerDiv = document.getElementById("timer");
   const lockMsg = document.getElementById("lockMessage");
 
-  // Proceed button
   document.getElementById("proceedBtn").addEventListener("click", async () => {
     const nameInput = document.getElementById("studentName").value.trim();
     if (nameInput === "") {
@@ -193,7 +236,6 @@
     }
     studentName = nameInput;
 
-    // 🔍 Check if student is locked
     const userRef = ref(db, "quizResults/" + studentName);
     const snapshot = await get(userRef);
     if (snapshot.exists()) {
@@ -209,10 +251,32 @@
     welcomePage.classList.remove("hidden");
   });
 
-  document.getElementById("startBtn").addEventListener("click", startQuiz);
+  document.getElementById("startBtn").addEventListener("click", () => {
+    welcomePage.classList.add("hidden");
+    startCountdown();
+  });
+
+  function startCountdown() {
+    countdownScreen.classList.remove("hidden");
+    let counter = 3;
+    countdownScreen.textContent = "Get ready... " + counter;
+
+    const countdown = setInterval(() => {
+      counter--;
+      if (counter > 0) {
+        countdownScreen.textContent = counter + "...";
+      } else {
+        clearInterval(countdown);
+        countdownScreen.textContent = "Begin!";
+        setTimeout(() => {
+          countdownScreen.classList.add("hidden");
+          startQuiz();
+        }, 800);
+      }
+    }, 1000);
+  }
 
   function startQuiz() {
-    welcomePage.classList.add("hidden");
     quizArea.classList.remove("hidden");
     loadQuestion();
     startTimer();
@@ -305,7 +369,6 @@
       ${summaryHTML}
     `;
 
-    // ✅ Save result + lock time (12 hours)
     const lockedUntil = Date.now() + lockDuration;
     const quizRef = ref(db, "quizResults/" + studentName);
     set(quizRef, {
