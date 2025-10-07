@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Computing Quiz</title>
+  <title>Coding Quiz</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -22,9 +22,7 @@
       border-radius: 12px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
-    h1, h2 {
-      text-align: center;
-    }
+    h1, h2 { text-align: center; }
     .hidden { display: none; }
     .controls {
       margin-top: 15px;
@@ -58,19 +56,40 @@
       border-radius: 8px;
       font-size: 14px;
     }
+    input {
+      padding: 10px;
+      width: 90%;
+      margin: 10px auto;
+      display: block;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
   </style>
 </head>
 <body>
   <div class="wrap">
+
+    <!-- Name Input Page -->
+    <div id="namePage">
+      <h1>Welcome to Yeriel Bracha Coding Quiz!</h1>
+      <p>Please enter your full name to begin:</p>
+      <input type="text" id="studentName" placeholder="Enter your name" />
+      <div class="controls">
+        <button class="primary" id="proceedBtn">Proceed</button>
+      </div>
+      <p id="lockMessage" style="text-align:center; color:red; font-weight:bold;"></p>
+    </div>
+
     <!-- Welcome Page -->
-    <div id="welcomePage">
+    <div id="welcomePage" class="hidden">
       <h1>Welcome Quizzilla!</h1>
-      <p>This quiz will test your knowledge of <strong>what you just learnt</strong>.</p>
+      <p>This quiz will test your knowledge of <strong>user account</strong> and permission levels.</p>
       <p><marquee>Just select the correct answer</marquee></p>
       <p>You will have <strong>10 minutes</strong> to answer <strong>20 questions</strong>.</p>
       <p>Use <strong>Next</strong> and <strong>Previous</strong> to move, Click <strong>Submit</strong> when done.</p>
       <div class="controls">
-        <button class="primary" id="startBtn"> Sure, Let's Start Quiz </button>
+        <button class="primary" id="startBtn">Sure, Let's Start Quiz</button>
       </div>
     </div>
 
@@ -80,7 +99,6 @@
       <div id="question"></div>
       <div id="options"></div>
       <input type="text" id="shortAnswer" class="hidden" placeholder="Type your answer here" />
-
       <div class="controls">
         <button type="button" id="prevBtn" class="primary">Previous</button>
         <button type="button" id="nextBtn" class="primary">Next</button>
@@ -97,171 +115,63 @@
     </footer>
   </div>
 
-<script>
-  // ======================
-  // QUIZ DATA (sample - replace with yours)
-  // ======================
- const quizData = [
-  {
-    q: "1. What is word processing?",
-    options: [
-      "Writing with a pen and paper",
-      "Typing, editing, and printing documents using a computer",
-      "Drawing and painting on a computer",
-      "Playing music and videos"
-    ],
-    answer: "Typing, editing, and printing documents using a computer"
-  },
-  {
-    q: "2. Which of the following is a word processing program?",
-    options: ["MS Paint", "Microsoft Word", "Excel", "PowerPoint"],
-    answer: "Microsoft Word"
-  },
-  {
-    q: "3. The main purpose of word processing is to ____.",
-    options: [
-      "Design houses",
-      "Create and edit text documents",
-      "Play games",
-      "Browse the internet"
-    ],
-    answer: "Create and edit text documents"
-  },
-  {
-    q: "4. Which of these is NOT a word processor?",
-    options: ["Google Docs", "WPS Office", "VLC Media Player", "LibreOffice Writer"],
-    answer: "VLC Media Player"
-  },
-  {
-    q: "5. What is the full meaning of 'MS Word'?",
-    options: [
-      "Machine System Word",
-      "Microsoft Word",
-      "Main Source Word",
-      "Modern Script Word"
-    ],
-    answer: "Microsoft Word"
-  },
-  {
-    q: "6. Which feature helps to correct spelling mistakes automatically?",
-    options: ["Find", "Spell Check", "Paste", "Zoom"],
-    answer: "Spell Check"
-  },
-  {
-    q: "7. The 'Cut' command is used to ____.",
-    options: [
-      "Copy text to another place",
-      "Remove text and place it on the clipboard",
-      "Save the document",
-      "Print the file"
-    ],
-    answer: "Remove text and place it on the clipboard"
-  },
-  {
-    q: "8. Which shortcut key is used to copy text?",
-    options: ["Ctrl + X", "Ctrl + C", "Ctrl + V", "Ctrl + Z"],
-    answer: "Ctrl + C"
-  },
-  {
-    q: "9. The shortcut key for Undo is ____.",
-    options: ["Ctrl + U", "Ctrl + P", "Ctrl + Z", "Ctrl + A"],
-    answer: "Ctrl + Z"
-  },
-  {
-    q: "10. Which toolbar has Bold, Italic, and Underline buttons?",
-    options: ["Drawing Toolbar", "Formatting Toolbar", "Status Bar", "Title Bar"],
-    answer: "Formatting Toolbar"
-  },
-  {
-    q: "11. What is the name of the bar that displays the document name?",
-    options: ["Menu Bar", "Title Bar", "Taskbar", "Status Bar"],
-    answer: "Title Bar"
-  },
-  {
-    q: "12. Which of these devices is needed to print a document?",
-    options: ["Scanner", "Monitor", "Printer", "Keyboard"],
-    answer: "Printer"
-  },
-  {
-    q: "13. Which feature allows you to change all instances of a word in a document?",
-    options: ["Find", "Replace", "Paste", "Cut"],
-    answer: "Replace"
-  },
-  {
-    q: "14. The 'Find' feature helps to ____.",
-    options: [
-      "Search for specific words in a document",
-      "Delete words from the file",
-      "Save the file",
-      "Print the document"
-    ],
-    answer: "Search for specific words in a document"
-  },
-  {
-    q: "15. Which of the following is an importance of word processing?",
-    options: [
-      "It helps to type and edit easily",
-      "It wastes paper",
-      "It makes typing difficult",
-      "It increases file size"
-    ],
-    answer: "It helps to type and edit easily"
-  },
-  {
-    q: "16. Formatting means ____.",
-    options: [
-      "Changing the look of the text",
-      "Saving the file",
-      "Deleting the document",
-      "Printing the document"
-    ],
-    answer: "Changing the look of the text"
-  },
-  {
-    q: "17. Which command allows you to repeat your last undone action?",
-    options: ["Undo", "Redo", "Paste", "Save"],
-    answer: "Redo"
-  },
-  {
-    q: "18. The 'Save As' command is used to ____.",
-    options: [
-      "Close the document",
-      "Save a copy of the document with a new name",
-      "Delete the document",
-      "Print the document"
-    ],
-    answer: "Save a copy of the document with a new name"
-  },
-  {
-    q: "19. Why is word processing better than using a typewriter?",
-    options: [
-      "You can easily edit mistakes",
-      "It cannot print",
-      "It uses ink ribbons",
-      "It does not save work"
-    ],
-    answer: "You can easily edit mistakes"
-  },
-  {
-    q: "20. Which key combination is used to paste text?",
-    options: ["Ctrl + X", "Ctrl + Z", "Ctrl + V", "Ctrl + S"],
-    answer: "Ctrl + V"
-  }
-];
+<!-- ==============================
+     Firebase Setup
+============================== -->
+<script type="module">
+  // ✅ Import Firebase SDKs
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+  import { getDatabase, ref, get, set } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
 
+  // ✅ Firebase Config (Replace with your real project info)
+  const firebaseConfig = {
+    apiKey: "AIzaSyCY9oturc9bql33PSUkfNUptcHXla2RWN4",
+    authDomain: "tracha-xx.firebaseapp.com",
+    databaseURL: "https://tracha-xx-default-rtdb.firebaseio.com",
+    projectId: "tracha-xx",
+    storageBucket: "tracha-xx.appspot.com",
+    messagingSenderId: "914440906583",
+    appId: "1:914440906583:web:123abc456xyz" // optional placeholder
+  };
 
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
 
+  // QUIZ DATA
+  const quizData = [
+    { q: "1. A computer is an __________ machine that can store and process information.", options: ["manual", "electronic", "mechanical", "magical"], answer: "electronic" },
+    { q: "2. The main screen that appears after the computer starts is called the ________.", options: ["keyboard", "desktop", "monitor", "menu"], answer: "desktop" },
+    { q: "3. Which part of the computer shows pictures and videos?", options: ["mouse", "printer", "monitor", "keyboard"], answer: "monitor" },
+    { q: "4. The brain of the computer is called the ________.", options: ["CPU", "mouse", "speaker", "screen"], answer: "CPU" },
+    { q: "5. Which of these is an input device?", options: ["speaker", "printer", "keyboard", "projector"], answer: "keyboard" },
+    { q: "6. A device that helps us hear sound from the computer is called a ________.", options: ["scanner", "speaker", "keyboard", "printer"], answer: "speaker" },
+    { q: "7. Which device is used to print work on paper?", options: ["monitor", "mouse", "printer", "CPU"], answer: "printer" },
+    { q: "8. What is the use of a mouse?", options: ["to move and click items", "to type words", "to print documents", "to play sound"], answer: "to move and click items" },
+    { q: "9. The desktop background is the ________ you see behind all the icons.", options: ["file", "color or picture", "keyboard", "program"], answer: "color or picture" },
+    { q: "10. To change the desktop background, we right-click and choose ________.", options: ["Copy", "Paste", "Personalize", "Delete"], answer: "Personalize" },
+    { q: "11. Icons on the desktop are small ________ that represent programs or files.", options: ["songs", "pictures", "boxes", "letters"], answer: "pictures" },
+    { q: "12. A folder helps to ________ files on the computer.", options: ["delete", "open", "organize", "close"], answer: "organize" },
+    { q: "13. Which of the following is a storage device?", options: ["flash drive", "speaker", "monitor", "mouse"], answer: "flash drive" },
+    { q: "14. To create a new folder, you right-click, point to New, and click ________.", options: ["File", "Folder", "Icon", "Program"], answer: "Folder" },
+    { q: "15. The Recycle Bin is used to keep ________ files.", options: ["new", "saved", "deleted", "open"], answer: "deleted" },
+    { q: "16. What does a scanner do?", options: ["copies pictures into the computer", "prints documents", "plays music", "stores videos"], answer: "copies pictures into the computer" },
+    { q: "17. A folder on the desktop looks like a ________.", options: ["bag", "box", "yellow envelope", "book"], answer: "yellow envelope" },
+    { q: "18. Which of the following helps to store and move files easily?", options: ["mouse", "flash drive", "speaker", "monitor"], answer: "flash drive" },
+    { q: "19. To rename a folder, right-click the folder and choose ________.", options: ["Open", "Rename", "Move", "Delete"], answer: "Rename" },
+    { q: "20. Why should we keep the desktop tidy?", options: ["To look neat and find items easily", "To confuse the user", "To make it slow", "To hide folders"], answer: "To look neat and find items easily" }
+  ];
 
-
-
-  // ======================
-  // QUIZ LOGIC
-  // ======================
+  // ==============================
+  // VARIABLES
+  // ==============================
+  let studentName = "";
   let currentQuestion = 0;
   let answers = [];
   let timer;
   let timeLeft = 10 * 60; // 10 minutes
+  const lockDuration = 12 * 60 * 60 * 1000; // 12 hours in milliseconds
 
+  const namePage = document.getElementById("namePage");
   const welcomePage = document.getElementById("welcomePage");
   const quizArea = document.getElementById("quizArea");
   const resultsDiv = document.getElementById("results");
@@ -272,6 +182,32 @@
   const nextBtn = document.getElementById("nextBtn");
   const submitBtn = document.getElementById("submitBtn");
   const timerDiv = document.getElementById("timer");
+  const lockMsg = document.getElementById("lockMessage");
+
+  // Proceed button
+  document.getElementById("proceedBtn").addEventListener("click", async () => {
+    const nameInput = document.getElementById("studentName").value.trim();
+    if (nameInput === "") {
+      alert("Please enter your name before proceeding!");
+      return;
+    }
+    studentName = nameInput;
+
+    // 🔍 Check if student is locked
+    const userRef = ref(db, "quizResults/" + studentName);
+    const snapshot = await get(userRef);
+    if (snapshot.exists()) {
+      const data = snapshot.val();
+      if (data.lockedUntil && Date.now() < data.lockedUntil) {
+        const unlockTime = new Date(data.lockedUntil).toLocaleString();
+        lockMsg.textContent = `You already completed this quiz. You can try again after ${unlockTime}`;
+        return;
+      }
+    }
+
+    namePage.classList.add("hidden");
+    welcomePage.classList.remove("hidden");
+  });
 
   document.getElementById("startBtn").addEventListener("click", startQuiz);
 
@@ -284,7 +220,7 @@
 
   function loadQuestion() {
     const q = quizData[currentQuestion];
-    questionDiv.innerHTML = `<h2>Q${currentQuestion+1}: ${q.q}</h2>`;
+    questionDiv.innerHTML = `<h2>${q.q}</h2>`;
     optionsDiv.innerHTML = "";
     shortAnswer.classList.add("hidden");
 
@@ -300,10 +236,6 @@
         }
         optionsDiv.appendChild(btn);
       });
-    } else if (q.input) {
-      shortAnswer.classList.remove("hidden");
-      shortAnswer.value = answers[currentQuestion] || "";
-      shortAnswer.oninput = () => saveAnswer(shortAnswer.value);
     }
 
     prevBtn.disabled = currentQuestion === 0;
@@ -317,7 +249,6 @@
   }
 
   nextBtn.onclick = () => {
-    if (!shortAnswer.classList.contains("hidden")) saveAnswer(shortAnswer.value);
     if (currentQuestion < quizData.length - 1) {
       currentQuestion++;
       loadQuestion();
@@ -325,7 +256,6 @@
   };
 
   prevBtn.onclick = () => {
-    if (!shortAnswer.classList.contains("hidden")) saveAnswer(shortAnswer.value);
     if (currentQuestion > 0) {
       currentQuestion--;
       loadQuestion();
@@ -339,7 +269,7 @@
       timeLeft--;
       let mins = Math.floor(timeLeft / 60);
       let secs = timeLeft % 60;
-      timerDiv.textContent = `Time Left: ${mins}:${secs.toString().padStart(2,"0")}`;
+      timerDiv.textContent = `Time Left: ${mins}:${secs.toString().padStart(2, "0")}`;
       if (timeLeft <= 0) {
         clearInterval(timer);
         finishQuiz();
@@ -356,38 +286,37 @@
     let summaryHTML = "<div class='summary'><h3>Summary</h3>";
 
     quizData.forEach((q, i) => {
-      let userAns = answers[i] || "(no answer)";
-      let correctFlag = false;
+      const userAns = answers[i] || "(no answer)";
+      const correct = userAns === q.answer;
+      if (correct) score++;
 
-      if (q.options && userAns === q.answer) correctFlag = true;
-      if (q.input && userAns.trim().toLowerCase() === q.answer.trim().toLowerCase()) correctFlag = true;
-      if (correctFlag) score++;
-
-      summaryHTML += `<p><strong>Q${i+1}:</strong> ${q.q}<br>
-      Your answer: <span class="${correctFlag ? 'correct':'wrong'}">${userAns}</span><br>
+      summaryHTML += `<p><strong>Q${i + 1}:</strong> ${q.q}<br>
+      Your answer: <span class="${correct ? 'correct' : 'wrong'}">${userAns}</span><br>
       Correct answer: <span class="correct">${q.answer}</span></p>`;
     });
 
     const percentage = ((score / quizData.length) * 100).toFixed(2);
-
     summaryHTML += "</div>";
 
     resultsDiv.innerHTML = `
       <h2>Quiz Completed!</h2>
+      <p><strong>Name:</strong> ${studentName}</p>
       <p>Your Score: <strong>${score} / ${quizData.length}</strong> (${percentage}%)</p>
       ${summaryHTML}
     `;
+
+    // ✅ Save result + lock time (12 hours)
+    const lockedUntil = Date.now() + lockDuration;
+    const quizRef = ref(db, "quizResults/" + studentName);
+    set(quizRef, {
+      name: studentName,
+      score: score,
+      percentage: percentage,
+      totalQuestions: quizData.length,
+      timestamp: new Date().toISOString(),
+      lockedUntil: lockedUntil
+    });
   }
 </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
