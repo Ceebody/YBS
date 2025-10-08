@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- ✅ Added for mobile scaling -->
+  <title>Coding Quiz</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: orange;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .wrap {
+      width: 90%;
+      max-width: 800px;
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    h1, h2 { text-align: center; }
+    .hidden { display: none; }
+    .controls {
+      margin-top: 20px;
+      text-align: center;
+    }
+    button {
+      padding: 15px 25px; /* ✅ Larger buttons */
+      margin: 10px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 18px; /* ✅ Easier to tap */
+      transition: 0.2s;
+    }
+    button:hover { transform: scale(1.05); }
+    button.primary { background: #4CAF50; color: white; }
+    button.secondary { background: #ddd; }
+    #timer { font-weight: bold; text-align: right; margin-bottom: 10px; }
+    .results { margin-top: 20px; padding: 15px; border-radius: 8px; background: #eef; }
+    .summary {
+      margin-top: 20px;
+      padding: 10px;
+      border-top: 2px solid #ccc;
+    }
+    .correct { color: green; font-weight: bold; }
+    .wrong { color: red; font-weight: bold; }
+    footer {
+      text-align: center;
+      margin-top: 40px;
+      padding: 15px;
+      background: #333;
+      color: white;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+    input {
+      padding: 12px;
+      width: 90%;
+      margin: 15px auto;
+      display: block;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+
+    /* ✅ Countdown Animation */
+    #countdownScreen {
+      text-align: center;
+      font-size: 60px;
+      font-weight: bold;
+      color: #4CAF50;
+      animation: fade 1s ease-in-out infinite;
+    }
+    @keyframes fade {
+      0%, 100% { opacity: 0; }
+      50% { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+
+    <!-- Name Input Page -->
+    <div id="namePage">
+      <h1>Welcome to Yeriel Bracha Computing Quiz!</h1>
+      <p>Please enter your full name to begin:</p>
+      <input type="text" id="studentName" placeholder="Enter your name" />
+      <div class="controls">
+        <button class="primary" id="proceedBtn">Proceed</button>
+      </div>
+      <p id="lockMessage" style="text-align:center; color:red; font-weight:bold;"></p>
+    </div>
+
+    <!-- Welcome Page -->
+    <div id="welcomePage" class="hidden">
+      <h1>Welcome Quizzilla!</h1>
+      <p>This quiz will test your knowledge of <strong>Intorduction to computing</strong> <stong>.</p>
+      <p><marquee>Just select the correct answer</marquee></p>
+      <p>You will have <strong>15 minutes</strong> to answer <strong>20 questions</strong>.</p>
+      <p>Use <strong>Next</strong> and <strong>Previous</strong> to move, Click <strong>Submit</strong> when done.</p>
+      <div class="controls">
+        <button class="primary" id="startBtn">Sure, Let's Start Quiz</button>
+      </div>
+    </div>
+
+    <!-- ✅ Countdown Screen -->
+    <div id="countdownScreen" class="hidden"></div>
+
+    <!-- Quiz Area -->
+    <div id="quizArea" class="hidden">
+      <div id="timer"></div>
+      <div id="question"></div>
+      <div id="options"></div>
+      <input type="text" id="shortAnswer" class="hidden" placeholder="Type your answer here" />
+      <div class="controls">
+        <button type="button" id="prevBtn" class="primary">Previous</button>
+        <button type="button" id="nextBtn" class="primary">Next</button>
+        <button type="button" id="submitBtn" class="primary hidden">Submit Quiz</button>
+      </div>
+    </div>
+
+    <!-- Results Area -->
+    <div id="results" class="results hidden"></div>
+
+    <!-- Footer -->
+    <footer>
+      <p>Yeriel Bracha Coding Club <br> ©2025</p>
+    </footer>
+  </div>
+
+<!-- ==============================
+     Firebase Setup
+============================== -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+  import { getDatabase, ref, get, set } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCY9oturc9bql33PSUkfNUptcHXla2RWN4",
+    authDomain: "tracha-xx.firebaseapp.com",
+    databaseURL: "https://tracha-xx-default-rtdb.firebaseio.com",
+    projectId: "tracha-xx",
+    storageBucket: "tracha-xx.appspot.com",
+    messagingSenderId: "914440906583",
+    appId: "1:914440906583:web:123abc456xyz"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+
+const quizData = [
+  { q: "1. Either the teachers or the principal ___ attending the meeting today.", options: ["are", "is", "were", "be"], answer: "is" },
+  { q: "2. The boy, along with his friends, ___ playing football in the park.", options: ["were", "are", "is", "have"], answer: "is" },
+  { q: "3. Mathematics ___ an interesting subject to many students.", options: ["are", "is", "were", "be"], answer: "is" },
+  { q: "4. Neither my mother nor my sisters ___ going to the market today.", options: ["is", "are", "was", "has"], answer: "are" },
+  { q: "5. The news about the results ___ very surprising.", options: ["are", "was", "were", "be"], answer: "was" },
+  { q: "6. Everyone in the class ___ to submit the assignment by Friday.", options: ["have", "has", "are", "were"], answer: "has" },
+  { q: "7. The number of students in the school ___ increasing every year.", options: ["are", "is", "were", "be"], answer: "is" },
+  { q: "8. A pair of shoes ___ on the table.", options: ["are", "is", "were", "have"], answer: "is" },
+  { q: "9. Neither the players nor the coach ___ satisfied with the result.", options: ["was", "were", "are", "be"], answer: "was" },
+  { q: "10. The committee ___ not yet reached a decision.", options: ["has", "have", "are", "were"], answer: "has" },
+  { q: "11. Bread and butter ___ his favourite breakfast.", options: ["is", "are", "were", "be"], answer: "is" },
+  { q: "12. The teacher and the students ___ ready for the trip.", options: ["is", "was", "are", "be"], answer: "are" },
+  { q: "13. Each of the girls ___ a unique talent.", options: ["has", "have", "were", "are"], answer: "has" },
+  { q: "14. The police ___ investigating the case carefully.", options: ["is", "are", "was", "be"], answer: "are" },
+  { q: "15. A number of students ___ absent today.", options: ["is", "are", "was", "has"], answer: "are" },
+  { q: "16. Neither of the answers ___ correct.", options: ["are", "were", "is", "be"], answer: "is" },
+  { q: "17. The audience ___ clapping loudly after the performance.", options: ["was", "were", "are", "be"], answer: "was" },
+  { q: "18. Ten kilometres ___ a long distance to walk.", options: ["are", "is", "were", "have"], answer: "is" },
+  { q: "19. The quality of the apples ___ not very good this season.", options: ["are", "is", "were", "be"], answer: "is" },
+  { q: "20. Either the cat or the dogs ___ making that noise.", options: ["is", "are", "was", "be"], answer: "are" }
+];
+
+
+
+  let studentName = "";
+  let currentQuestion = 0;
+  let answers = [];
+  let timer;
+  let timeLeft = 15 * 60; 
+  const lockDuration = 12 * 60 * 60 * 1000;
+
+  const namePage = document.getElementById("namePage");
+  const welcomePage = document.getElementById("welcomePage");
+  const countdownScreen = document.getElementById("countdownScreen");
+  const quizArea = document.getElementById("quizArea");
+  const resultsDiv = document.getElementById("results");
+  const questionDiv = document.getElementById("question");
+  const optionsDiv = document.getElementById("options");
+  const shortAnswer = document.getElementById("shortAnswer");
+  const prevBtn = document.getElementById("prevBtn");
+  const nextBtn = document.getElementById("nextBtn");
+  const submitBtn = document.getElementById("submitBtn");
+  const timerDiv = document.getElementById("timer");
+  const lockMsg = document.getElementById("lockMessage");
+
+  document.getElementById("proceedBtn").addEventListener("click", async () => {
+    const nameInput = document.getElementById("studentName").value.trim();
+    if (nameInput === "") {
+      alert("Please enter your name before proceeding!");
+      return;
+    }
+    studentName = nameInput;
+
+    const userRef = ref(db, "quizResults/" + studentName);
+    const snapshot = await get(userRef);
+    if (snapshot.exists()) {
+      const data = snapshot.val();
+      if (data.lockedUntil && Date.now() < data.lockedUntil) {
+        const unlockTime = new Date(data.lockedUntil).toLocaleString();
+        lockMsg.textContent = `You already completed this quiz. You can try again after ${unlockTime}`;
+        return;
+      }
+    }
+
+    namePage.classList.add("hidden");
+    welcomePage.classList.remove("hidden");
+  });
+
+  document.getElementById("startBtn").addEventListener("click", () => {
+    welcomePage.classList.add("hidden");
+    startCountdown();
+  });
+
+  function startCountdown() {
+    countdownScreen.classList.remove("hidden");
+    let counter = 3;
+    countdownScreen.textContent = "Get ready... " + counter;
+
+    const countdown = setInterval(() => {
+      counter--;
+      if (counter > 0) {
+        countdownScreen.textContent = counter + "...";
+      } else {
+        clearInterval(countdown);
+        countdownScreen.textContent = "Begin!";
+        setTimeout(() => {
+          countdownScreen.classList.add("hidden");
+          startQuiz();
+        }, 800);
+      }
+    }, 1000);
+  }
+
+  function startQuiz() {
+    quizArea.classList.remove("hidden");
+    loadQuestion();
+    startTimer();
+  }
+
+  function loadQuestion() {
+    const q = quizData[currentQuestion];
+    questionDiv.innerHTML = `<h2>${q.q}</h2>`;
+    optionsDiv.innerHTML = "";
+    shortAnswer.classList.add("hidden");
+
+    if (q.options) {
+      q.options.forEach(opt => {
+        const btn = document.createElement("button");
+        btn.textContent = opt;
+        btn.className = "secondary";
+        btn.onclick = () => saveAnswer(opt);
+        if (answers[currentQuestion] === opt) {
+          btn.style.background = "#4CAF50";
+          btn.style.color = "white";
+        }
+        optionsDiv.appendChild(btn);
+      });
+    }
+
+    prevBtn.disabled = currentQuestion === 0;
+    nextBtn.classList.toggle("hidden", currentQuestion === quizData.length - 1);
+    submitBtn.classList.toggle("hidden", currentQuestion !== quizData.length - 1);
+  }
+
+  function saveAnswer(ans) {
+    answers[currentQuestion] = ans;
+    loadQuestion();
+  }
+
+  nextBtn.onclick = () => {
+    if (currentQuestion < quizData.length - 1) {
+      currentQuestion++;
+      loadQuestion();
+    }
+  };
+
+  prevBtn.onclick = () => {
+    if (currentQuestion > 0) {
+      currentQuestion--;
+      loadQuestion();
+    }
+  };
+
+  submitBtn.onclick = finishQuiz;
+
+  function startTimer() {
+    timer = setInterval(() => {
+      timeLeft--;
+      let mins = Math.floor(timeLeft / 60);
+      let secs = timeLeft % 60;
+      timerDiv.textContent = `Time Left: ${mins}:${secs.toString().padStart(2, "0")}`;
+      if (timeLeft <= 0) {
+        clearInterval(timer);
+        finishQuiz();
+      }
+    }, 1000);
+  }
+
+  function finishQuiz() {
+    clearInterval(timer);
+    quizArea.classList.add("hidden");
+    resultsDiv.classList.remove("hidden");
+
+    let score = 0;
+    let summaryHTML = "<div class='summary'><h3>Summary</h3>";
+
+    quizData.forEach((q, i) => {
+      const userAns = answers[i] || "(no answer)";
+      const correct = userAns === q.answer;
+      if (correct) score++;
+
+      summaryHTML += `<p><strong>Q${i + 1}:</strong> ${q.q}<br>
+      Your answer: <span class="${correct ? 'correct' : 'wrong'}">${userAns}</span><br>
+      Correct answer: <span class="correct">${q.answer}</span></p>`;
+    });
+
+    const percentage = ((score / quizData.length) * 100).toFixed(2);
+    summaryHTML += "</div>";
+
+    resultsDiv.innerHTML = `
+      <h2>Quiz Completed!</h2>
+      <p><strong>Name:</strong> ${studentName}</p>
+      <p>Your Score: <strong>${score} / ${quizData.length}</strong> (${percentage}%)</p>
+      ${summaryHTML}
+    `;
+
+    const lockedUntil = Date.now() + lockDuration;
+    const quizRef = ref(db, "quizResults/" + studentName);
+    set(quizRef, {
+      name: studentName,
+      score: score,
+      percentage: percentage,
+      totalQuestions: quizData.length,
+      timestamp: new Date().toISOString(),
+      lockedUntil: lockedUntil
+    });
+  }
+</script>
+</body>
+</html>
+
