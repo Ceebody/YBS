@@ -155,26 +155,66 @@
   const db = getDatabase(app);
 
 const quizData = [
-  { q: "1. Either the teachers or the principal ___ attending the meeting today.", options: ["are", "is", "were", "be"], answer: "is" },
-  { q: "2. The boy, along with his friends, ___ playing football in the park.", options: ["were", "are", "is", "have"], answer: "is" },
-  { q: "3. Mathematics ___ an interesting subject to many students.", options: ["are", "is", "were", "be"], answer: "is" },
-  { q: "4. Neither my mother nor my sisters ___ going to the market today.", options: ["is", "are", "was", "has"], answer: "are" },
-  { q: "5. The news about the results ___ very surprising.", options: ["are", "was", "were", "be"], answer: "was" },
-  { q: "6. Everyone in the class ___ to submit the assignment by Friday.", options: ["have", "has", "are", "were"], answer: "has" },
-  { q: "7. The number of students in the school ___ increasing every year.", options: ["are", "is", "were", "be"], answer: "is" },
-  { q: "8. A pair of shoes ___ on the table.", options: ["are", "is", "were", "have"], answer: "is" },
-  { q: "9. Neither the players nor the coach ___ satisfied with the result.", options: ["was", "were", "are", "be"], answer: "was" },
-  { q: "10. The committee ___ not yet reached a decision.", options: ["has", "have", "are", "were"], answer: "has" },
-  { q: "11. Bread and butter ___ his favourite breakfast.", options: ["is", "are", "were", "be"], answer: "is" },
-  { q: "12. The teacher and the students ___ ready for the trip.", options: ["is", "was", "are", "be"], answer: "are" },
-  { q: "13. Each of the girls ___ a unique talent.", options: ["has", "have", "were", "are"], answer: "has" },
-  { q: "14. The police ___ investigating the case carefully.", options: ["is", "are", "was", "be"], answer: "are" },
-  { q: "15. A number of students ___ absent today.", options: ["is", "are", "was", "has"], answer: "are" },
-  { q: "16. Neither of the answers ___ correct.", options: ["are", "were", "is", "be"], answer: "is" },
-  { q: "17. The audience ___ clapping loudly after the performance.", options: ["was", "were", "are", "be"], answer: "was" },
-  { q: "18. Ten kilometres ___ a long distance to walk.", options: ["are", "is", "were", "have"], answer: "is" },
-  { q: "19. The quality of the apples ___ not very good this season.", options: ["are", "is", "were", "be"], answer: "is" },
-  { q: "20. Either the cat or the dogs ___ making that noise.", options: ["is", "are", "was", "be"], answer: "are" }
+  {
+    q: "1. A bag contains 3 red balls and 2 blue balls. What is the probability of picking a red ball?",
+    options: ["3/5", "2/5", "1/5", "1/2"],
+    answer: "3/5",
+    work: "There are 3 red out of 5 total balls. So P(Red) = 3/5."
+  },
+  {
+    q: "2. A fair coin is tossed twice. What is the probability of getting two heads?",
+    options: ["1/4", "1/2", "1/3", "1/8"],
+    answer: "1/4",
+    work: "Possible outcomes = 4 (HH, HT, TH, TT). Only 1 is HH. So P(2 Heads) = 1/4."
+  },
+  {
+    q: "3. A die is rolled once. What is the probability of getting a number greater than 4?",
+    options: ["1/6", "1/3", "1/2", "2/3"],
+    answer: "1/3",
+    work: "Numbers greater than 4 are 5 and 6 → 2 outcomes. So P = 2/6 = 1/3."
+  },
+  {
+    q: "4. Two dice are rolled. What is the probability that the sum is 7?",
+    options: ["1/6", "1/9", "1/12", "1/36"],
+    answer: "1/6",
+    work: "There are 6 combinations giving sum 7: (1,6),(2,5),(3,4),(4,3),(5,2),(6,1). Out of 36 total → 6/36 = 1/6."
+  },
+  {
+    q: "5. A bag has 5 white and 3 black balls. One ball is drawn, not replaced, then another is drawn. What is the probability that both are white?",
+    options: ["5/8", "5/7", "5/14", "5/16"],
+    answer: "5/14",
+    work: "P(1st white) = 5/8; after removing 1 white → P(2nd white) = 4/7; multiply: (5/8)*(4/7)=20/56=5/14."
+  },
+  {
+    q: "6. The probability that it rains on a given day is 0.4. What is the probability that it does not rain?",
+    options: ["0.4", "0.5", "0.6", "0.7"],
+    answer: "0.6",
+    work: "P(not rain) = 1 - 0.4 = 0.6."
+  },
+  {
+    q: "7. A card is drawn from a standard deck of 52 cards. What is the probability of drawing a heart?",
+    options: ["1/13", "1/4", "1/26", "1/2"],
+    answer: "1/4",
+    work: "There are 13 hearts in 52 cards → P(Heart) = 13/52 = 1/4."
+  },
+  {
+    q: "8. In a class, 60% of students are boys. If one student is chosen at random, what is the probability that it is a girl?",
+    options: ["0.4", "0.5", "0.6", "0.3"],
+    answer: "0.4",
+    work: "P(Girl) = 1 - 0.6 = 0.4."
+  },
+  {
+    q: "9. A spinner has 8 equal sections numbered 1 to 8. What is the probability of landing on an even number?",
+    options: ["1/8", "1/2", "3/8", "5/8"],
+    answer: "1/2",
+    work: "Even numbers = 4 (2,4,6,8) → P = 4/8 = 1/2."
+  },
+  {
+    q: "10. A box contains 2 red, 3 green, and 5 blue balls. One ball is drawn. What is the probability it is neither red nor green?",
+    options: ["1/10", "1/2", "1/5", "1/3"],
+    answer: "1/2",
+    work: "Blue balls = 5, total = 10. P(blue) = 5/10 = 1/2."
+  }
 ];
 
 
@@ -326,10 +366,11 @@ const quizData = [
       const correct = userAns === q.answer;
       if (correct) score++;
 
-      summaryHTML += `<p><strong>Q${i + 1}:</strong> ${q.q}<br>
-      Your answer: <span class="${correct ? 'correct' : 'wrong'}">${userAns}</span><br>
-      Correct answer: <span class="correct">${q.answer}</span></p>`;
-    });
+     summaryHTML += `<p><strong>Q${i + 1}:</strong> ${q.q}<br>
+    Your answer: <span class="${correct ? 'correct' : 'wrong'}">${userAns}</span><br>
+    Correct answer: <span class="correct">${q.answer}</span><br>
+    <span style="color:#333;"><em>Work:</em> ${q.work}</span></p>`;
+
 
     const percentage = ((score / quizData.length) * 100).toFixed(2);
     summaryHTML += "</div>";
@@ -355,4 +396,5 @@ const quizData = [
 </script>
 </body>
 </html>
+
 
