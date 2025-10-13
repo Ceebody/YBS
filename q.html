@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Yeriel Bracha School - Computing Mock (Section B)</title>
+  <style>
+    :root {
+      --accent: #4b70f5;
+      --bg: #f6f9ff;
+      --card: #fff;
+      --text-dark: #222;
+      --text-light: #666;
+      --success: #22c55e;
+      --danger: #ef4444;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Poppins", sans-serif;
+      background: var(--bg);
+      color: var(--text-dark);
+      overflow-x: hidden;
+    }
+
+    header {
+      background: var(--accent);
+      color: white;
+      padding: 15px;
+      text-align: center;
+      border-bottom: 3px solid #274bcc;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    header p {
+      margin: 5px 0 0;
+      font-size: 13px;
+      opacity: 0.9;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 20px auto;
+      background: var(--card);
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+    }
+
+    h2 {
+      color: var(--accent);
+      font-size: 18px;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      margin: 10px 0 5px;
+    }
+
+    textarea {
+      width: 100%;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 10px;
+      font-size: 15px;
+      min-height: 70px;
+      resize: vertical;
+      outline: none;
+      transition: border 0.2s;
+    }
+
+    textarea:focus {
+      border-color: var(--accent);
+    }
+
+    input {
+      width: 90%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 15px;
+      margin-top: 5px;
+    }
+
+    .btn {
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: 0.2s;
+      margin-top: 15px;
+    }
+
+    .btn:hover {
+      opacity: 0.9;
+    }
+
+    .ghost {
+      background: #eee;
+      color: #333;
+      border: 1px solid #ccc;
+    }
+
+    .result {
+      background: #eef;
+      border-radius: 8px;
+      padding: 10px;
+      margin-top: 15px;
+      display: none;
+    }
+
+    footer {
+      text-align: center;
+      padding: 15px;
+      margin-top: 30px;
+      color: #555;
+      font-size: 14px;
+    }
+
+    @media (max-width: 600px) {
+      header h1 { font-size: 18px; }
+      textarea { font-size: 14px; }
+      .container { padding: 15px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Yeriel Bracha School</h1>
+    <p>Computing Mock Test — Section B</p>
+  </header>
+
+  <div class="container">
+    <label>Student Full Name:</label>
+    <input type="text" id="studentName" placeholder="Enter your full name" />
+    <button class="btn" id="checkBtn">Start Test</button>
+
+    <div id="testArea" style="display:none;">
+      <h2>Question 1 — Artificial Intelligence (24 marks)</h2>
+      <label>1a. Name two modern technologies that make face recognition possible. (4 marks)</label>
+      <textarea id="q1a"></textarea>
+
+      <label>1b. Describe Artificial Intelligence in your own words. (4 marks)</label>
+      <textarea id="q1b"></textarea>
+
+      <label>1c. Explain how perceptual computing improves communication between humans and computers. (4 marks)</label>
+      <textarea id="q1c"></textarea>
+
+      <label>1d. Explain how hardware, software and peopleware must work together to make features such as face recognition or voice assistants possible. (6 marks)</label>
+      <textarea id="q1d"></textarea>
+
+      <label>1e. State three benefits and two challenges of using Artificial Intelligence in everyday life. (6 marks)</label>
+      <textarea id="q1e"></textarea>
+
+      <h2>Question 2 — Components of Computer System (12 marks)</h2>
+      <label>2a. Define a computer system. (2 marks)</label>
+      <textarea id="q2a"></textarea>
+
+      <label>2b. List and explain four major components of a computer system. (8 marks)</label>
+      <textarea id="q2b"></textarea>
+
+      <label>2c. Give two examples each of input and output devices. (2 marks)</label>
+      <textarea id="q2c"></textarea>
+
+      <h2>Question 3 — Liveware / Peopleware (12 marks)</h2>
+      <label>3a. What is liveware? (2 marks)</label>
+      <textarea id="q3a"></textarea>
+
+      <label>3b. Describe three roles of liveware in computer operation. (6 marks)</label>
+      <textarea id="q3b"></textarea>
+
+      <label>3c. State two differences between hardware and liveware. (4 marks)</label>
+      <textarea id="q3c"></textarea>
+
+      <button class="btn" id="submitBtn">Submit Answers</button>
+      <button class="btn ghost" id="showAnswersBtn" style="display:none;">Show Expected Answers</button>
+
+      <div id="results" class="result"></div>
+      <div id="expected" class="result"></div>
+    </div>
+  </div>
+
+  <footer>© 2025 Yeriel Bracha School | Computing Department</footer>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getDatabase, ref, get, set } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAKUmFw5md9dvNUsdQUXV1Ipk8fAfMUT_I",
+      authDomain: "tracha-xx.firebaseapp.com",
+      databaseURL: "https://tracha-xx-default-rtdb.firebaseio.com",
+      projectId: "tracha-xx",
+      storageBucket: "tracha-xx.firebasestorage.app",
+      messagingSenderId: "914440906583",
+      appId: "1:914440906583:web:995459b29705ef444d8012"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    const checkBtn = document.getElementById("checkBtn");
+    const testArea = document.getElementById("testArea");
+    const submitBtn = document.getElementById("submitBtn");
+    const showAnswersBtn = document.getElementById("showAnswersBtn");
+    const resultsDiv = document.getElementById("results");
+    const expectedDiv = document.getElementById("expected");
+
+    const expected = {
+      q1a: "Artificial Intelligence, Perceptual Computing, Parallel Processing.",
+      q1b: "AI allows computers to learn and make decisions like humans.",
+      q1c: "Perceptual computing uses gestures, speech, and facial cues to communicate.",
+      q1d: "Hardware (camera, mic), Software (AI models), Peopleware (users, programmers).",
+      q1e: "Benefits: efficiency, speed, convenience. Challenges: privacy, job loss, bias.",
+      q2a: "A system combining hardware, software and peopleware to process data.",
+      q2b: "Input, Processing, Storage, Output – explain each.",
+      q2c: "Input: Keyboard, Mouse; Output: Monitor, Printer.",
+      q3a: "Liveware refers to human users of computers.",
+      q3b: "Operate, maintain, program, manage data and systems.",
+      q3c: "Hardware = physical; Liveware = people; hardware can't think, liveware can."
+    };
+
+    checkBtn.addEventListener("click", async () => {
+      const name = document.getElementById("studentName").value.trim();
+      if (!name) return alert("Enter your name first.");
+      const userRef = ref(db, "mockResults/" + name);
+      const snap = await get(userRef);
+      if (snap.exists() && Date.now() < snap.val().lockedUntil) {
+        alert("You have already written this test. Try again later.");
+        return;
+      }
+      testArea.style.display = "block";
+    });
+
+    submitBtn.addEventListener("click", async () => {
+      const name = document.getElementById("studentName").value.trim();
+      if (!name) return alert("Enter your name first.");
+
+      const answers = {};
+      for (let id in expected) answers[id] = document.getElementById(id).value.trim();
+
+      let score = 0;
+      for (let id in expected) {
+        if (answers[id] && answers[id].toLowerCase().includes(expected[id].split(" ")[0].toLowerCase()))
+          score += 4; // approximate mark share
+      }
+
+      const percent = ((score / 48) * 100).toFixed(1);
+      resultsDiv.innerHTML = `<h3>Submission Successful!</h3><p><strong>Score:</strong> ${score}/48 (${percent}%)</p>`;
+      resultsDiv.style.display = "block";
+      showAnswersBtn.style.display = "inline-block";
+
+      const data = {
+        name,
+        answers,
+        expectedAnswers: expected,
+        score,
+        percentage: percent,
+        lockedUntil: Date.now() + 12 * 60 * 60 * 1000,
+        timestamp: new Date().toISOString()
+      };
+      await set(ref(db, "mockResults/" + name), data);
+    });
+
+    showAnswersBtn.addEventListener("click", () => {
+      expectedDiv.innerHTML =
+        "<h3>Expected Answers</h3>" +
+        Object.entries(expected)
+          .map(([q, a]) => `<p><strong>${q.toUpperCase()}</strong>: ${a}</p>`)
+          .join("");
+      expectedDiv.style.display = "block";
+    });
+  </script>
+</body>
+</html>
