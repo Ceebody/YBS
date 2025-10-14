@@ -9,20 +9,29 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getDatabase, ref, push, set } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-    // Firebase configuration
+    // Firebase configuration - Replace with your actual Firebase config
     const firebaseConfig = {
       apiKey: "AIzaSyDgqz8...yourapikey...",
       authDomain: "yourapp.firebaseapp.com",
-      databaseURL: "https://yourapp.firebaseio.com",
+      databaseURL: "https://yourapp-default-rtdb.firebaseio.com/",
       projectId: "yourapp",
       storageBucket: "yourapp.appspot.com",
       messagingSenderId: "123456789",
       appId: "1:123456789:web:abc123"
     };
 
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
+    let app, db;
+    let useLocalStorage = false;
+
+    // Try to initialize Firebase, fallback to localStorage if it fails
+    try {
+      app = initializeApp(firebaseConfig);
+      db = getDatabase(app);
+      console.log("Firebase initialized successfully");
+    } catch (error) {
+      console.warn("Firebase initialization failed, using localStorage:", error);
+      useLocalStorage = true;
+    }
 
     // Quiz Data
     const quizData = [
@@ -66,6 +75,33 @@
         sampleAnswer: "Cut removes the selected text from its original location, while Copy creates a duplicate without removing the original text."
       }
     ];
+
+    // Function to save to localStorage
+    function saveToLocalStorage(data) {
+      const existingData = JSON.parse(localStorage.getItem('quizResults') || '[]');
+      existingData.push({
+        ...data,
+        id: Date.now().toString(),
+        timestamp: new Date().toISOString()
+      });
+      localStorage.setItem('quizResults', JSON.stringify(existingData));
+    }
+
+    // Function to save to Firebase
+    async function saveToFirebase(data) {
+      try {
+        const quizRef = ref(db, "quizResults");
+        const newEntry = push(quizRef);
+        await set(newEntry, {
+          ...data,
+          timestamp: new Date().toISOString()
+        });
+        return true;
+      } catch (error) {
+        console.error("Firebase save failed:", error);
+        return false;
+      }
+    }
 
     // Function to check theory answers
     function checkTheoryAnswer(userAnswer, expectedKeywords) {
@@ -172,6 +208,14 @@
       const submitBtn = document.getElementById("submit");
       const nameInput = document.getElementById("studentName");
 
+      // Show storage method being used
+      const storageInfo = document.createElement("div");
+      storageInfo.style.cssText = "background: #e3f2fd; padding: 10px; border-radius: 8px; margin-bottom: 20px; font-size: 14px; color: #1976d2;";
+      storageInfo.innerHTML = useLocalStorage ? 
+        "📱 Using local storage (results saved locally)" : 
+        "☁️ Connected to Firebase (results saved to cloud)";
+      document.querySelector('.content').insertBefore(storageInfo, document.querySelector('.content').firstChild);
+
       // Render Section A
       quizData.forEach((item, index) => {
         quizContainer.innerHTML += `
@@ -191,7 +235,7 @@
       });
 
       // Handle Submit
-      submitBtn.onclick = () => {
+      submitBtn.onclick = async () => {
         const studentName = nameInput.value.trim();
         if (!studentName) {
           alert("Please enter your name before submitting.");
@@ -215,22 +259,38 @@
 
         const totalScore = sectionAScore + sectionBScore;
 
-        // Save to Firebase
-        const quizRef = ref(db, "quizResults");
-        const newEntry = push(quizRef);
-        set(newEntry, {
+        const resultData = {
           name: studentName,
           sectionA: sectionAScore,
           sectionB: sectionBScore,
           total: totalScore,
           date: new Date().toLocaleString()
-        });
+        };
 
-        // Hide submit button and show answers
-        submitBtn.style.display = 'none';
-        displayAnswers(sectionAScore, sectionBScore);
+        // Save to appropriate storage
+        let saveSuccess = false;
+        if (useLocalStorage) {
+          saveToLocalStorage(resultData);
+          saveSuccess = true;
+        } else {
+          saveSuccess = await saveToFirebase(resultData);
+          if (!saveSuccess) {
+            // Fallback to localStorage if Firebase fails
+            saveToLocalStorage(resultData);
+            saveSuccess = true;
+          }
+        }
 
-        alert(`✅ ${studentName}, your quiz is submitted!\n\nSection A: ${sectionAScore}/20\nSection B: ${sectionBScore}/6\nTotal: ${totalScore}/26`);
+        if (saveSuccess) {
+          // Hide submit button and show answers
+          submitBtn.style.display = 'none';
+          displayAnswers(sectionAScore, sectionBScore);
+
+          const storageMethod = useLocalStorage ? "locally" : "to cloud database";
+          alert(`✅ ${studentName}, your quiz is submitted and saved ${storageMethod}!\n\nSection A: ${sectionAScore}/20\nSection B: ${sectionBScore}/6\nTotal: ${totalScore}/26`);
+        } else {
+          alert("❌ Failed to save quiz results. Please try again.");
+        }
       };
     };
   </script>
