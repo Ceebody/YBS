@@ -1,283 +1,464 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Yeriel Bracha School - Computing Mock (Section B)</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Word Processing Quiz</title>
   <style>
-    :root {
-      --accent: #4b70f5;
-      --bg: #f6f9ff;
-      --card: #fff;
-      --text-dark: #222;
-      --text-light: #666;
-      --success: #22c55e;
-      --danger: #ef4444;
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
-
+    
     body {
-      margin: 0;
-      font-family: "Poppins", sans-serif;
-      background: var(--bg);
-      color: var(--text-dark);
-      overflow-x: hidden;
-    }
-
-    header {
-      background: var(--accent);
-      color: white;
-      padding: 15px;
-      text-align: center;
-      border-bottom: 3px solid #274bcc;
-    }
-
-    header h1 {
-      margin: 0;
-      font-size: 20px;
-      font-weight: 700;
-    }
-
-    header p {
-      margin: 5px 0 0;
-      font-size: 13px;
-      opacity: 0.9;
-    }
-
-    .container {
-      max-width: 900px;
-      margin: 20px auto;
-      background: var(--card);
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
       padding: 20px;
     }
-
-    h2 {
-      color: var(--accent);
-      font-size: 18px;
-    }
-
-    label {
-      display: block;
-      font-weight: 600;
-      margin: 10px 0 5px;
-    }
-
-    textarea {
-      width: 100%;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      padding: 10px;
-      font-size: 15px;
-      min-height: 70px;
-      resize: vertical;
-      outline: none;
-      transition: border 0.2s;
-    }
-
-    textarea:focus {
-      border-color: var(--accent);
-    }
-
-    input {
+    
+    .container {
       width: 90%;
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      font-size: 15px;
-      margin-top: 5px;
+      max-width: 900px;
+      margin: 0 auto;
+      background: rgba(255, 255, 255, 0.95);
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
     }
-
-    .btn {
-      background: var(--accent);
+    
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 30px;
+      font-size: 2.5em;
+      font-weight: 700;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    h2 {
+      color: #34495e;
+      margin: 25px 0 20px 0;
+      font-size: 1.5em;
+      padding-bottom: 10px;
+      border-bottom: 3px solid #3498db;
+      position: relative;
+    }
+    
+    h2::after {
+      content: '';
+      position: absolute;
+      bottom: -3px;
+      left: 0;
+      width: 50px;
+      height: 3px;
+      background: #e74c3c;
+    }
+    
+    .question {
+      margin: 20px 0;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.7);
+      border-radius: 12px;
+      border-left: 4px solid #3498db;
+      transition: all 0.3s ease;
+    }
+    
+    .question:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    }
+    
+    .question p {
+      font-weight: 600;
+      color: #2c3e50;
+      margin-bottom: 10px;
+      font-size: 1.1em;
+    }
+    
+    button {
+      background: linear-gradient(135deg, #3498db, #2980b9);
       color: white;
       border: none;
-      padding: 12px 20px;
-      border-radius: 8px;
+      padding: 15px 30px;
+      border-radius: 50px;
       cursor: pointer;
-      font-weight: 600;
-      transition: 0.2s;
-      margin-top: 15px;
-    }
-
-    .btn:hover {
-      opacity: 0.9;
-    }
-
-    .ghost {
-      background: #eee;
-      color: #333;
-      border: 1px solid #ccc;
-    }
-
-    .result {
-      background: #eef;
-      border-radius: 8px;
-      padding: 10px;
-      margin-top: 15px;
-      display: none;
-    }
-
-    footer {
-      text-align: center;
-      padding: 15px;
       margin-top: 30px;
-      color: #555;
-      font-size: 14px;
+      display: block;
+      width: 100%;
+      font-size: 1.1em;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 1px;
     }
-
-    @media (max-width: 600px) {
-      header h1 { font-size: 18px; }
-      textarea { font-size: 14px; }
-      .container { padding: 15px; }
+    
+    button:hover {
+      background: linear-gradient(135deg, #2980b9, #3498db);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(52, 152, 219, 0.4);
+    }
+    
+    button:active {
+      transform: translateY(0);
+    }
+    
+    textarea {
+      width: 100%;
+      height: 100px;
+      border-radius: 10px;
+      border: 2px solid #bdc3c7;
+      padding: 15px;
+      font-family: inherit;
+      font-size: 1em;
+      resize: vertical;
+      transition: border-color 0.3s ease;
+    }
+    
+    textarea:focus {
+      outline: none;
+      border-color: #3498db;
+      box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+    }
+    
+    input[type="text"] {
+      width: 100%;
+      padding: 15px;
+      border-radius: 10px;
+      border: 2px solid #bdc3c7;
+      margin-bottom: 25px;
+      font-size: 1.1em;
+      transition: border-color 0.3s ease;
+    }
+    
+    input[type="text"]:focus {
+      outline: none;
+      border-color: #3498db;
+      box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+    }
+    
+    .fill-blank-input {
+      display: inline-block;
+      width: 200px;
+      padding: 8px 12px;
+      border: none;
+      border-bottom: 2px solid #3498db;
+      background: transparent;
+      font-size: 1em;
+      margin: 0 5px;
+      text-align: center;
+      transition: border-color 0.3s ease;
+    }
+    
+    .fill-blank-input:focus {
+      outline: none;
+      border-bottom-color: #e74c3c;
+    }
+    
+    .result {
+      text-align: center;
+      margin-top: 30px;
+      padding: 25px;
+      background: linear-gradient(135deg, #2ecc71, #27ae60);
+      color: white;
+      border-radius: 15px;
+      font-size: 1.2em;
+      font-weight: bold;
+      box-shadow: 0 10px 30px rgba(46, 204, 113, 0.3);
+    }
+    
+    .feedback {
+      margin-top: 12px;
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 0.95em;
+      animation: fadeIn 0.5s ease;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .correct {
+      background: rgba(46, 204, 113, 0.1);
+      color: #27ae60;
+      border-left: 4px solid #27ae60;
+    }
+    
+    .wrong {
+      background: rgba(231, 76, 60, 0.1);
+      color: #c0392b;
+      border-left: 4px solid #c0392b;
+    }
+    
+    .expected {
+      color: #7f8c8d;
+      font-style: italic;
+      margin-top: 8px;
+      padding: 8px;
+      background: rgba(127, 140, 141, 0.1);
+      border-radius: 6px;
+    }
+    
+    .name-label {
+      font-weight: 600;
+      color: #2c3e50;
+      margin-bottom: 10px;
+      display: block;
+      font-size: 1.1em;
+    }
+    
+    .loading {
+      opacity: 0.7;
+      pointer-events: none;
+    }
+    
+    .success-message {
+      background: linear-gradient(135deg, #2ecc71, #27ae60);
+      color: white;
+      padding: 15px;
+      border-radius: 10px;
+      margin-top: 20px;
+      text-align: center;
+      font-weight: 600;
+    }
+    
+    .error-message {
+      background: linear-gradient(135deg, #e74c3c, #c0392b);
+      color: white;
+      padding: 15px;
+      border-radius: 10px;
+      margin-top: 20px;
+      text-align: center;
+      font-weight: 600;
     }
   </style>
 </head>
 <body>
-  <header>
-    <h1>Yeriel Bracha School</h1>
-    <p>Computing Mock Test — Section B</p>
-  </header>
-
   <div class="container">
-    <label>Student Full Name:</label>
-    <input type="text" id="studentName" placeholder="Enter your full name" />
-    <button class="btn" id="checkBtn">Start Test</button>
+    <h1>📝 Word Processing Quiz</h1>
+    <form id="quizForm">
+      <label class="name-label">Enter your full name:</label>
+      <input type="text" id="studentName" placeholder="Type your name here..." required>
 
-    <div id="testArea" style="display:none;">
-      <h2>Question 1 — Artificial Intelligence (24 marks)</h2>
-      <label>1a. Name two modern technologies that make face recognition possible. (4 marks)</label>
-      <textarea id="q1a"></textarea>
+      <h2>Section A: Fill in the Blanks (1 mark each)</h2>
+      <div id="sectionA"></div>
 
-      <label>1b. Describe Artificial Intelligence in your own words. (4 marks)</label>
-      <textarea id="q1b"></textarea>
+      <h2>Section B: Theory Questions (10 marks each)</h2>
+      <div id="sectionB"></div>
 
-      <label>1c. Explain how perceptual computing improves communication between humans and computers. (4 marks)</label>
-      <textarea id="q1c"></textarea>
-
-      <label>1d. Explain how hardware, software and peopleware must work together to make features such as face recognition or voice assistants possible. (6 marks)</label>
-      <textarea id="q1d"></textarea>
-
-      <label>1e. State three benefits and two challenges of using Artificial Intelligence in everyday life. (6 marks)</label>
-      <textarea id="q1e"></textarea>
-
-      <h2>Question 2 — Components of Computer System (12 marks)</h2>
-      <label>2a. Define a computer system. (2 marks)</label>
-      <textarea id="q2a"></textarea>
-
-      <label>2b. List and explain four major components of a computer system. (8 marks)</label>
-      <textarea id="q2b"></textarea>
-
-      <label>2c. Give two examples each of input and output devices. (2 marks)</label>
-      <textarea id="q2c"></textarea>
-
-      <h2>Question 3 — Liveware / Peopleware (12 marks)</h2>
-      <label>3a. What is liveware? (2 marks)</label>
-      <textarea id="q3a"></textarea>
-
-      <label>3b. Describe three roles of liveware in computer operation. (6 marks)</label>
-      <textarea id="q3b"></textarea>
-
-      <label>3c. State two differences between hardware and liveware. (4 marks)</label>
-      <textarea id="q3c"></textarea>
-
-      <button class="btn" id="submitBtn">Submit Answers</button>
-      <button class="btn ghost" id="showAnswersBtn" style="display:none;">Show Expected Answers</button>
-
-      <div id="results" class="result"></div>
-      <div id="expected" class="result"></div>
-    </div>
+      <button type="button" onclick="submitQuiz()">Submit Quiz</button>
+    </form>
+    <div class="result" id="result" style="display: none;"></div>
   </div>
-
-  <footer>© 2025 Yeriel Bracha School | Computing Department</footer>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import { getDatabase, ref, get, set } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+    import { getDatabase, ref, push, set } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
 
     const firebaseConfig = {
-      apiKey: "AIzaSyAKUmFw5md9dvNUsdQUXV1Ipk8fAfMUT_I",
+      apiKey: "AIzaSyCY9oturc9bql33PSUkfNUptcHXla2RWN4",
       authDomain: "tracha-xx.firebaseapp.com",
       databaseURL: "https://tracha-xx-default-rtdb.firebaseio.com",
       projectId: "tracha-xx",
-      storageBucket: "tracha-xx.firebasestorage.app",
+      storageBucket: "tracha-xx.appspot.com",
       messagingSenderId: "914440906583",
-      appId: "1:914440906583:web:995459b29705ef444d8012"
+      appId: "1:914440906583:web:123abc456xyz"
     };
 
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    const checkBtn = document.getElementById("checkBtn");
-    const testArea = document.getElementById("testArea");
-    const submitBtn = document.getElementById("submitBtn");
-    const showAnswersBtn = document.getElementById("showAnswersBtn");
-    const resultsDiv = document.getElementById("results");
-    const expectedDiv = document.getElementById("expected");
+    const quizData = [
+      { section: "A", q: "1. Microsoft Word is an example of a __________ software.", answer: "word processing" },
+      { section: "A", q: "2. The part of Microsoft Word that shows the file name and program name is called the __________ bar.", answer: "title" },
+      { section: "A", q: "3. The blinking vertical line that shows where text will appear when you type is called the __________.", answer: "cursor" },
+      { section: "A", q: "4. The group that contains the Cut, Copy, and Paste commands is the __________ group.", answer: "clipboard" },
+      { section: "A", q: "5. To remove a word or sentence from one place and insert it somewhere else, use the __________ command.", answer: "cut" },
+      { section: "A", q: "6. The __________ command makes a duplicate of the selected text or object.", answer: "copy" },
+      { section: "A", q: "7. To place copied or cut text into a new position, use the __________ command.", answer: "paste" },
+      { section: "A", q: "8. The feature that allows you to search for a specific word or phrase in a document is called __________.", answer: "find" },
+      { section: "A", q: "9. The feature used to automatically change a word or phrase in a document is called __________.", answer: "replace" },
+      { section: "A", q: "10. A __________ is a grid made of rows and columns that organizes data neatly in a document.", answer: "table" },
+      { section: "A", q: "11. The command used to combine two or more cells into one is called __________.", answer: "merge cells" },
+      { section: "A", q: "12. To divide one cell into smaller ones, use the __________ command.", answer: "split cells" },
+      { section: "A", q: "13. The tab that contains the Table and Picture options is called the __________ tab.", answer: "insert" },
+      { section: "A", q: "14. A __________ in Word allows users to jump to another document, a webpage, or another part of the same document.", answer: "hyperlink" },
+      { section: "A", q: "15. When text is too long for one page, Word automatically moves it to the next page. This is called __________.", answer: "word wrap" },
+      { section: "A", q: "16. The __________ tool checks your spelling and grammar mistakes in a document.", answer: "spelling and grammar checker" },
+      { section: "A", q: "17. To make text bold, italic, or underlined, you use the tools in the __________ group.", answer: "font" },
+      { section: "A", q: "18. You can change the font style and size from the __________ tab.", answer: "home" },
+      { section: "A", q: "19. To select all the text in a document, press __________ + A on the keyboard.", answer: "ctrl" },
+      { section: "A", q: "20. The part of the screen where you type your text is called the __________ area.", answer: "document" }
+    ];
 
-    const expected = {
-      q1a: "Artificial Intelligence, Perceptual Computing, Parallel Processing.",
-      q1b: "AI allows computers to learn and make decisions like humans.",
-      q1c: "Perceptual computing uses gestures, speech, and facial cues to communicate.",
-      q1d: "Hardware (camera, mic), Software (AI models), Peopleware (users, programmers).",
-      q1e: "Benefits: efficiency, speed, convenience. Challenges: privacy, job loss, bias.",
-      q2a: "A system combining hardware, software and peopleware to process data.",
-      q2b: "Input, Processing, Storage, Output – explain each.",
-      q2c: "Input: Keyboard, Mouse; Output: Monitor, Printer.",
-      q3a: "Liveware refers to human users of computers.",
-      q3b: "Operate, maintain, program, manage data and systems.",
-      q3c: "Hardware = physical; Liveware = people; hardware can't think, liveware can."
-    };
+    const theoryData = [
+      { q: "1. Name any three commands found in the Editing group on the Home tab.", expected: ["find", "replace", "select"] },
+      { q: "2. Mention two types of places a hyperlink can lead to.", expected: ["webpage", "document", "email", "bookmark"] },
+      { q: "3. Explain the difference between Cut and Copy.", expected: ["cut removes", "copy duplicates", "cut moves", "copy leaves original"] }
+    ];
 
-    checkBtn.addEventListener("click", async () => {
-      const name = document.getElementById("studentName").value.trim();
-      if (!name) return alert("Enter your name first.");
-      const userRef = ref(db, "mockResults/" + name);
-      const snap = await get(userRef);
-      if (snap.exists() && Date.now() < snap.val().lockedUntil) {
-        alert("You have already written this test. Try again later.");
+    const sectionAContainer = document.getElementById("sectionA");
+    const sectionBContainer = document.getElementById("sectionB");
+
+    // Generate Section A (Fill in the blanks)
+    quizData.forEach((item, index) => {
+      const div = document.createElement("div");
+      div.className = "question";
+      
+      // Replace __________ with input field
+      const questionText = item.q.replace(/__________/g, '<input type="text" class="fill-blank-input" id="a' + index + '" placeholder="Answer">');
+      
+      div.innerHTML = `<p>${questionText}</p>`;
+      sectionAContainer.appendChild(div);
+    });
+
+    // Generate Section B (Theory questions)
+    theoryData.forEach((item, index) => {
+      const div = document.createElement("div");
+      div.className = "question";
+      div.innerHTML = `<p>${item.q}</p><textarea id="t${index}" placeholder="Type your detailed answer here..."></textarea>`;
+      sectionBContainer.appendChild(div);
+    });
+
+    function checkTheoryAnswer(answer, expectedKeywords) {
+      const lowerAns = answer.toLowerCase();
+      let score = 0;
+      expectedKeywords.forEach(keyword => {
+        if (lowerAns.includes(keyword.toLowerCase())) score++;
+      });
+      const totalPossible = expectedKeywords.length;
+      return Math.min(10, Math.round((score / totalPossible) * 10));
+    }
+
+    window.submitQuiz = async function() {
+      const studentName = document.getElementById("studentName").value.trim();
+      if (!studentName) {
+        alert("Please enter your name before submitting.");
         return;
       }
-      testArea.style.display = "block";
-    });
 
-    submitBtn.addEventListener("click", async () => {
-      const name = document.getElementById("studentName").value.trim();
-      if (!name) return alert("Enter your name first.");
+      // Add loading state
+      const submitBtn = document.querySelector('button');
+      const originalText = submitBtn.textContent;
+      submitBtn.textContent = 'Submitting...';
+      submitBtn.classList.add('loading');
 
-      const answers = {};
-      for (let id in expected) answers[id] = document.getElementById(id).value.trim();
+      let scoreA = 0;
+      
+      // Check Section A answers
+      quizData.forEach((item, index) => {
+        const userAnswer = document.getElementById(`a${index}`).value.trim().toLowerCase();
+        const correctAnswer = item.answer.toLowerCase();
+        const questionDiv = sectionAContainer.children[index];
+        
+        // Remove existing feedback
+        const existingFeedback = questionDiv.querySelector('.feedback');
+        if (existingFeedback) existingFeedback.remove();
+        
+        const feedbackDiv = document.createElement("div");
+        feedbackDiv.className = "feedback";
 
-      let score = 0;
-      for (let id in expected) {
-        if (answers[id] && answers[id].toLowerCase().includes(expected[id].split(" ")[0].toLowerCase()))
-          score += 4; // approximate mark share
+        if (userAnswer === correctAnswer || 
+            (correctAnswer.includes(userAnswer) && userAnswer.length > 2) ||
+            (userAnswer.includes(correctAnswer) && correctAnswer.length > 2)) {
+          scoreA++;
+          feedbackDiv.className += " correct";
+          feedbackDiv.innerHTML = `✅ Correct!`;
+        } else {
+          feedbackDiv.className += " wrong";
+          feedbackDiv.innerHTML = `❌ Incorrect. Correct answer: <strong>${item.answer}</strong>`;
+        }
+        questionDiv.appendChild(feedbackDiv);
+      });
+
+      let scoreB = 0;
+      
+      // Check Section B answers
+      theoryData.forEach((item, index) => {
+        const ans = document.getElementById(`t${index}`).value.trim();
+        const questionScore = checkTheoryAnswer(ans, item.expected);
+        scoreB += questionScore;
+        
+        const div = sectionBContainer.children[index];
+        
+        // Remove existing feedback
+        const existingExpected = div.querySelector('.expected');
+        if (existingExpected) existingExpected.remove();
+
+        const expectedDiv = document.createElement("div");
+        expectedDiv.className = "expected";
+        expectedDiv.innerHTML = `<strong>Score: ${questionScore}/10</strong><br><strong>Expected keywords:</strong> ${item.expected.join(", ")}`;
+        div.appendChild(expectedDiv);
+      });
+
+      const totalScore = scoreA + scoreB;
+      const percentage = Math.round((totalScore / 50) * 100);
+
+      // Show results
+      const resultDiv = document.getElementById("result");
+      resultDiv.style.display = "block";
+      resultDiv.innerHTML = `
+        <h3>📊 Quiz Results</h3>
+        <p>Section A (Fill in the blanks): ${scoreA}/20 marks</p>
+        <p>Section B (Theory): ${scoreB}/30 marks</p>
+        <p><strong>Total Score: ${totalScore}/50 marks (${percentage}%)</strong></p>
+        <p>${percentage >= 70 ? '🎉 Excellent work!' : percentage >= 50 ? '👍 Good job!' : '📚 Keep studying!'}</p>
+      `;
+
+      // Scroll to results
+      resultDiv.scrollIntoView({ behavior: 'smooth' });
+
+      try {
+        const newRef = push(ref(db, "quizScores"));
+        await set(newRef, {
+          name: studentName,
+          sectionA: scoreA,
+          sectionB: scoreB,
+          totalScore: totalScore,
+          percentage: percentage,
+          timestamp: new Date().toISOString(),
+          date: new Date().toLocaleDateString()
+        });
+        
+        // Show success message
+        const successDiv = document.createElement('div');
+        successDiv.className = 'success-message';
+        successDiv.innerHTML = '✅ Quiz submitted and score saved successfully!';
+        resultDiv.appendChild(successDiv);
+        
+      } catch (err) {
+        console.error('Firebase error:', err);
+        
+        // Show error message
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'error-message';
+        errorDiv.innerHTML = '⚠️ Quiz completed but could not save to database. Please contact your instructor.';
+        resultDiv.appendChild(errorDiv);
+      } finally {
+        // Reset button
+        submitBtn.textContent = originalText;
+        submitBtn.classList.remove('loading');
       }
+    }
 
-      const percent = ((score / 48) * 100).toFixed(1);
-      resultsDiv.innerHTML = `<h3>Submission Successful!</h3><p><strong>Score:</strong> ${score}/48 (${percent}%)</p>`;
-      resultsDiv.style.display = "block";
-      showAnswersBtn.style.display = "inline-block";
-
-      const data = {
-        name,
-        answers,
-        expectedAnswers: expected,
-        score,
-        percentage: percent,
-        lockedUntil: Date.now() + 12 * 60 * 60 * 1000,
-        timestamp: new Date().toISOString()
-      };
-      await set(ref(db, "mockResults/" + name), data);
-    });
-
-    showAnswersBtn.addEventListener("click", () => {
-      expectedDiv.innerHTML =
-        "<h3>Expected Answers</h3>" +
-        Object.entries(expected)
-          .map(([q, a]) => `<p><strong>${q.toUpperCase()}</strong>: ${a}</p>`)
-          .join("");
-      expectedDiv.style.display = "block";
+    // Add some interactive effects
+    document.addEventListener('DOMContentLoaded', function() {
+      // Add focus effects to inputs
+      const inputs = document.querySelectorAll('input, textarea');
+      inputs.forEach(input => {
+        input.addEventListener('focus', function() {
+          this.parentElement.style.transform = 'scale(1.02)';
+        });
+        
+        input.addEventListener('blur', function() {
+          this.parentElement.style.transform = 'scale(1)';
+        });
+      });
     });
   </script>
 </body>
