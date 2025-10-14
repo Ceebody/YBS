@@ -35,7 +35,7 @@
     }
     
     .container {
-      max-width: 1000px;
+      max-width: 1200px;
       margin: 0 auto;
       background: rgba(255, 255, 255, 0.95);
       padding: 30px;
@@ -96,7 +96,7 @@
     
     .date-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
       gap: 15px;
       margin-bottom: 20px;
     }
@@ -170,6 +170,20 @@
     .score-good { background: #fef9e7; color: #f39c12; }
     .score-needs-improvement { background: #fadbd8; color: #e74c3c; }
     
+    .multiple-attempts {
+      background: #e8f4fd;
+      border-left: 4px solid #3498db;
+    }
+    
+    .attempt-badge {
+      background: #3498db;
+      color: white;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 0.75em;
+      margin-left: 8px;
+    }
+    
     .back-btn {
       display: inline-block;
       margin-top: 20px;
@@ -222,12 +236,22 @@
       outline: none;
       border-color: #3498db;
     }
+
+    .cooldown-info {
+      background: #fff3cd;
+      border: 1px solid #ffeaa7;
+      color: #856404;
+      padding: 10px;
+      border-radius: 8px;
+      margin-top: 5px;
+      font-size: 0.85em;
+    }
   </style>
 </head>
 <body>
   <header>
     <h1>📊 Quiz Results Dashboard</h1>
-    <p>Monitor and analyze student performance</p>
+    <p>Monitor student performance with 6-hour attempt tracking</p>
   </header>
 
   <div class="container">
@@ -244,19 +268,19 @@
       <div class="stats-grid">
         <div class="stat-card">
           <h3 id="totalStudents">0</h3>
-          <p>Total Students</p>
+          <p>Unique Students</p>
+        </div>
+        <div class="stat-card">
+          <h3 id="totalAttempts">0</h3>
+          <p>Total Attempts</p>
         </div>
         <div class="stat-card">
           <h3 id="averageScore">0%</h3>
           <p>Average Score</p>
         </div>
         <div class="stat-card">
-          <h3 id="totalDates">0</h3>
-          <p>Quiz Dates</p>
-        </div>
-        <div class="stat-card">
-          <h3 id="highestScore">0%</h3>
-          <p>Highest Score</p>
+          <h3 id="multipleAttempts">0</h3>
+          <p>Multiple Attempts</p>
         </div>
       </div>
     </div>
@@ -275,6 +299,7 @@
         <thead>
           <tr>
             <th>Student Name</th>
+            <th>Attempts</th>
             <th>Section A</th>
             <th>Section B</th>
             <th>Total Score</th>
@@ -320,9 +345,10 @@
 
     let allResults = {};
     let currentResults = [];
+    let studentStats = {};
 
     // Fetch quiz results from Firebase
-    const quizRef = ref(db, "quizScores"); // Fixed: changed from "quizResults" to "quizScores"
+    const quizRef = ref(db, "quizScores");
     
     onValue(quizRef, (snapshot) => {
       loadingArea.classList.add("hidden");
@@ -351,6 +377,7 @@
     function processResults(data) {
       const grouped = {};
       const allScores = [];
+      studentStats = {};
       
       Object.values(data).forEach(entry => {
         if (!entry.timestamp || !entry.name) return;
@@ -360,6 +387,34 @@
         grouped[dateOnly].push(entry);
         
         if (entry.percentage) allScores.push(entry.percentage);
+
+        // Track student attempts
+        const studentName = entry.displayName || entry.name;
+        if (!studentStats[studentName]) {
+          studentStats[studentName] = {
+            attempts: 0,
+            scores: [],
+            lastAttempt: null
+          };
+        }
+        studentStats[studentName].attempts++;
+        studentStats[studentName].scores.push({
+          score: entry.totalScore || 0,
+          percentage: entry.percentage || 0,
+          timestamp: entry.timestamp,
+          sectionA: entry.sectionA || 0,
+          sectionB: entry.sectionB || 0
+        });
+        
+        if (!studentStats[studentName].lastAttempt || 
+            new Date(entry.timestamp) > new Date(studentStats[studentName].lastAttempt)) {
+          studentStats[studentName].lastAttempt = entry.timestamp;
+        }
+      });
+
+      // Sort attempts by timestamp for each student
+      Object.keys(studentStats).forEach(student => {
+        studentStats[student].scores.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
       });
 
       allResults = grouped;
@@ -368,15 +423,15 @@
     }
 
     function updateStats(data, allScores) {
-      const totalStudents = Object.keys(data).length;
+      const uniqueStudents = Object.keys(studentStats).length;
+      const totalAttempts = Object.keys(data).length;
       const averageScore = allScores.length > 0 ? Math.round(allScores.reduce((a, b) => a + b, 0) / allScores.length) : 0;
-      const totalDates = Object.keys(allResults).length;
-      const highestScore = allScores.length > 0 ? Math.max(...allScores) : 0;
+      const multipleAttempts = Object.values(studentStats).filter(s => s.attempts > 1).length;
 
-      document.getElementById("totalStudents").textContent = totalStudents;
+      document.getElementById("totalStudents").textContent = uniqueStudents;
+      document.getElementById("totalAttempts").textContent = totalAttempts;
       document.getElementById("averageScore").textContent = averageScore + "%";
-      document.getElementById("totalDates").textContent = totalDates;
-      document.getElementById("highestScore").textContent = highestScore + "%";
+      document.getElementById("multipleAttempts").textContent = multipleAttempts;
     }
 
     function showOverview() {
@@ -392,13 +447,15 @@
         .sort((a, b) => new Date(b) - new Date(a))
         .forEach(date => {
           const results = grouped[date];
+          const uniqueStudentsOnDate = new Set(results.map(r => r.displayName || r.name)).size;
           const avgScore = Math.round(results.reduce((sum, r) => sum + (r.percentage || 0), 0) / results.length);
           
           const card = document.createElement("div");
           card.className = "date-card";
           card.innerHTML = `
             <h4>📅 ${date}</h4>
-            <p>${results.length} students</p>
+            <p>${results.length} attempts</p>
+            <p>${uniqueStudentsOnDate} unique students</p>
             <p>Avg: ${avgScore}%</p>
           `;
           card.onclick = () => showResults(date, results);
@@ -419,26 +476,55 @@
     function displayResults(results) {
       resultsTable.innerHTML = "";
 
-      results
-        .sort((a, b) => (b.percentage || 0) - (a.percentage || 0))
-        .forEach(r => {
-          const row = document.createElement("tr");
-          const time = new Date(r.timestamp).toLocaleTimeString();
-          const percentage = r.percentage || 0;
+      // Group results by student name
+      const studentGroups = {};
+      results.forEach(r => {
+        const studentName = r.displayName || r.name;
+        if (!studentGroups[studentName]) {
+          studentGroups[studentName] = [];
+        }
+        studentGroups[studentName].push(r);
+      });
+
+      // Display each student's attempts
+      Object.keys(studentGroups)
+        .sort()
+        .forEach(studentName => {
+          const attempts = studentGroups[studentName].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
           
-          let scoreClass = "score-needs-improvement";
-          if (percentage >= 80) scoreClass = "score-excellent";
-          else if (percentage >= 60) scoreClass = "score-good";
-          
-          row.innerHTML = `
-            <td><strong>${r.name || "N/A"}</strong></td>
-            <td>${r.sectionA || 0}/20</td>
-            <td>${r.sectionB || 0}/30</td>
-            <td>${r.totalScore || 0}/50</td>
-            <td><span class="score-badge ${scoreClass}">${percentage}%</span></td>
-            <td>${time}</td>
-          `;
-          resultsTable.appendChild(row);
+          attempts.forEach((r, index) => {
+            const row = document.createElement("tr");
+            const time = new Date(r.timestamp).toLocaleTimeString();
+            const percentage = r.percentage || 0;
+            
+            let scoreClass = "score-needs-improvement";
+            if (percentage >= 80) scoreClass = "score-excellent";
+            else if (percentage >= 60) scoreClass = "score-good";
+            
+            if (attempts.length > 1) {
+              row.classList.add("multiple-attempts");
+            }
+            
+            const attemptNumber = attempts.length - index;
+            const isLatest = index === 0;
+            
+            row.innerHTML = `
+              <td>
+                <strong>${studentName}</strong>
+                ${attempts.length > 1 ? `<span class="attempt-badge">Attempt ${attemptNumber}${isLatest ? ' (Latest)' : ''}</span>` : ''}
+              </td>
+              <td>${attempts.length}</td>
+              <td>${r.sectionA || 0}/20</td>
+              <td>${r.sectionB || 0}/30</td>
+              <td>${r.totalScore || 0}/50</td>
+              <td><span class="score-badge ${scoreClass}">${percentage}%</span></td>
+              <td>
+                ${time}
+                ${attempts.length > 1 && !isLatest ? '<div class="cooldown-info">Previous attempt</div>' : ''}
+              </td>
+            `;
+            resultsTable.appendChild(row);
+          });
         });
     }
 
@@ -446,7 +532,7 @@
     searchBox.addEventListener("input", (e) => {
       const searchTerm = e.target.value.toLowerCase();
       const filteredResults = currentResults.filter(r => 
-        (r.name || "").toLowerCase().includes(searchTerm)
+        (r.displayName || r.name || "").toLowerCase().includes(searchTerm)
       );
       displayResults(filteredResults);
     });
@@ -454,16 +540,18 @@
     // Export to CSV
     exportBtn.addEventListener("click", () => {
       const csvContent = "data:text/csv;charset=utf-8," +
-        "Student Name,Section A,Section B,Total Score,Percentage,Time Submitted\n" +
+        "Student Name,Attempt Number,Section A,Section B,Total Score,Percentage,Time Submitted\n" +
         currentResults.map(r => {
           const time = new Date(r.timestamp).toLocaleString();
-          return `"${r.name || "N/A"}",${r.sectionA || 0},${r.sectionB || 0},${r.totalScore || 0},${r.percentage || 0}%,"${time}"`;
+          const studentName = r.displayName || r.name;
+          const studentAttempts = studentStats[studentName] ? studentStats[studentName].attempts : 1;
+          return `"${studentName}",${studentAttempts},"${r.sectionA || 0}/20","${r.sectionB || 0}/30","${r.totalScore || 0}/50",${r.percentage || 0}%,"${time}"`;
         }).join("\n");
 
       const encodedUri = encodeURI(csvContent);
       const link = document.createElement("a");
       link.setAttribute("href", encodedUri);
-      link.setAttribute("download", `quiz_results_${selectedDateSpan.textContent}.csv`);
+      link.setAttribute("download", `quiz_results_${selectedDateSpan.textContent.replace(/\//g, '-')}.csv`);
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
