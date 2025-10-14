@@ -102,6 +102,13 @@
       box-shadow: 0 10px 30px rgba(52, 152, 219, 0.4);
     }
     
+    button:disabled {
+      background: #95a5a6;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+    
     button:active {
       transform: translateY(0);
     }
@@ -236,11 +243,39 @@
       text-align: center;
       font-weight: 600;
     }
+
+    .warning-message {
+      background: linear-gradient(135deg, #f39c12, #e67e22);
+      color: white;
+      padding: 20px;
+      border-radius: 15px;
+      margin-bottom: 20px;
+      text-align: center;
+      font-weight: 600;
+      font-size: 1.1em;
+    }
+
+    .countdown {
+      font-size: 1.2em;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+
+    .quiz-disabled {
+      opacity: 0.5;
+      pointer-events: none;
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>📝 Word Processing Quiz</h1>
+    
+    <div id="warningArea" class="warning-message" style="display: none;">
+      <p>⏰ You have already taken this quiz recently.</p>
+      <p>You can take it again in: <span id="countdown" class="countdown"></span></p>
+    </div>
+
     <form id="quizForm">
       <label class="name-label">Enter your full name:</label>
       <input type="text" id="studentName" placeholder="Type your name here..." required>
@@ -251,14 +286,14 @@
       <h2>Section B: Theory Questions (10 marks each)</h2>
       <div id="sectionB"></div>
 
-      <button type="button" onclick="submitQuiz()">Submit Quiz</button>
+      <button type="button" id="submitBtn" onclick="submitQuiz()">Submit Quiz</button>
     </form>
     <div class="result" id="result" style="display: none;"></div>
   </div>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import { getDatabase, ref, push, set } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+    import { getDatabase, ref, push, set, query, orderByChild, equalTo, get } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyCY9oturc9bql33PSUkfNUptcHXla2RWN4",
@@ -272,6 +307,9 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
+
+    const COOLDOWN_HOURS = 6;
+    let countdownInterval;
 
     const quizData = [
       { section: "A", q: "1. Microsoft Word is an example of a __________ software.", answer: "word processing" },
@@ -304,13 +342,16 @@
 
     const sectionAContainer = document.getElementById("sectionA");
     const sectionBContainer = document.getElementById("sectionB");
+    const warningArea = document.getElementById("warningArea");
+    const quizForm = document.getElementById("quizForm");
+    const submitBtn = document.getElementById("submitBtn");
+    const countdownSpan = document.getElementById("countdown");
 
     // Generate Section A (Fill in the blanks)
     quizData.forEach((item, index) => {
       const div = document.createElement("div");
       div.className = "question";
       
-      // Replace __________ with input field
       const questionText = item.q.replace(/__________/g, '<input type="text" class="fill-blank-input" id="a' + index + '" placeholder="Answer">');
       
       div.innerHTML = `<p>${questionText}</p>`;
@@ -323,6 +364,96 @@
       div.className = "question";
       div.innerHTML = `<p>${item.q}</p><textarea id="t${index}" placeholder="Type your detailed answer here..."></textarea>`;
       sectionBContainer.appendChild(div);
+    });
+
+    // Check if student can take quiz
+    async function checkStudentEligibility(studentName) {
+      try {
+        const studentQuery = query(
+          ref(db, "quizScores"),
+          orderByChild("name"),
+          equalTo(studentName.toLowerCase())
+        );
+        
+        const snapshot = await get(studentQuery);
+        
+        if (!snapshot.exists()) {
+          return { canTake: true };
+        }
+
+        const submissions = Object.values(snapshot.val());
+        const lastSubmission = submissions.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))[0];
+        
+        const lastSubmissionTime = new Date(lastSubmission.timestamp);
+        const now = new Date();
+        const timeDiff = now - lastSubmissionTime;
+        const hoursDiff = timeDiff / (1000 * 60 * 60);
+
+        if (hoursDiff < COOLDOWN_HOURS) {
+          const remainingTime = (COOLDOWN_HOURS * 60 * 60 * 1000) - timeDiff;
+          return { 
+            canTake: false, 
+            remainingTime: remainingTime,
+            lastScore: lastSubmission.totalScore || 0,
+            lastPercentage: lastSubmission.percentage || 0
+          };
+        }
+
+        return { canTake: true };
+      } catch (error) {
+        console.error("Error checking eligibility:", error);
+        return { canTake: true }; // Allow quiz if there's an error
+      }
+    }
+
+    // Start countdown timer
+    function startCountdown(remainingTime) {
+      countdownInterval = setInterval(() => {
+        const hours = Math.floor(remainingTime / (1000 * 60 * 60));
+        const minutes = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((remainingTime % (1000 * 60)) / 1000);
+
+        countdownSpan.textContent = `${hours}h ${minutes}m ${seconds}s`;
+
+        remainingTime -= 1000;
+
+        if (remainingTime <= 0) {
+          clearInterval(countdownInterval);
+          location.reload(); // Refresh page when cooldown ends
+        }
+      }, 1000);
+    }
+
+    // Check eligibility when name is entered
+    document.getElementById("studentName").addEventListener("blur", async function() {
+      const studentName = this.value.trim();
+      if (!studentName) return;
+
+      const eligibility = await checkStudentEligibility(studentName);
+      
+      if (!eligibility.canTake) {
+        warningArea.style.display = "block";
+        warningArea.innerHTML = `
+          <p>⏰ You have already taken this quiz recently.</p>
+          <p>Last score: ${eligibility.lastScore}/50 (${eligibility.lastPercentage}%)</p>
+          <p>You can take it again in: <span id="countdown" class="countdown"></span></p>
+        `;
+        
+        quizForm.classList.add("quiz-disabled");
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Quiz Locked - Wait for Cooldown";
+        
+        startCountdown(eligibility.remainingTime);
+      } else {
+        warningArea.style.display = "none";
+        quizForm.classList.remove("quiz-disabled");
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Submit Quiz";
+        
+        if (countdownInterval) {
+          clearInterval(countdownInterval);
+        }
+      }
     });
 
     function checkTheoryAnswer(answer, expectedKeywords) {
@@ -339,6 +470,13 @@
       const studentName = document.getElementById("studentName").value.trim();
       if (!studentName) {
         alert("Please enter your name before submitting.");
+        return;
+      }
+
+      // Double-check eligibility before submission
+      const eligibility = await checkStudentEligibility(studentName);
+      if (!eligibility.canTake) {
+        alert("You cannot take the quiz yet. Please wait for the cooldown period to end.");
         return;
       }
 
@@ -416,7 +554,8 @@
       try {
         const newRef = push(ref(db, "quizScores"));
         await set(newRef, {
-          name: studentName,
+          name: studentName.toLowerCase(), // Store in lowercase for consistent querying
+          displayName: studentName, // Store original case for display
           sectionA: scoreA,
           sectionB: scoreB,
           totalScore: totalScore,
@@ -428,8 +567,13 @@
         // Show success message
         const successDiv = document.createElement('div');
         successDiv.className = 'success-message';
-        successDiv.innerHTML = '✅ Quiz submitted and score saved successfully!';
+        successDiv.innerHTML = '✅ Quiz submitted and score saved successfully!<br>⏰ You can take the quiz again after 6 hours.';
         resultDiv.appendChild(successDiv);
+        
+        // Disable form after successful submission
+        quizForm.classList.add("quiz-disabled");
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Quiz Completed - Wait 6 Hours";
         
       } catch (err) {
         console.error('Firebase error:', err);
@@ -440,26 +584,13 @@
         errorDiv.innerHTML = '⚠️ Quiz completed but could not save to database. Please contact your instructor.';
         resultDiv.appendChild(errorDiv);
       } finally {
-        // Reset button
-        submitBtn.textContent = originalText;
-        submitBtn.classList.remove('loading');
+        // Reset button if not disabled
+        if (!submitBtn.disabled) {
+          submitBtn.textContent = originalText;
+          submitBtn.classList.remove('loading');
+        }
       }
     }
-
-    // Add some interactive effects
-    document.addEventListener('DOMContentLoaded', function() {
-      // Add focus effects to inputs
-      const inputs = document.querySelectorAll('input, textarea');
-      inputs.forEach(input => {
-        input.addEventListener('focus', function() {
-          this.parentElement.style.transform = 'scale(1.02)';
-        });
-        
-        input.addEventListener('blur', function() {
-          this.parentElement.style.transform = 'scale(1)';
-        });
-      });
-    });
   </script>
 </body>
 </html>
