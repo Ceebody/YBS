@@ -80,6 +80,16 @@
       font-size: 1.1em;
     }
     
+    .info {
+      background: linear-gradient(135deg, #3498db, #2980b9);
+      color: white;
+      padding: 20px;
+      border-radius: 12px;
+      margin: 20px 0;
+      text-align: center;
+      font-size: 1.1em;
+    }
+    
     .stats-section {
       margin-bottom: 40px;
     }
@@ -395,6 +405,10 @@
       ❌ Unable to connect to Firebase. Please check your configuration.
     </div>
 
+    <div id="infoArea" class="info hidden">
+      📱 Using local storage data. Results are saved locally in your browser.
+    </div>
+
     <div id="mainContent" class="hidden">
       <!-- Statistics Overview -->
       <div class="stats-section">
@@ -512,19 +526,19 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-    // Firebase configuration - Using the same config as the quiz page
+    // Firebase configuration - Replace with your actual Firebase config
     const firebaseConfig = {
       apiKey: "AIzaSyDgqz8...yourapikey...",
       authDomain: "yourapp.firebaseapp.com",
-      databaseURL: "https://yourapp.firebaseio.com",
+      databaseURL: "https://yourapp-default-rtdb.firebaseio.com/",
       projectId: "yourapp",
       storageBucket: "yourapp.appspot.com",
       messagingSenderId: "123456789",
       appId: "1:123456789:web:abc123"
     };
 
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
+    let app, db;
+    let useLocalStorage = false;
 
     // Global variables
     let allResults = [];
@@ -534,6 +548,7 @@
     // DOM elements
     const loadingArea = document.getElementById("loadingArea");
     const errorArea = document.getElementById("errorArea");
+    const infoArea = document.getElementById("infoArea");
     const mainContent = document.getElementById("mainContent");
     const resultsTableBody = document.getElementById("resultsTableBody");
     const noResults = document.getElementById("noResults");
@@ -552,23 +567,69 @@
     const exportFilteredBtn = document.getElementById("exportFiltered");
     const refreshDataBtn = document.getElementById("refreshData");
 
+    // Try to initialize Firebase, fallback to localStorage if it fails
+    try {
+      app = initializeApp(firebaseConfig);
+      db = getDatabase(app);
+      console.log("Firebase initialized successfully");
+      fetchQuizResults();
+    } catch (error) {
+      console.warn("Firebase initialization failed, using localStorage:", error);
+      useLocalStorage = true;
+      loadLocalStorageResults();
+    }
+
     // Initialize the dashboard
     function initializeDashboard() {
-      loadingArea.classList.remove("hidden");
-      
       // Set default date range (last 30 days)
       const today = new Date();
       const thirtyDaysAgo = new Date(today.getTime() - (30 * 24 * 60 * 60 * 1000));
       
       dateTo.value = today.toISOString().split('T')[0];
       dateFrom.value = thirtyDaysAgo.toISOString().split('T')[0];
+    }
 
-      fetchQuizResults();
+    // Load results from localStorage
+    function loadLocalStorageResults() {
+      loadingArea.classList.add("hidden");
+      
+      const localData = localStorage.getItem('quizResults');
+      if (!localData) {
+        showInfo("📝 No quiz results found in local storage. Students need to take the quiz first.");
+        return;
+      }
+
+      try {
+        const data = JSON.parse(localData);
+        if (data.length === 0) {
+          showInfo("📝 No quiz results found. Students need to take the quiz first.");
+          return;
+        }
+
+        // Convert localStorage format to Firebase format
+        const firebaseFormat = {};
+        data.forEach((item, index) => {
+          firebaseFormat[item.id || index] = {
+            name: item.name,
+            sectionA: item.sectionA,
+            sectionB: item.sectionB,
+            total: item.total,
+            date: item.date || item.timestamp
+          };
+        });
+
+        processResults(firebaseFormat);
+        showMainContent();
+        showInfo("📱 Using local storage data. Results are saved locally in your browser.");
+        applyFilters();
+      } catch (error) {
+        console.error("Error processing localStorage results:", error);
+        showError("❌ Error processing local quiz data. Check console for details.");
+      }
     }
 
     // Fetch quiz results from Firebase
     function fetchQuizResults() {
-      // Try the same database reference as the quiz page
       const quizRef = ref(db, "quizResults");
       
       onValue(quizRef, (snapshot) => {
@@ -576,7 +637,7 @@
         
         const data = snapshot.val();
         if (!data) {
-          showError("📝 No quiz results found. Students need to take the quiz first.");
+          showError("📝 No quiz results found in Firebase. Students need to take the quiz first.");
           return;
         }
 
@@ -591,11 +652,13 @@
       }, (error) => {
         loadingArea.classList.add("hidden");
         console.error("Firebase error:", error);
-        showError(`❌ Firebase connection error: ${error.message}`);
+        // Fallback to localStorage
+        useLocalStorage = true;
+        loadLocalStorageResults();
       });
     }
 
-    // Process raw Firebase data
+    // Process raw data
     function processResults(data) {
       allResults = [];
       studentAttempts = {};
@@ -652,6 +715,7 @@
       allResults.sort((a, b) => b.date - a.date);
 
       updateOverallStats();
+      initializeDashboard();
     }
 
     // Update overall statistics
@@ -806,12 +870,22 @@
     function showError(message) {
       errorArea.innerHTML = message;
       errorArea.classList.remove("hidden");
+      infoArea.classList.add("hidden");
       mainContent.classList.add("hidden");
+    }
+
+    // Show info message
+    function showInfo(message) {
+      infoArea.innerHTML = message;
+      infoArea.classList.remove("hidden");
+      errorArea.classList.add("hidden");
+      mainContent.classList.remove("hidden");
     }
 
     // Show main content
     function showMainContent() {
       errorArea.classList.add("hidden");
+      infoArea.classList.add("hidden");
       mainContent.classList.remove("hidden");
     }
 
@@ -837,14 +911,15 @@
     refreshDataBtn.addEventListener("click", () => {
       loadingArea.classList.remove("hidden");
       mainContent.classList.add("hidden");
-      fetchQuizResults();
+      if (useLocalStorage) {
+        loadLocalStorageResults();
+      } else {
+        fetchQuizResults();
+      }
     });
 
     // Real-time search
     studentSearch.addEventListener("input", applyFilters);
-
-    // Initialize dashboard on page load
-    initializeDashboard();
   </script>
 </body>
 </html>
