@@ -4,824 +4,201 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Word Processing Quiz</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
+  <script type="module">
+    // Import Firebase modules
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getDatabase, ref, push, set } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyDgqz8...yourapikey...",
+      authDomain: "yourapp.firebaseapp.com",
+      databaseURL: "https://yourapp.firebaseio.com",
+      projectId: "yourapp",
+      storageBucket: "yourapp.appspot.com",
+      messagingSenderId: "123456789",
+      appId: "1:123456789:web:abc123"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    // Quiz Data
+    const quizData = [
+      { q: "1. Microsoft Word is an example of a __________ software.", answer: "Word processing" },
+      { q: "2. The part of Microsoft Word that shows the file name and program name is called the __________ bar.", answer: "Title" },
+      { q: "3. The blinking vertical line that shows where text will appear when you type is called the __________.", answer: "Cursor" },
+      { q: "4. The group that contains the Cut, Copy, and Paste commands is the __________ group.", answer: "Clipboard" },
+      { q: "5. To remove a word or sentence from one place and insert it somewhere else, use the __________ command.", answer: "Cut" },
+      { q: "6. The __________ command makes a duplicate of the selected text or object.", answer: "Copy" },
+      { q: "7. To place copied or cut text into a new position, use the __________ command.", answer: "Paste" },
+      { q: "8. The feature that allows you to search for a specific word or phrase in a document is called __________.", answer: "Find" },
+      { q: "9. The feature used to automatically change a word or phrase in a document is called __________.", answer: "Replace" },
+      { q: "10. A __________ is a grid made of rows and columns that organizes data neatly in a document.", answer: "Table" },
+      { q: "11. The command used to combine two or more cells into one is called __________.", answer: "Merge Cells" },
+      { q: "12. To divide one cell into smaller ones, use the __________ command.", answer: "Split Cells" },
+      { q: "13. The tab that contains the Table and Picture options is called the __________ tab.", answer: "Insert" },
+      { q: "14. A __________ in Word allows users to jump to another document, a webpage, or another part of the same document.", answer: "Hyperlink" },
+      { q: "15. When text is too long for one page, Word automatically moves it to the next page. This is called __________.", answer: "Word wrap" },
+      { q: "16. The __________ tool checks your spelling and grammar mistakes in a document.", answer: "Spelling and Grammar checker" },
+      { q: "17. To make text bold, italic, or underlined, you use the tools in the __________ group.", answer: "Font" },
+      { q: "18. You can change the font style and size from the __________ tab.", answer: "Home" },
+      { q: "19. To select all the text in a document, press __________ + A on the keyboard.", answer: "Ctrl" },
+      { q: "20. The part of the screen where you type your text is called the __________ area.", answer: "Document" }
+    ];
+
+    // Section B Theory Questions
+    const theoryQuestions = [
+      {
+        q: "1. Name any three commands found in the Editing group on the Home tab.",
+        expectedKeywords: ["find", "replace", "select"]
+      },
+      {
+        q: "2. Mention two types of places a hyperlink can lead to.",
+        expectedKeywords: ["webpage", "document", "email", "file"]
+      },
+      {
+        q: "3. Explain the difference between Cut and Copy.",
+        expectedKeywords: ["cut", "remove", "copy", "duplicate", "original"]
+      }
+    ];
+
+    // Function to check theory answers
+    function checkTheoryAnswer(userAnswer, expectedKeywords) {
+      userAnswer = userAnswer.toLowerCase();
+      let score = 0;
+      expectedKeywords.forEach(keyword => {
+        if (userAnswer.includes(keyword)) score++;
+      });
+      return score >= Math.ceil(expectedKeywords.length / 2);
     }
-    
+
+    window.onload = () => {
+      const quizContainer = document.getElementById("quiz");
+      const theoryContainer = document.getElementById("theory");
+      const submitBtn = document.getElementById("submit");
+      const nameInput = document.getElementById("studentName");
+
+      // Render Section A
+      quizData.forEach((item, index) => {
+        quizContainer.innerHTML += `
+          <div class="question">
+            <p>${item.q}</p>
+            <input type="text" id="q${index}" placeholder="Your answer here..." />
+          </div>`;
+      });
+
+      // Render Section B
+      theoryQuestions.forEach((item, index) => {
+        theoryContainer.innerHTML += `
+          <div class="question">
+            <p>${item.q}</p>
+            <textarea id="t${index}" rows="3" placeholder="Type your answer..."></textarea>
+          </div>`;
+      });
+
+      // Handle Submit
+      submitBtn.onclick = () => {
+        const studentName = nameInput.value.trim();
+        if (!studentName) {
+          alert("Please enter your name before submitting.");
+          return;
+        }
+
+        let sectionAScore = 0;
+        let sectionBScore = 0;
+
+        // Section A Scoring
+        quizData.forEach((item, index) => {
+          const ans = document.getElementById(`q${index}`).value.trim().toLowerCase();
+          if (ans.includes(item.answer.toLowerCase())) sectionAScore++;
+        });
+
+        // Section B Scoring
+        theoryQuestions.forEach((item, index) => {
+          const ans = document.getElementById(`t${index}`).value.trim();
+          if (checkTheoryAnswer(ans, item.expectedKeywords)) sectionBScore += 2; // 2 marks each
+        });
+
+        const totalScore = sectionAScore + sectionBScore;
+
+        // Save to Firebase
+        const quizRef = ref(db, "quizResults");
+        const newEntry = push(quizRef);
+        set(newEntry, {
+          name: studentName,
+          sectionA: sectionAScore,
+          sectionB: sectionBScore,
+          total: totalScore,
+          date: new Date().toLocaleString()
+        });
+
+        alert(`✅ ${studentName}, your quiz is submitted!\n\nSection A: ${sectionAScore}\nSection B: ${sectionBScore}\nTotal: ${totalScore}`);
+      };
+    };
+  </script>
+
+  <style>
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      min-height: 100vh;
+      font-family: "Poppins", sans-serif;
+      background: #f4f6fa;
       padding: 20px;
     }
-    
-    .container {
-      width: 90%;
-      max-width: 900px;
-      margin: 0 auto;
-      background: rgba(255, 255, 255, 0.95);
-      padding: 30px;
-      border-radius: 20px;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-    }
-    
     h1 {
       text-align: center;
-      color: #2c3e50;
-      margin-bottom: 30px;
-      font-size: 2.5em;
-      font-weight: 700;
-      text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+      color: #2b4d90;
     }
-    
-    h2 {
-      color: #34495e;
-      margin: 25px 0 20px 0;
-      font-size: 1.5em;
-      padding-bottom: 10px;
-      border-bottom: 3px solid #3498db;
-      position: relative;
-    }
-    
-    h2::after {
-      content: '';
-      position: absolute;
-      bottom: -3px;
-      left: 0;
-      width: 50px;
-      height: 3px;
-      background: #e74c3c;
-    }
-    
-    .question {
-      margin: 20px 0;
-      padding: 20px;
-      background: rgba(255, 255, 255, 0.7);
-      border-radius: 12px;
-      border-left: 4px solid #3498db;
-      transition: all 0.3s ease;
-    }
-    
-    .question:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-    }
-    
-    .question p {
-      font-weight: 600;
-      color: #2c3e50;
-      margin-bottom: 10px;
-      font-size: 1.1em;
-    }
-    
-    button {
-      background: linear-gradient(135deg, #3498db, #2980b9);
-      color: white;
-      border: none;
-      padding: 15px 30px;
-      border-radius: 50px;
-      cursor: pointer;
-      margin-top: 30px;
-      display: block;
-      width: 100%;
-      font-size: 1.1em;
-      font-weight: 600;
-      transition: all 0.3s ease;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-    
-    button:hover {
-      background: linear-gradient(135deg, #2980b9, #3498db);
-      transform: translateY(-2px);
-      box-shadow: 0 10px 30px rgba(52, 152, 219, 0.4);
-    }
-    
-    button:disabled {
-      background: #95a5a6;
-      cursor: not-allowed;
-      transform: none;
-      box-shadow: none;
-    }
-    
-    button:active {
-      transform: translateY(0);
-    }
-    
-    textarea {
-      width: 100%;
-      height: 100px;
-      border-radius: 10px;
-      border: 2px solid #bdc3c7;
-      padding: 15px;
-      font-family: inherit;
-      font-size: 1em;
-      resize: vertical;
-      transition: border-color 0.3s ease;
-    }
-    
-    textarea:focus {
-      outline: none;
-      border-color: #3498db;
-      box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
-    }
-    
-    input[type="text"] {
-      width: 100%;
-      padding: 15px;
-      border-radius: 10px;
-      border: 2px solid #bdc3c7;
-      margin-bottom: 25px;
-      font-size: 1.1em;
-      transition: border-color 0.3s ease;
-    }
-    
-    input[type="text"]:focus {
-      outline: none;
-      border-color: #3498db;
-      box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
-    }
-    
-    .fill-blank-input {
-      display: inline-block;
-      width: 200px;
-      padding: 8px 12px;
-      border: none;
-      border-bottom: 2px solid #3498db;
-      background: transparent;
-      font-size: 1em;
-      margin: 0 5px;
-      text-align: center;
-      transition: border-color 0.3s ease;
-    }
-    
-    .fill-blank-input:focus {
-      outline: none;
-      border-bottom-color: #e74c3c;
-    }
-    
-    .result {
-      text-align: center;
-      margin-top: 30px;
-      padding: 25px;
-      background: linear-gradient(135deg, #2ecc71, #27ae60);
-      color: white;
-      border-radius: 15px;
-      font-size: 1.2em;
+    .section-title {
       font-weight: bold;
-      box-shadow: 0 10px 30px rgba(46, 204, 113, 0.3);
+      color: #1f3a7d;
+      margin-top: 20px;
     }
-    
-    .feedback {
-      margin-top: 12px;
+    .question {
+      background: white;
       padding: 10px;
       border-radius: 8px;
-      font-size: 0.95em;
-      animation: fadeIn 0.5s ease;
+      margin-bottom: 10px;
+      box-shadow: 0 0 3px rgba(0,0,0,0.1);
     }
-    
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    
-    .correct {
-      background: rgba(46, 204, 113, 0.1);
-      color: #27ae60;
-      border-left: 4px solid #27ae60;
-    }
-    
-    .wrong {
-      background: rgba(231, 76, 60, 0.1);
-      color: #c0392b;
-      border-left: 4px solid #c0392b;
-    }
-    
-    .expected {
-      color: #7f8c8d;
-      font-style: italic;
-      margin-top: 8px;
+    input, textarea {
+      width: 100%;
       padding: 8px;
-      background: rgba(127, 140, 141, 0.1);
+      border: 1px solid #ccc;
       border-radius: 6px;
     }
-    
-    .name-label {
-      font-weight: 600;
-      color: #2c3e50;
-      margin-bottom: 10px;
+    button {
+      background: #2b4d90;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
       display: block;
-      font-size: 1.1em;
+      margin: 20px auto;
     }
-    
-    .loading {
-      opacity: 0.7;
-      pointer-events: none;
-    }
-    
-    .success-message {
-      background: linear-gradient(135deg, #2ecc71, #27ae60);
-      color: white;
-      padding: 15px;
-      border-radius: 10px;
-      margin-top: 20px;
-      text-align: center;
-      font-weight: 600;
-    }
-    
-    .error-message {
-      background: linear-gradient(135deg, #e74c3c, #c0392b);
-      color: white;
-      padding: 15px;
-      border-radius: 10px;
-      margin-top: 20px;
-      text-align: center;
-      font-weight: 600;
-    }
-
-    .warning-message {
-      background: linear-gradient(135deg, #f39c12, #e67e22);
-      color: white;
-      padding: 20px;
-      border-radius: 15px;
-      margin-bottom: 20px;
-      text-align: center;
-      font-weight: 600;
-      font-size: 1.1em;
-    }
-
-    .countdown {
-      font-size: 1.2em;
-      font-weight: bold;
-      margin-top: 10px;
-    }
-
-    .quiz-disabled {
-      opacity: 0.5;
-      pointer-events: none;
-    }
-
-    /* Timer Styles */
-    .timer-container {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      background: rgba(255, 255, 255, 0.95);
-      padding: 15px 20px;
-      border-radius: 15px;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.2);
-      backdrop-filter: blur(10px);
-      z-index: 1000;
-      min-width: 200px;
-      text-align: center;
-    }
-
-    .timer-display {
-      font-size: 1.8em;
-      font-weight: bold;
-      color: #2c3e50;
-      margin-bottom: 5px;
-    }
-
-    .timer-label {
-      font-size: 0.9em;
-      color: #7f8c8d;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    .timer-warning {
-      color: #e74c3c !important;
-      animation: pulse 1s infinite;
-    }
-
-    .timer-critical {
-      color: #c0392b !important;
-      animation: blink 0.5s infinite;
-    }
-
-    @keyframes pulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.05); }
-      100% { transform: scale(1); }
-    }
-
-    @keyframes blink {
-      0%, 50% { opacity: 1; }
-      51%, 100% { opacity: 0.3; }
-    }
-
-    .start-screen {
-      text-align: center;
-      padding: 40px;
-    }
-
-    .start-button {
-      background: linear-gradient(135deg, #27ae60, #2ecc71);
-      font-size: 1.3em;
-      padding: 20px 40px;
-      margin-top: 20px;
-    }
-
-    .start-button:hover {
-      background: linear-gradient(135deg, #2ecc71, #27ae60);
-    }
-
-    .quiz-instructions {
-      background: rgba(52, 152, 219, 0.1);
-      border: 2px solid #3498db;
-      border-radius: 15px;
-      padding: 25px;
-      margin-bottom: 30px;
-    }
-
-    .quiz-instructions h3 {
-      color: #2c3e50;
-      margin-bottom: 15px;
-      font-size: 1.3em;
-    }
-
-    .quiz-instructions ul {
-      text-align: left;
-      color: #34495e;
-      line-height: 1.6;
-    }
-
-    .quiz-instructions li {
-      margin-bottom: 8px;
-    }
-
-    .hidden {
-      display: none;
+    #studentName {
+      display: block;
+      margin: 0 auto 20px auto;
+      padding: 10px;
+      width: 60%;
+      font-size: 16px;
+      border-radius: 6px;
+      border: 1px solid #aaa;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>📝 Word Processing Quiz</h1>
-    
-    <!-- Timer Display -->
-    <div id="timerContainer" class="timer-container hidden">
-      <div id="timerDisplay" class="timer-display">40:00</div>
-      <div class="timer-label">Time Remaining</div>
-    </div>
+  <h1>Word Processing Quiz</h1>
+  <input type="text" id="studentName" placeholder="Enter your full name" />
+  
+  <h2 class="section-title">Section A – Fill in the Blanks</h2>
+  <div id="quiz"></div>
 
-    <!-- Start Screen -->
-    <div id="startScreen" class="start-screen">
-      <div class="quiz-instructions">
-        <h3>📋 Quiz Instructions</h3>
-        <ul>
-          <li>⏱️ <strong>Time Limit:</strong> 40 minutes</li>
-          <li>📝 <strong>Section A:</strong> 20 fill-in-the-blank questions (1 mark each)</li>
-          <li>📖 <strong>Section B:</strong> 3 theory questions (10 marks each)</li>
-          <li>💾 <strong>Auto-Save:</strong> Quiz will auto-submit when time expires</li>
-          <li>⚠️ <strong>Warning:</strong> Timer starts immediately when you click "Start Quiz"</li>
-          <li>🔄 <strong>Cooldown:</strong> You can retake after 6 hours</li>
-        </ul>
-      </div>
-      
-      <label class="name-label">Enter your full name to begin:</label>
-      <input type="text" id="startStudentName" placeholder="Type your name here..." required>
-      
-      <button type="button" id="startButton" class="start-button" onclick="startQuiz()">
-        🚀 Start Quiz (40 Minutes)
-      </button>
-    </div>
-    
-    <div id="warningArea" class="warning-message" style="display: none;">
-      <p>⏰ You have already taken this quiz recently.</p>
-      <p>You can take it again in: <span id="countdown" class="countdown"></span></p>
-    </div>
+  <h2 class="section-title">Section B – Theory Questions</h2>
+  <div id="theory"></div>
 
-    <!-- Quiz Form -->
-    <form id="quizForm" class="hidden">
-      <h2>Section A: Fill in the Blanks (1 mark each)</h2>
-      <div id="sectionA"></div>
-
-      <h2>Section B: Theory Questions (10 marks each)</h2>
-      <div id="sectionB"></div>
-
-      <button type="button" id="submitBtn" onclick="submitQuiz()">Submit Quiz</button>
-    </form>
-    
-    <div class="result" id="result" style="display: none;"></div>
-  </div>
-
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import { getDatabase, ref, push, set, query, orderByChild, equalTo, get } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyCY9oturc9bql33PSUkfNUptcHXla2RWN4",
-      authDomain: "tracha-xx.firebaseapp.com",
-      databaseURL: "https://tracha-xx-default-rtdb.firebaseio.com",
-      projectId: "tracha-xx",
-      storageBucket: "tracha-xx.appspot.com",
-      messagingSenderId: "914440906583",
-      appId: "1:914440906583:web:123abc456xyz"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
-
-    const COOLDOWN_HOURS = 6;
-    const QUIZ_DURATION = 40 * 60; // 40 minutes in seconds
-    let countdownInterval;
-    let quizTimer;
-    let timeRemaining = QUIZ_DURATION;
-    let quizStarted = false;
-    let currentStudentName = "";
-
-    const quizData = [
-      { section: "A", q: "1. Microsoft Word is an example of a __________ software.", answer: "word processing" },
-      { section: "A", q: "2. The part of Microsoft Word that shows the file name and program name is called the __________ bar.", answer: "title" },
-      { section: "A", q: "3. The blinking vertical line that shows where text will appear when you type is called the __________.", answer: "cursor" },
-      { section: "A", q: "4. The group that contains the Cut, Copy, and Paste commands is the __________ group.", answer: "clipboard" },
-      { section: "A", q: "5. To remove a word or sentence from one place and insert it somewhere else, use the __________ command.", answer: "cut" },
-      { section: "A", q: "6. The __________ command makes a duplicate of the selected text or object.", answer: "copy" },
-      { section: "A", q: "7. To place copied or cut text into a new position, use the __________ command.", answer: "paste" },
-      { section: "A", q: "8. The feature that allows you to search for a specific word or phrase in a document is called __________.", answer: "find" },
-      { section: "A", q: "9. The feature used to automatically change a word or phrase in a document is called __________.", answer: "replace" },
-      { section: "A", q: "10. A __________ is a grid made of rows and columns that organizes data neatly in a document.", answer: "table" },
-      { section: "A", q: "11. The command used to combine two or more cells into one is called __________.", answer: "merge cells" },
-      { section: "A", q: "12. To divide one cell into smaller ones, use the __________ command.", answer: "split cells" },
-      { section: "A", q: "13. The tab that contains the Table and Picture options is called the __________ tab.", answer: "insert" },
-      { section: "A", q: "14. A __________ in Word allows users to jump to another document, a webpage, or another part of the same document.", answer: "hyperlink" },
-      { section: "A", q: "15. When text is too long for one page, Word automatically moves it to the next page. This is called __________.", answer: "word wrap" },
-      { section: "A", q: "16. The __________ tool checks your spelling and grammar mistakes in a document.", answer: "spelling and grammar checker" },
-      { section: "A", q: "17. To make text bold, italic, or underlined, you use the tools in the __________ group.", answer: "font" },
-      { section: "A", q: "18. You can change the font style and size from the __________ tab.", answer: "home" },
-      { section: "A", q: "19. To select all the text in a document, press __________ + A on the keyboard.", answer: "ctrl" },
-      { section: "A", q: "20. The part of the screen where you type your text is called the __________ area.", answer: "document" }
-    ];
-
-    const theoryData = [
-      { q: "1. Name any three commands found in the Editing group on the Home tab.", expected: ["find", "replace", "select"] },
-      { q: "2. Mention two types of places a hyperlink can lead to.", expected: ["webpage", "document", "email", "bookmark"] },
-      { q: "3. Explain the difference between Cut and Copy.", expected: ["cut removes", "copy duplicates", "cut moves", "copy leaves original"] }
-    ];
-
-    const sectionAContainer = document.getElementById("sectionA");
-    const sectionBContainer = document.getElementById("sectionB");
-    const warningArea = document.getElementById("warningArea");
-    const quizForm = document.getElementById("quizForm");
-    const submitBtn = document.getElementById("submitBtn");
-    const countdownSpan = document.getElementById("countdown");
-    const startScreen = document.getElementById("startScreen");
-    const timerContainer = document.getElementById("timerContainer");
-    const timerDisplay = document.getElementById("timerDisplay");
-
-    // Generate Section A (Fill in the blanks)
-    quizData.forEach((item, index) => {
-      const div = document.createElement("div");
-      div.className = "question";
-      
-      const questionText = item.q.replace(/__________/g, '<input type="text" class="fill-blank-input" id="a' + index + '" placeholder="Answer">');
-      
-      div.innerHTML = `<p>${questionText}</p>`;
-      sectionAContainer.appendChild(div);
-    });
-
-    // Generate Section B (Theory questions)
-    theoryData.forEach((item, index) => {
-      const div = document.createElement("div");
-      div.className = "question";
-      div.innerHTML = `<p>${item.q}</p><textarea id="t${index}" placeholder="Type your detailed answer here..."></textarea>`;
-      sectionBContainer.appendChild(div);
-    });
-
-    // Timer Functions
-    function formatTime(seconds) {
-      const minutes = Math.floor(seconds / 60);
-      const remainingSeconds = seconds % 60;
-      return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
-    }
-
-    function updateTimerDisplay() {
-      timerDisplay.textContent = formatTime(timeRemaining);
-      
-      // Change color based on time remaining
-      if (timeRemaining <= 300) { // 5 minutes
-        timerDisplay.className = "timer-display timer-critical";
-      } else if (timeRemaining <= 600) { // 10 minutes
-        timerDisplay.className = "timer-display timer-warning";
-      } else {
-        timerDisplay.className = "timer-display";
-      }
-    }
-
-    function startTimer() {
-      updateTimerDisplay();
-      quizTimer = setInterval(() => {
-        timeRemaining--;
-        updateTimerDisplay();
-        
-        if (timeRemaining <= 0) {
-          clearInterval(quizTimer);
-          autoSubmitQuiz();
-        }
-      }, 1000);
-    }
-
-    function stopTimer() {
-      if (quizTimer) {
-        clearInterval(quizTimer);
-      }
-    }
-
-    // Check if student can take quiz
-    async function checkStudentEligibility(studentName) {
-      try {
-        const studentQuery = query(
-          ref(db, "quizScores"),
-          orderByChild("name"),
-          equalTo(studentName.toLowerCase())
-        );
-        
-        const snapshot = await get(studentQuery);
-        
-        if (!snapshot.exists()) {
-          return { canTake: true };
-        }
-
-        const submissions = Object.values(snapshot.val());
-        const lastSubmission = submissions.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))[0];
-        
-        const lastSubmissionTime = new Date(lastSubmission.timestamp);
-        const now = new Date();
-        const timeDiff = now - lastSubmissionTime;
-        const hoursDiff = timeDiff / (1000 * 60 * 60);
-
-        if (hoursDiff < COOLDOWN_HOURS) {
-          const remainingTime = (COOLDOWN_HOURS * 60 * 60 * 1000) - timeDiff;
-          return { 
-            canTake: false, 
-            remainingTime: remainingTime,
-            lastScore: lastSubmission.totalScore || 0,
-            lastPercentage: lastSubmission.percentage || 0
-          };
-        }
-
-        return { canTake: true };
-      } catch (error) {
-        console.error("Error checking eligibility:", error);
-        return { canTake: true }; // Allow quiz if there's an error
-      }
-    }
-
-    // Start countdown timer for cooldown
-    function startCooldownTimer(remainingTime) {
-      countdownInterval = setInterval(() => {
-        const hours = Math.floor(remainingTime / (1000 * 60 * 60));
-        const minutes = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((remainingTime % (1000 * 60)) / 1000);
-
-        countdownSpan.textContent = `${hours}h ${minutes}m ${seconds}s`;
-
-        remainingTime -= 1000;
-
-        if (remainingTime <= 0) {
-          clearInterval(countdownInterval);
-          location.reload(); // Refresh page when cooldown ends
-        }
-      }, 1000);
-    }
-
-    // Start Quiz Function
-    window.startQuiz = async function() {
-      const studentName = document.getElementById("startStudentName").value.trim();
-      if (!studentName) {
-        alert("Please enter your name before starting the quiz.");
-        return;
-      }
-
-      // Check eligibility
-      const eligibility = await checkStudentEligibility(studentName);
-      
-      if (!eligibility.canTake) {
-        startScreen.classList.add("hidden");
-        warningArea.style.display = "block";
-        warningArea.innerHTML = `
-          <p>⏰ You have already taken this quiz recently.</p>
-          <p>Last score: ${eligibility.lastScore}/50 (${eligibility.lastPercentage}%)</p>
-          <p>You can take it again in: <span id="countdown" class="countdown"></span></p>
-        `;
-        
-        startCooldownTimer(eligibility.remainingTime);
-        return;
-      }
-
-      // Start the quiz
-      currentStudentName = studentName;
-      quizStarted = true;
-      
-      // Hide start screen, show quiz and timer
-      startScreen.classList.add("hidden");
-      quizForm.classList.remove("hidden");
-      timerContainer.classList.remove("hidden");
-      
-      // Start the timer
-      startTimer();
-      
-      // Prevent page refresh/close
-      window.addEventListener('beforeunload', function (e) {
-        if (quizStarted) {
-          e.preventDefault();
-          e.returnValue = '';
-        }
-      });
-    }
-
-    function checkTheoryAnswer(answer, expectedKeywords) {
-      const lowerAns = answer.toLowerCase();
-      let score = 0;
-      expectedKeywords.forEach(keyword => {
-        if (lowerAns.includes(keyword.toLowerCase())) score++;
-      });
-      const totalPossible = expectedKeywords.length;
-      return Math.min(10, Math.round((score / totalPossible) * 10));
-    }
-
-    function calculateScores() {
-      let scoreA = 0;
-      let scoreB = 0;
-
-      // Check Section A answers
-      quizData.forEach((item, index) => {
-        const userAnswer = document.getElementById(`a${index}`).value.trim().toLowerCase();
-        const correctAnswer = item.answer.toLowerCase();
-        const questionDiv = sectionAContainer.children[index];
-        
-        // Remove existing feedback
-        const existingFeedback = questionDiv.querySelector('.feedback');
-        if (existingFeedback) existingFeedback.remove();
-        
-        const feedbackDiv = document.createElement("div");
-        feedbackDiv.className = "feedback";
-
-        if (userAnswer === correctAnswer || 
-            (correctAnswer.includes(userAnswer) && userAnswer.length > 2) ||
-            (userAnswer.includes(correctAnswer) && correctAnswer.length > 2)) {
-          scoreA++;
-          feedbackDiv.className += " correct";
-          feedbackDiv.innerHTML = `✅ Correct!`;
-        } else {
-          feedbackDiv.className += " wrong";
-          feedbackDiv.innerHTML = `❌ Incorrect. Correct answer: <strong>${item.answer}</strong>`;
-        }
-        questionDiv.appendChild(feedbackDiv);
-      });
-
-      // Check Section B answers
-      theoryData.forEach((item, index) => {
-        const ans = document.getElementById(`t${index}`).value.trim();
-        const questionScore = checkTheoryAnswer(ans, item.expected);
-        scoreB += questionScore;
-        
-        const div = sectionBContainer.children[index];
-        
-        // Remove existing feedback
-        const existingExpected = div.querySelector('.expected');
-        if (existingExpected) existingExpected.remove();
-
-        const expectedDiv = document.createElement("div");
-        expectedDiv.className = "expected";
-        expectedDiv.innerHTML = `<strong>Score: ${questionScore}/10</strong><br><strong>Expected keywords:</strong> ${item.expected.join(", ")}`;
-        div.appendChild(expectedDiv);
-      });
-
-      return { scoreA, scoreB };
-    }
-
-    async function saveQuizResults(scoreA, scoreB, totalScore, percentage, isAutoSubmit = false) {
-      try {
-        const newRef = push(ref(db, "quizScores"));
-        await set(newRef, {
-          name: currentStudentName.toLowerCase(),
-          displayName: currentStudentName,
-          sectionA: scoreA,
-          sectionB: scoreB,
-          totalScore: totalScore,
-          percentage: percentage,
-          timeUsed: QUIZ_DURATION - timeRemaining,
-          autoSubmitted: isAutoSubmit,
-          timestamp: new Date().toISOString(),
-          date: new Date().toLocaleDateString()
-        });
-        return true;
-      } catch (err) {
-        console.error('Firebase error:', err);
-        return false;
-      }
-    }
-
-    function displayResults(scoreA, scoreB, totalScore, percentage, isAutoSubmit = false) {
-      const resultDiv = document.getElementById("result");
-      resultDiv.style.display = "block";
-      
-      const timeUsed = QUIZ_DURATION - timeRemaining;
-      const timeUsedFormatted = formatTime(timeUsed);
-      
-      resultDiv.innerHTML = `
-        <h3>📊 Quiz Results ${isAutoSubmit ? '(Auto-Submitted)' : ''}</h3>
-        <p>Section A (Fill in the blanks): ${scoreA}/20 marks</p>
-        <p>Section B (Theory): ${scoreB}/30 marks</p>
-        <p><strong>Total Score: ${totalScore}/50 marks (${percentage}%)</strong></p>
-        <p>⏱️ Time Used: ${timeUsedFormatted}</p>
-        <p>${percentage >= 70 ? '🎉 Excellent work!' : percentage >= 50 ? '👍 Good job!' : '📚 Keep studying!'}</p>
-      `;
-
-      // Scroll to results
-      resultDiv.scrollIntoView({ behavior: 'smooth' });
-    }
-
-    // Auto-submit when time expires
-    async function autoSubmitQuiz() {
-      if (!quizStarted) return;
-      
-      quizStarted = false;
-      stopTimer();
-      
-      // Hide timer
-      timerContainer.classList.add("hidden");
-      
-      // Disable form
-      quizForm.classList.add("quiz-disabled");
-      submitBtn.disabled = true;
-      submitBtn.textContent = "Time Expired - Auto Submitted";
-      
-      const { scoreA, scoreB } = calculateScores();
-      const totalScore = scoreA + scoreB;
-      const percentage = Math.round((totalScore / 50) * 100);
-      
-      displayResults(scoreA, scoreB, totalScore, percentage, true);
-      
-      const saved = await saveQuizResults(scoreA, scoreB, totalScore, percentage, true);
-      
-      const resultDiv = document.getElementById("result");
-      if (saved) {
-        const successDiv = document.createElement('div');
-        successDiv.className = 'success-message';
-        successDiv.innerHTML = '✅ Quiz auto-submitted and score saved successfully!<br>⏰ You can take the quiz again after 6 hours.';
-        resultDiv.appendChild(successDiv);
-      } else {
-        const errorDiv = document.createElement('div');
-        errorDiv.className = 'error-message';
-        errorDiv.innerHTML = '⚠️ Quiz completed but could not save to database. Please contact your instructor.';
-        resultDiv.appendChild(errorDiv);
-      }
-    }
-
-    // Manual submit
-    window.submitQuiz = async function() {
-      if (!quizStarted) return;
-      
-      if (!confirm("Are you sure you want to submit your quiz? You cannot change your answers after submission.")) {
-        return;
-      }
-      
-      quizStarted = false;
-      stopTimer();
-      
-      // Hide timer
-      timerContainer.classList.add("hidden");
-      
-      // Add loading state
-      const originalText = submitBtn.textContent;
-      submitBtn.textContent = 'Submitting...';
-      submitBtn.classList.add('loading');
-
-      const { scoreA, scoreB } = calculateScores();
-      const totalScore = scoreA + scoreB;
-      const percentage = Math.round((totalScore / 50) * 100);
-      
-      displayResults(scoreA, scoreB, totalScore, percentage, false);
-      
-      const saved = await saveQuizResults(scoreA, scoreB, totalScore, percentage, false);
-      
-      const resultDiv = document.getElementById("result");
-      if (saved) {
-        const successDiv = document.createElement('div');
-        successDiv.className = 'success-message';
-        successDiv.innerHTML = '✅ Quiz submitted and score saved successfully!<br>⏰ You can take the quiz again after 6 hours.';
-        resultDiv.appendChild(successDiv);
-      } else {
-        const errorDiv = document.createElement('div');
-        errorDiv.className = 'error-message';
-        errorDiv.innerHTML = '⚠️ Quiz completed but could not save to database. Please contact your instructor.';
-        resultDiv.appendChild(errorDiv);
-      }
-      
-      // Disable form after submission
-      quizForm.classList.add("quiz-disabled");
-      submitBtn.disabled = true;
-      submitBtn.textContent = "Quiz Completed";
-    }
-  </script>
+  <button id="submit">Submit Quiz</button>
 </body>
 </html>
