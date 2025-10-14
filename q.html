@@ -265,21 +265,141 @@
       opacity: 0.5;
       pointer-events: none;
     }
+
+    /* Timer Styles */
+    .timer-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: rgba(255, 255, 255, 0.95);
+      padding: 15px 20px;
+      border-radius: 15px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+      backdrop-filter: blur(10px);
+      z-index: 1000;
+      min-width: 200px;
+      text-align: center;
+    }
+
+    .timer-display {
+      font-size: 1.8em;
+      font-weight: bold;
+      color: #2c3e50;
+      margin-bottom: 5px;
+    }
+
+    .timer-label {
+      font-size: 0.9em;
+      color: #7f8c8d;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .timer-warning {
+      color: #e74c3c !important;
+      animation: pulse 1s infinite;
+    }
+
+    .timer-critical {
+      color: #c0392b !important;
+      animation: blink 0.5s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes blink {
+      0%, 50% { opacity: 1; }
+      51%, 100% { opacity: 0.3; }
+    }
+
+    .start-screen {
+      text-align: center;
+      padding: 40px;
+    }
+
+    .start-button {
+      background: linear-gradient(135deg, #27ae60, #2ecc71);
+      font-size: 1.3em;
+      padding: 20px 40px;
+      margin-top: 20px;
+    }
+
+    .start-button:hover {
+      background: linear-gradient(135deg, #2ecc71, #27ae60);
+    }
+
+    .quiz-instructions {
+      background: rgba(52, 152, 219, 0.1);
+      border: 2px solid #3498db;
+      border-radius: 15px;
+      padding: 25px;
+      margin-bottom: 30px;
+    }
+
+    .quiz-instructions h3 {
+      color: #2c3e50;
+      margin-bottom: 15px;
+      font-size: 1.3em;
+    }
+
+    .quiz-instructions ul {
+      text-align: left;
+      color: #34495e;
+      line-height: 1.6;
+    }
+
+    .quiz-instructions li {
+      margin-bottom: 8px;
+    }
+
+    .hidden {
+      display: none;
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>📝 Word Processing Quiz</h1>
     
+    <!-- Timer Display -->
+    <div id="timerContainer" class="timer-container hidden">
+      <div id="timerDisplay" class="timer-display">40:00</div>
+      <div class="timer-label">Time Remaining</div>
+    </div>
+
+    <!-- Start Screen -->
+    <div id="startScreen" class="start-screen">
+      <div class="quiz-instructions">
+        <h3>📋 Quiz Instructions</h3>
+        <ul>
+          <li>⏱️ <strong>Time Limit:</strong> 40 minutes</li>
+          <li>📝 <strong>Section A:</strong> 20 fill-in-the-blank questions (1 mark each)</li>
+          <li>📖 <strong>Section B:</strong> 3 theory questions (10 marks each)</li>
+          <li>💾 <strong>Auto-Save:</strong> Quiz will auto-submit when time expires</li>
+          <li>⚠️ <strong>Warning:</strong> Timer starts immediately when you click "Start Quiz"</li>
+          <li>🔄 <strong>Cooldown:</strong> You can retake after 6 hours</li>
+        </ul>
+      </div>
+      
+      <label class="name-label">Enter your full name to begin:</label>
+      <input type="text" id="startStudentName" placeholder="Type your name here..." required>
+      
+      <button type="button" id="startButton" class="start-button" onclick="startQuiz()">
+        🚀 Start Quiz (40 Minutes)
+      </button>
+    </div>
+    
     <div id="warningArea" class="warning-message" style="display: none;">
       <p>⏰ You have already taken this quiz recently.</p>
       <p>You can take it again in: <span id="countdown" class="countdown"></span></p>
     </div>
 
-    <form id="quizForm">
-      <label class="name-label">Enter your full name:</label>
-      <input type="text" id="studentName" placeholder="Type your name here..." required>
-
+    <!-- Quiz Form -->
+    <form id="quizForm" class="hidden">
       <h2>Section A: Fill in the Blanks (1 mark each)</h2>
       <div id="sectionA"></div>
 
@@ -288,6 +408,7 @@
 
       <button type="button" id="submitBtn" onclick="submitQuiz()">Submit Quiz</button>
     </form>
+    
     <div class="result" id="result" style="display: none;"></div>
   </div>
 
@@ -309,7 +430,12 @@
     const db = getDatabase(app);
 
     const COOLDOWN_HOURS = 6;
+    const QUIZ_DURATION = 40 * 60; // 40 minutes in seconds
     let countdownInterval;
+    let quizTimer;
+    let timeRemaining = QUIZ_DURATION;
+    let quizStarted = false;
+    let currentStudentName = "";
 
     const quizData = [
       { section: "A", q: "1. Microsoft Word is an example of a __________ software.", answer: "word processing" },
@@ -346,6 +472,9 @@
     const quizForm = document.getElementById("quizForm");
     const submitBtn = document.getElementById("submitBtn");
     const countdownSpan = document.getElementById("countdown");
+    const startScreen = document.getElementById("startScreen");
+    const timerContainer = document.getElementById("timerContainer");
+    const timerDisplay = document.getElementById("timerDisplay");
 
     // Generate Section A (Fill in the blanks)
     quizData.forEach((item, index) => {
@@ -365,6 +494,45 @@
       div.innerHTML = `<p>${item.q}</p><textarea id="t${index}" placeholder="Type your detailed answer here..."></textarea>`;
       sectionBContainer.appendChild(div);
     });
+
+    // Timer Functions
+    function formatTime(seconds) {
+      const minutes = Math.floor(seconds / 60);
+      const remainingSeconds = seconds % 60;
+      return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+    }
+
+    function updateTimerDisplay() {
+      timerDisplay.textContent = formatTime(timeRemaining);
+      
+      // Change color based on time remaining
+      if (timeRemaining <= 300) { // 5 minutes
+        timerDisplay.className = "timer-display timer-critical";
+      } else if (timeRemaining <= 600) { // 10 minutes
+        timerDisplay.className = "timer-display timer-warning";
+      } else {
+        timerDisplay.className = "timer-display";
+      }
+    }
+
+    function startTimer() {
+      updateTimerDisplay();
+      quizTimer = setInterval(() => {
+        timeRemaining--;
+        updateTimerDisplay();
+        
+        if (timeRemaining <= 0) {
+          clearInterval(quizTimer);
+          autoSubmitQuiz();
+        }
+      }, 1000);
+    }
+
+    function stopTimer() {
+      if (quizTimer) {
+        clearInterval(quizTimer);
+      }
+    }
 
     // Check if student can take quiz
     async function checkStudentEligibility(studentName) {
@@ -406,8 +574,8 @@
       }
     }
 
-    // Start countdown timer
-    function startCountdown(remainingTime) {
+    // Start countdown timer for cooldown
+    function startCooldownTimer(remainingTime) {
       countdownInterval = setInterval(() => {
         const hours = Math.floor(remainingTime / (1000 * 60 * 60));
         const minutes = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60));
@@ -424,14 +592,19 @@
       }, 1000);
     }
 
-    // Check eligibility when name is entered
-    document.getElementById("studentName").addEventListener("blur", async function() {
-      const studentName = this.value.trim();
-      if (!studentName) return;
+    // Start Quiz Function
+    window.startQuiz = async function() {
+      const studentName = document.getElementById("startStudentName").value.trim();
+      if (!studentName) {
+        alert("Please enter your name before starting the quiz.");
+        return;
+      }
 
+      // Check eligibility
       const eligibility = await checkStudentEligibility(studentName);
       
       if (!eligibility.canTake) {
+        startScreen.classList.add("hidden");
         warningArea.style.display = "block";
         warningArea.innerHTML = `
           <p>⏰ You have already taken this quiz recently.</p>
@@ -439,22 +612,30 @@
           <p>You can take it again in: <span id="countdown" class="countdown"></span></p>
         `;
         
-        quizForm.classList.add("quiz-disabled");
-        submitBtn.disabled = true;
-        submitBtn.textContent = "Quiz Locked - Wait for Cooldown";
-        
-        startCountdown(eligibility.remainingTime);
-      } else {
-        warningArea.style.display = "none";
-        quizForm.classList.remove("quiz-disabled");
-        submitBtn.disabled = false;
-        submitBtn.textContent = "Submit Quiz";
-        
-        if (countdownInterval) {
-          clearInterval(countdownInterval);
-        }
+        startCooldownTimer(eligibility.remainingTime);
+        return;
       }
-    });
+
+      // Start the quiz
+      currentStudentName = studentName;
+      quizStarted = true;
+      
+      // Hide start screen, show quiz and timer
+      startScreen.classList.add("hidden");
+      quizForm.classList.remove("hidden");
+      timerContainer.classList.remove("hidden");
+      
+      // Start the timer
+      startTimer();
+      
+      // Prevent page refresh/close
+      window.addEventListener('beforeunload', function (e) {
+        if (quizStarted) {
+          e.preventDefault();
+          e.returnValue = '';
+        }
+      });
+    }
 
     function checkTheoryAnswer(answer, expectedKeywords) {
       const lowerAns = answer.toLowerCase();
@@ -466,28 +647,10 @@
       return Math.min(10, Math.round((score / totalPossible) * 10));
     }
 
-    window.submitQuiz = async function() {
-      const studentName = document.getElementById("studentName").value.trim();
-      if (!studentName) {
-        alert("Please enter your name before submitting.");
-        return;
-      }
-
-      // Double-check eligibility before submission
-      const eligibility = await checkStudentEligibility(studentName);
-      if (!eligibility.canTake) {
-        alert("You cannot take the quiz yet. Please wait for the cooldown period to end.");
-        return;
-      }
-
-      // Add loading state
-      const submitBtn = document.querySelector('button');
-      const originalText = submitBtn.textContent;
-      submitBtn.textContent = 'Submitting...';
-      submitBtn.classList.add('loading');
-
+    function calculateScores() {
       let scoreA = 0;
-      
+      let scoreB = 0;
+
       // Check Section A answers
       quizData.forEach((item, index) => {
         const userAnswer = document.getElementById(`a${index}`).value.trim().toLowerCase();
@@ -514,8 +677,6 @@
         questionDiv.appendChild(feedbackDiv);
       });
 
-      let scoreB = 0;
-      
       // Check Section B answers
       theoryData.forEach((item, index) => {
         const ans = document.getElementById(`t${index}`).value.trim();
@@ -534,62 +695,132 @@
         div.appendChild(expectedDiv);
       });
 
-      const totalScore = scoreA + scoreB;
-      const percentage = Math.round((totalScore / 50) * 100);
+      return { scoreA, scoreB };
+    }
 
-      // Show results
+    async function saveQuizResults(scoreA, scoreB, totalScore, percentage, isAutoSubmit = false) {
+      try {
+        const newRef = push(ref(db, "quizScores"));
+        await set(newRef, {
+          name: currentStudentName.toLowerCase(),
+          displayName: currentStudentName,
+          sectionA: scoreA,
+          sectionB: scoreB,
+          totalScore: totalScore,
+          percentage: percentage,
+          timeUsed: QUIZ_DURATION - timeRemaining,
+          autoSubmitted: isAutoSubmit,
+          timestamp: new Date().toISOString(),
+          date: new Date().toLocaleDateString()
+        });
+        return true;
+      } catch (err) {
+        console.error('Firebase error:', err);
+        return false;
+      }
+    }
+
+    function displayResults(scoreA, scoreB, totalScore, percentage, isAutoSubmit = false) {
       const resultDiv = document.getElementById("result");
       resultDiv.style.display = "block";
+      
+      const timeUsed = QUIZ_DURATION - timeRemaining;
+      const timeUsedFormatted = formatTime(timeUsed);
+      
       resultDiv.innerHTML = `
-        <h3>📊 Quiz Results</h3>
+        <h3>📊 Quiz Results ${isAutoSubmit ? '(Auto-Submitted)' : ''}</h3>
         <p>Section A (Fill in the blanks): ${scoreA}/20 marks</p>
         <p>Section B (Theory): ${scoreB}/30 marks</p>
         <p><strong>Total Score: ${totalScore}/50 marks (${percentage}%)</strong></p>
+        <p>⏱️ Time Used: ${timeUsedFormatted}</p>
         <p>${percentage >= 70 ? '🎉 Excellent work!' : percentage >= 50 ? '👍 Good job!' : '📚 Keep studying!'}</p>
       `;
 
       // Scroll to results
       resultDiv.scrollIntoView({ behavior: 'smooth' });
+    }
 
-      try {
-        const newRef = push(ref(db, "quizScores"));
-        await set(newRef, {
-          name: studentName.toLowerCase(), // Store in lowercase for consistent querying
-          displayName: studentName, // Store original case for display
-          sectionA: scoreA,
-          sectionB: scoreB,
-          totalScore: totalScore,
-          percentage: percentage,
-          timestamp: new Date().toISOString(),
-          date: new Date().toLocaleDateString()
-        });
-        
-        // Show success message
+    // Auto-submit when time expires
+    async function autoSubmitQuiz() {
+      if (!quizStarted) return;
+      
+      quizStarted = false;
+      stopTimer();
+      
+      // Hide timer
+      timerContainer.classList.add("hidden");
+      
+      // Disable form
+      quizForm.classList.add("quiz-disabled");
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Time Expired - Auto Submitted";
+      
+      const { scoreA, scoreB } = calculateScores();
+      const totalScore = scoreA + scoreB;
+      const percentage = Math.round((totalScore / 50) * 100);
+      
+      displayResults(scoreA, scoreB, totalScore, percentage, true);
+      
+      const saved = await saveQuizResults(scoreA, scoreB, totalScore, percentage, true);
+      
+      const resultDiv = document.getElementById("result");
+      if (saved) {
         const successDiv = document.createElement('div');
         successDiv.className = 'success-message';
-        successDiv.innerHTML = '✅ Quiz submitted and score saved successfully!<br>⏰ You can take the quiz again after 6 hours.';
+        successDiv.innerHTML = '✅ Quiz auto-submitted and score saved successfully!<br>⏰ You can take the quiz again after 6 hours.';
         resultDiv.appendChild(successDiv);
-        
-        // Disable form after successful submission
-        quizForm.classList.add("quiz-disabled");
-        submitBtn.disabled = true;
-        submitBtn.textContent = "Quiz Completed - Wait 6 Hours";
-        
-      } catch (err) {
-        console.error('Firebase error:', err);
-        
-        // Show error message
+      } else {
         const errorDiv = document.createElement('div');
         errorDiv.className = 'error-message';
         errorDiv.innerHTML = '⚠️ Quiz completed but could not save to database. Please contact your instructor.';
         resultDiv.appendChild(errorDiv);
-      } finally {
-        // Reset button if not disabled
-        if (!submitBtn.disabled) {
-          submitBtn.textContent = originalText;
-          submitBtn.classList.remove('loading');
-        }
       }
+    }
+
+    // Manual submit
+    window.submitQuiz = async function() {
+      if (!quizStarted) return;
+      
+      if (!confirm("Are you sure you want to submit your quiz? You cannot change your answers after submission.")) {
+        return;
+      }
+      
+      quizStarted = false;
+      stopTimer();
+      
+      // Hide timer
+      timerContainer.classList.add("hidden");
+      
+      // Add loading state
+      const originalText = submitBtn.textContent;
+      submitBtn.textContent = 'Submitting...';
+      submitBtn.classList.add('loading');
+
+      const { scoreA, scoreB } = calculateScores();
+      const totalScore = scoreA + scoreB;
+      const percentage = Math.round((totalScore / 50) * 100);
+      
+      displayResults(scoreA, scoreB, totalScore, percentage, false);
+      
+      const saved = await saveQuizResults(scoreA, scoreB, totalScore, percentage, false);
+      
+      const resultDiv = document.getElementById("result");
+      if (saved) {
+        const successDiv = document.createElement('div');
+        successDiv.className = 'success-message';
+        successDiv.innerHTML = '✅ Quiz submitted and score saved successfully!<br>⏰ You can take the quiz again after 6 hours.';
+        resultDiv.appendChild(successDiv);
+      } else {
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'error-message';
+        errorDiv.innerHTML = '⚠️ Quiz completed but could not save to database. Please contact your instructor.';
+        resultDiv.appendChild(errorDiv);
+      }
+      
+      // Disable form after submission
+      quizForm.classList.add("quiz-disabled");
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Quiz Completed";
     }
   </script>
 </body>
