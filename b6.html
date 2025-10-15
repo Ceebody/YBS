@@ -387,8 +387,8 @@
       <div class="quiz-info">
         <p>📚 <strong>Subject:</strong> Introduction to Computing</p>
         <marquee>Just select the correct answer for each question!</marquee>
-        <p>⏱️ <strong>Time Limit:</strong> 15 minutes</p>
-        <p>❓ <strong>Questions:</strong> 20 questions (randomly selected)</p>
+        <p>⏱️ <strong>Time Limit:</strong> 30 minutes</p>
+        <p>❓ <strong>Questions:</strong> 40 questions (all questions included)</p>
         <p>🎯 <strong>Instructions:</strong> Use Next and Previous to navigate, click Submit when done</p>
       </div>
       <button id="startBtn">🎯 Sure, Let's Start Quiz!</button>
@@ -400,8 +400,8 @@
     <!-- Quiz Area -->
     <div id="quizArea" class="hidden">
       <div class="quiz-header">
-        <div class="question-counter" id="questionCounter">Question 1 of 20</div>
-        <div class="timer" id="timer">15:00</div>
+        <div class="question-counter" id="questionCounter">Question 1 of 40</div>
+        <div class="timer" id="timer">30:00</div>
       </div>
       
       <div class="question-content">
@@ -448,9 +448,9 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    // Quiz Configuration
-    const QUIZ_DURATION = 15 * 60; // 15 minutes in seconds
-    const TOTAL_QUESTIONS = 20;
+    // Quiz Configuration - Updated for all 40 questions
+    const QUIZ_DURATION = 30 * 60; // 30 minutes in seconds
+    const TOTAL_QUESTIONS = 40; // Show all 40 questions
     const COOLDOWN_HOURS = 12;
 
     // Quiz Data - All 40 questions
@@ -803,15 +803,6 @@
     const summaryContainer = document.getElementById("summaryContainer");
 
     // Utility Functions
-    function shuffleArray(array) {
-      const shuffled = [...array];
-      for (let i = shuffled.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-      }
-      return shuffled;
-    }
-
     function formatTime(seconds) {
       const minutes = Math.floor(seconds / 60);
       const remainingSeconds = seconds % 60;
@@ -853,7 +844,7 @@
             canTake: false, 
             remainingTime: remainingTime,
             lastScore: lastSubmission.total || 0,
-            lastPercentage: Math.round((lastSubmission.total || 0) / 20 * 100)
+            lastPercentage: Math.round((lastSubmission.total || 0) / 40 * 100)
           };
         }
 
@@ -882,7 +873,7 @@
         lockMessage.classList.remove("hidden");
         lockMessage.innerHTML = `
           <p>⏰ You have already completed this quiz recently.</p>
-          <p>Last Score: ${eligibility.lastScore}/20 (${eligibility.lastPercentage}%)</p>
+          <p>Last Score: ${eligibility.lastScore}/40 (${eligibility.lastPercentage}%)</p>
           <p>You can try again in: ${hours}h ${minutes}m</p>
         `;
         return;
@@ -920,8 +911,8 @@
 
     // Initialize Quiz
     function initializeQuiz() {
-      // Select random 20 questions
-      selectedQuestions = shuffleArray(allQuestions).slice(0, TOTAL_QUESTIONS);
+      // Use all 40 questions in order
+      selectedQuestions = [...allQuestions];
       userAnswers = new Array(TOTAL_QUESTIONS).fill(null);
       currentQuestion = 0;
       quizStarted = true;
@@ -1020,8 +1011,8 @@
     function updateTimerDisplay() {
       timer.textContent = formatTime(timeRemaining);
       
-      // Add warning class for last 2 minutes
-      if (timeRemaining <= 120) {
+      // Add warning class for last 5 minutes
+      if (timeRemaining <= 300) {
         timer.classList.add("warning");
       }
     }
