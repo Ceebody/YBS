@@ -496,12 +496,12 @@
           <thead>
             <tr>
               <th>Student Name</th>
-              <th>Section A (20)</th>
-              <th>Section B (6)</th>
-              <th>Total Score (26)</th>
+              <th>Score (20)</th>
               <th>Percentage</th>
+              <th>Time Used</th>
               <th>Date & Time</th>
-              <th>Attempt #</th>
+              <th>Subject</th>
+              <th>Status</th>
             </tr>
           </thead>
           <tbody id="resultsTableBody">
@@ -526,8 +526,8 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-    // Firebase configuration - Replace with your actual Firebase config
-     const firebaseConfig = {
+    // Firebase configuration - Using the same config as the quiz
+    const firebaseConfig = {
       apiKey: "AIzaSyCY9oturc9bql33PSUkfNUptcHXla2RWN4",
       authDomain: "tracha-xx.firebaseapp.com",
       databaseURL: "https://tracha-xx-default-rtdb.firebaseio.com",
@@ -611,10 +611,12 @@
         data.forEach((item, index) => {
           firebaseFormat[item.id || index] = {
             name: item.name,
-            sectionA: item.sectionA,
-            sectionB: item.sectionB,
             total: item.total,
-            date: item.date || item.timestamp
+            percentage: item.percentage,
+            date: item.date || item.timestamp,
+            subject: item.subject || "Introduction to Computing",
+            timeUsed: item.timeUsed || 0,
+            autoSubmitted: item.autoSubmitted || false
           };
         });
 
@@ -686,12 +688,13 @@
         const result = {
           id: key,
           name: studentName,
-          sectionA: entry.sectionA || 0,
-          sectionB: entry.sectionB || 0,
           total: entry.total || 0,
-          percentage: Math.round(((entry.total || 0) / 26) * 100),
+          percentage: entry.percentage || Math.round(((entry.total || 0) / 20) * 100),
           date: resultDate,
-          dateString: resultDate.toLocaleDateString()
+          dateString: resultDate.toLocaleDateString(),
+          subject: entry.subject || "Introduction to Computing",
+          timeUsed: entry.timeUsed || 0,
+          autoSubmitted: entry.autoSubmitted || false
         };
 
         allResults.push(result);
@@ -817,40 +820,50 @@
         else if (result.percentage >= 60) scoreClass = "score-good";
 
         const totalAttempts = studentAttempts[result.name]?.length || 1;
+        const timeUsedFormatted = formatTime(result.timeUsed);
 
         row.innerHTML = `
           <td>
             <div class="student-name">${result.name}</div>
-            <div class="attempt-info">${totalAttempts} total attempt(s)</div>
+            <div class="attempt-info">Attempt #${result.attemptNumber} of ${totalAttempts}</div>
           </td>
-          <td><strong>${result.sectionA}/20</strong></td>
-          <td><strong>${result.sectionB}/6</strong></td>
-          <td><strong>${result.total}/26</strong></td>
+          <td><strong>${result.total}/20</strong></td>
           <td><span class="score-badge ${scoreClass}">${result.percentage}%</span></td>
+          <td>${timeUsedFormatted}</td>
           <td>
             <div>${result.date.toLocaleDateString()}</div>
             <div class="date-time">${result.date.toLocaleTimeString()}</div>
           </td>
-          <td><strong>#${result.attemptNumber}</strong></td>
+          <td>${result.subject}</td>
+          <td>${result.autoSubmitted ? '⏰ Auto-submitted' : '✅ Completed'}</td>
         `;
 
         resultsTableBody.appendChild(row);
       });
     }
 
+    // Format time helper
+    function formatTime(seconds) {
+      if (!seconds) return "N/A";
+      const minutes = Math.floor(seconds / 60);
+      const remainingSeconds = seconds % 60;
+      return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+    }
+
     // Export to CSV
     function exportToCSV(results, filename) {
-      const headers = ["Student Name", "Section A", "Section B", "Total Score", "Percentage", "Date", "Time", "Attempt Number"];
+      const headers = ["Student Name", "Score", "Percentage", "Time Used", "Date", "Time", "Subject", "Status", "Attempt Number"];
       const csvContent = [
         headers.join(","),
         ...results.map(r => [
           `"${r.name}"`,
-          `${r.sectionA}/20`,
-          `${r.sectionB}/6`,
-          `${r.total}/26`,
+          `${r.total}/20`,
           `${r.percentage}%`,
+          formatTime(r.timeUsed),
           r.date.toLocaleDateString(),
           r.date.toLocaleTimeString(),
+          `"${r.subject}"`,
+          r.autoSubmitted ? "Auto-submitted" : "Completed",
           r.attemptNumber
         ].join(","))
       ].join("\n");
@@ -923,4 +936,3 @@
   </script>
 </body>
 </html>
-
