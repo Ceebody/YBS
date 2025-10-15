@@ -2,462 +2,1136 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- ✅ Added for mobile scaling -->
-  <title>Coding Quiz</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Yeriel Bracha Computing Quiz</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: orange;
+    * {
       margin: 0;
       padding: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #ff7b00 0%, #ff9500 50%, #ffb347 100%);
       min-height: 100vh;
-    }
-    .wrap {
-      width: 90%;
-      max-width: 800px;
-      background: #fff;
       padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
-    h1, h2 { text-align: center; }
-    .hidden { display: none; }
-    .controls {
-      margin-top: 20px;
+    
+    .container {
+      width: 90%;
+      max-width: 900px;
+      margin: 0 auto;
+      background: rgba(255, 255, 255, 0.95);
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 20px;
+      font-size: 2.2em;
+      font-weight: 700;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    h2 {
+      color: #34495e;
+      margin-bottom: 20px;
+      font-size: 1.3em;
       text-align: center;
     }
-    button {
-      padding: 15px 25px; /* ✅ Larger buttons */
-      margin: 10px;
-      border: none;
+    
+    .hidden { 
+      display: none; 
+    }
+    
+    /* Name Input Page */
+    .name-section {
+      text-align: center;
+      padding: 20px;
+    }
+    
+    .name-section p {
+      font-size: 1.1em;
+      color: #555;
+      margin-bottom: 20px;
+    }
+    
+    input[type="text"] {
+      width: 100%;
+      max-width: 400px;
+      padding: 15px;
       border-radius: 10px;
-      cursor: pointer;
-      font-size: 18px; /* ✅ Easier to tap */
-      transition: 0.2s;
+      border: 2px solid #bdc3c7;
+      font-size: 1.1em;
+      margin: 15px auto;
+      display: block;
+      transition: border-color 0.3s ease;
     }
-    button:hover { transform: scale(1.05); }
-    button.primary { background: #4CAF50; color: white; }
-    button.secondary { background: #ddd; }
-    #timer { font-weight: bold; text-align: right; margin-bottom: 10px; }
-    .results { margin-top: 20px; padding: 15px; border-radius: 8px; background: #eef; }
-    .summary {
-      margin-top: 20px;
+    
+    input[type="text"]:focus {
+      outline: none;
+      border-color: #ff7b00;
+      box-shadow: 0 0 0 3px rgba(255, 123, 0, 0.1);
+    }
+    
+    /* Welcome Page */
+    .welcome-content {
+      text-align: center;
+      padding: 20px;
+    }
+    
+    .quiz-info {
+      background: rgba(255, 123, 0, 0.1);
+      border: 2px solid #ff7b00;
+      border-radius: 15px;
+      padding: 20px;
+      margin: 20px 0;
+    }
+    
+    .quiz-info p {
+      margin: 10px 0;
+      font-size: 1.1em;
+      color: #2c3e50;
+    }
+    
+    marquee {
+      background: linear-gradient(135deg, #ff7b00, #ff9500);
+      color: white;
       padding: 10px;
-      border-top: 2px solid #ccc;
+      border-radius: 8px;
+      margin: 15px 0;
+      font-weight: bold;
     }
-    .correct { color: green; font-weight: bold; }
-    .wrong { color: red; font-weight: bold; }
+    
+    /* Buttons */
+    button {
+      background: linear-gradient(135deg, #ff7b00, #ff9500);
+      color: white;
+      border: none;
+      padding: 15px 30px;
+      border-radius: 50px;
+      cursor: pointer;
+      font-size: 1.1em;
+      font-weight: 600;
+      margin: 10px;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    button:hover {
+      background: linear-gradient(135deg, #ff9500, #ff7b00);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(255, 123, 0, 0.4);
+    }
+    
+    button:disabled {
+      background: #95a5a6;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+    
+    button.secondary {
+      background: #ecf0f1;
+      color: #2c3e50;
+      text-transform: none;
+      letter-spacing: normal;
+      padding: 12px 20px;
+      margin: 5px;
+      border-radius: 10px;
+      font-weight: normal;
+    }
+    
+    button.secondary:hover {
+      background: #bdc3c7;
+      transform: translateY(-1px);
+    }
+    
+    button.selected {
+      background: linear-gradient(135deg, #27ae60, #2ecc71) !important;
+      color: white !important;
+    }
+    
+    /* Countdown Screen */
+    .countdown-screen {
+      text-align: center;
+      padding: 60px 20px;
+      font-size: 4em;
+      font-weight: bold;
+      color: #ff7b00;
+      animation: pulse 1s ease-in-out infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 0.8; }
+      50% { transform: scale(1.1); opacity: 1; }
+    }
+    
+    /* Quiz Area */
+    .quiz-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      padding: 15px;
+      background: rgba(255, 123, 0, 0.1);
+      border-radius: 10px;
+    }
+    
+    .question-counter {
+      font-weight: bold;
+      color: #2c3e50;
+      font-size: 1.1em;
+    }
+    
+    .timer {
+      font-weight: bold;
+      color: #e74c3c;
+      font-size: 1.2em;
+      padding: 8px 15px;
+      background: rgba(231, 76, 60, 0.1);
+      border-radius: 20px;
+    }
+    
+    .timer.warning {
+      animation: blink 1s infinite;
+    }
+    
+    @keyframes blink {
+      0%, 50% { opacity: 1; }
+      51%, 100% { opacity: 0.5; }
+    }
+    
+    .question-content {
+      background: rgba(255, 255, 255, 0.8);
+      padding: 25px;
+      border-radius: 15px;
+      margin-bottom: 25px;
+      border-left: 5px solid #ff7b00;
+    }
+    
+    .question-text {
+      font-size: 1.2em;
+      color: #2c3e50;
+      font-weight: 600;
+      line-height: 1.5;
+      margin-bottom: 20px;
+    }
+    
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin-bottom: 25px;
+    }
+    
+    .option-button {
+      text-align: left;
+      padding: 15px 20px;
+      border-radius: 10px;
+      font-size: 1em;
+      line-height: 1.4;
+      word-wrap: break-word;
+    }
+    
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 30px;
+    }
+    
+    .nav-buttons {
+      display: flex;
+      gap: 10px;
+    }
+    
+    /* Results */
+    .results {
+      padding: 20px;
+      text-align: center;
+    }
+    
+    .score-display {
+      background: linear-gradient(135deg, #2ecc71, #27ae60);
+      color: white;
+      padding: 25px;
+      border-radius: 15px;
+      margin: 20px 0;
+      font-size: 1.3em;
+    }
+    
+    .summary {
+      text-align: left;
+      margin-top: 30px;
+      padding: 20px;
+      background: rgba(236, 240, 241, 0.8);
+      border-radius: 15px;
+    }
+    
+    .summary h3 {
+      color: #2c3e50;
+      margin-bottom: 20px;
+      text-align: center;
+      font-size: 1.4em;
+    }
+    
+    .question-review {
+      margin: 15px 0;
+      padding: 15px;
+      background: white;
+      border-radius: 10px;
+      border-left: 4px solid #bdc3c7;
+    }
+    
+    .question-review.correct {
+      border-left-color: #27ae60;
+    }
+    
+    .question-review.wrong {
+      border-left-color: #e74c3c;
+    }
+    
+    .correct { 
+      color: #27ae60; 
+      font-weight: bold; 
+    }
+    
+    .wrong { 
+      color: #e74c3c; 
+      font-weight: bold; 
+    }
+    
+    /* Footer */
     footer {
       text-align: center;
       margin-top: 40px;
-      padding: 15px;
-      background: #333;
+      padding: 20px;
+      background: linear-gradient(135deg, #2c3e50, #34495e);
       color: white;
-      border-radius: 8px;
+      border-radius: 15px;
       font-size: 14px;
     }
-    input {
-      padding: 12px;
-      width: 90%;
-      margin: 15px auto;
-      display: block;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      font-size: 16px;
-    }
-
-    /* ✅ Countdown Animation */
-    #countdownScreen {
+    
+    /* Lock Message */
+    .lock-message {
       text-align: center;
-      font-size: 60px;
+      color: #e74c3c;
       font-weight: bold;
-      color: #4CAF50;
-      animation: fade 1s ease-in-out infinite;
+      background: rgba(231, 76, 60, 0.1);
+      padding: 15px;
+      border-radius: 10px;
+      margin-top: 15px;
     }
-    @keyframes fade {
-      0%, 100% { opacity: 0; }
-      50% { opacity: 1; }
+    
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .container {
+        padding: 20px;
+        margin: 10px;
+        width: calc(100% - 20px);
+      }
+      
+      h1 {
+        font-size: 1.8em;
+      }
+      
+      .countdown-screen {
+        font-size: 3em;
+        padding: 40px 20px;
+      }
+      
+      .quiz-header {
+        flex-direction: column;
+        gap: 10px;
+      }
+      
+      .controls {
+        flex-direction: column;
+        gap: 15px;
+      }
+      
+      .nav-buttons {
+        width: 100%;
+        justify-content: space-between;
+      }
+      
+      button {
+        padding: 12px 20px;
+        font-size: 1em;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="wrap">
-
+  <div class="container">
     <!-- Name Input Page -->
-    <div id="namePage">
-      <h1>Welcome to Yeriel Bracha Computing Quiz!</h1>
-      <p>Please enter your full name to begin:</p>
-      <input type="text" id="studentName" placeholder="Enter your name" />
-      <div class="controls">
-        <button class="primary" id="proceedBtn">Proceed</button>
-      </div>
-      <p id="lockMessage" style="text-align:center; color:red; font-weight:bold;"></p>
+    <div id="namePage" class="name-section">
+      <h1>🎓 Yeriel Bracha Computing Quiz</h1>
+      <p>Welcome! Please enter your full name to begin the quiz.</p>
+      <input type="text" id="studentName" placeholder="Enter your full name" />
+      <button id="proceedBtn">Proceed to Quiz</button>
+      <div id="lockMessage" class="lock-message hidden"></div>
     </div>
 
     <!-- Welcome Page -->
-    <div id="welcomePage" class="hidden">
-      <h1>Welcome Quizzilla!</h1>
-      <p>This quiz will test your knowledge of <strong>Intorduction to computing</strong> <stong>.</p>
-      <p><marquee>Just select the correct answer</marquee></p>
-      <p>You will have <strong>15 minutes</strong> to answer <strong>20 questions</strong>.</p>
-      <p>Use <strong>Next</strong> and <strong>Previous</strong> to move, Click <strong>Submit</strong> when done.</p>
-      <div class="controls">
-        <button class="primary" id="startBtn">Sure, Let's Start Quiz</button>
+    <div id="welcomePage" class="welcome-content hidden">
+      <h1>Welcome to Quizzilla! 🚀</h1>
+      <div class="quiz-info">
+        <p>📚 <strong>Subject:</strong> Introduction to Computing</p>
+        <marquee>Just select the correct answer for each question!</marquee>
+        <p>⏱️ <strong>Time Limit:</strong> 15 minutes</p>
+        <p>❓ <strong>Questions:</strong> 20 questions (randomly selected)</p>
+        <p>🎯 <strong>Instructions:</strong> Use Next and Previous to navigate, click Submit when done</p>
       </div>
+      <button id="startBtn">🎯 Sure, Let's Start Quiz!</button>
     </div>
 
-    <!-- ✅ Countdown Screen -->
-    <div id="countdownScreen" class="hidden"></div>
+    <!-- Countdown Screen -->
+    <div id="countdownScreen" class="countdown-screen hidden"></div>
 
     <!-- Quiz Area -->
     <div id="quizArea" class="hidden">
-      <div id="timer"></div>
-      <div id="question"></div>
-      <div id="options"></div>
-      <input type="text" id="shortAnswer" class="hidden" placeholder="Type your answer here" />
+      <div class="quiz-header">
+        <div class="question-counter" id="questionCounter">Question 1 of 20</div>
+        <div class="timer" id="timer">15:00</div>
+      </div>
+      
+      <div class="question-content">
+        <div class="question-text" id="questionText"></div>
+        <div class="options-grid" id="optionsContainer"></div>
+      </div>
+      
       <div class="controls">
-        <button type="button" id="prevBtn" class="primary">Previous</button>
-        <button type="button" id="nextBtn" class="primary">Next</button>
-        <button type="button" id="submitBtn" class="primary hidden">Submit Quiz</button>
+        <div class="nav-buttons">
+          <button type="button" id="prevBtn" class="secondary">← Previous</button>
+          <button type="button" id="nextBtn">Next →</button>
+        </div>
+        <button type="button" id="submitBtn" class="hidden">🎯 Submit Quiz</button>
       </div>
     </div>
 
     <!-- Results Area -->
-    <div id="results" class="results hidden"></div>
+    <div id="resultsArea" class="results hidden">
+      <h1>🎉 Quiz Completed!</h1>
+      <div id="scoreDisplay" class="score-display"></div>
+      <div id="summaryContainer" class="summary"></div>
+    </div>
 
     <!-- Footer -->
     <footer>
-      <p>Yeriel Bracha Coding Club <br> ©2025</p>
+      <p><strong>Yeriel Bracha Coding Club</strong><br>© 2025 - Excellence in Computing Education</p>
     </footer>
   </div>
 
-<!-- ==============================
-     Firebase Setup
-============================== -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-  import { getDatabase, ref, get, set } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getDatabase, ref, get, set, push } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyCY9oturc9bql33PSUkfNUptcHXla2RWN4",
-    authDomain: "tracha-xx.firebaseapp.com",
-    databaseURL: "https://tracha-xx-default-rtdb.firebaseio.com",
-    projectId: "tracha-xx",
-    storageBucket: "tracha-xx.appspot.com",
-    messagingSenderId: "914440906583",
-    appId: "1:914440906583:web:123abc456xyz"
-  };
+    const firebaseConfig = {
+      apiKey: "AIzaSyCY9oturc9bql33PSUkfNUptcHXla2RWN4",
+      authDomain: "tracha-xx.firebaseapp.com",
+      databaseURL: "https://tracha-xx-default-rtdb.firebaseio.com",
+      projectId: "tracha-xx",
+      storageBucket: "tracha-xx.appspot.com",
+      messagingSenderId: "914440906583",
+      appId: "1:914440906583:web:123abc456xyz"
+    };
 
-  const app = initializeApp(firebaseConfig);
-  const db = getDatabase(app);
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
 
-const quizData = [
-  {
-    q: "1. A shop owner uses a computer to record daily sales. Why is a computer best described as an electronic machine in this situation?",
-    options: [
-      "Because it works with electricity to process data automatically",
-      "Because it is made of metal parts",
-      "Because it has many wires",
-      "Because it uses paper to store information"
-    ],
-    answer: "Because it works with electricity to process data automatically"
-  },
-  {
-    q: "2. Kofi turns on his computer and sees a screen with several icons. What is the name of this main screen?",
-    options: ["Keyboard", "Desktop", "Monitor", "Menu"],
-    answer: "Desktop"
-  },
-  {
-    q: "3. Ama is watching a video on her computer. Which device is responsible for showing the moving pictures?",
-    options: ["Mouse", "Printer", "Monitor", "Keyboard"],
-    answer: "Monitor"
-  },
-  {
-    q: "4. When you open a program or play a game, which part of the computer controls and processes all the commands?",
-    options: ["CPU", "Mouse", "Speaker", "Screen"],
-    answer: "CPU"
-  },
-  {
-    q: "5. You want to type a story into the computer. Which of these devices will help you enter the words?",
-    options: ["Speaker", "Printer", "Keyboard", "Projector"],
-    answer: "Keyboard"
-  },
-  {
-    q: "6. During a computer lesson, the teacher plays an educational song. Which device makes the sound loud enough for the class to hear?",
-    options: ["Scanner", "Speaker", "Keyboard", "Printer"],
-    answer: "Speaker"
-  },
-  {
-    q: "7. After finishing your class project, you need a copy of your work on paper. Which device will help you produce it?",
-    options: ["Monitor", "Mouse", "Printer", "CPU"],
-    answer: "Printer"
-  },
-  {
-    q: "8. When selecting items or dragging icons on the screen, which device makes it easier to move the pointer quickly?",
-    options: [
-      "To move and click items with the mouse",
-      "To type words on the keyboard",
-      "To print documents with the printer",
-      "To hear music with the speaker"
-    ],
-    answer: "To move and click items with the mouse"
-  },
-  {
-    q: "9. The background image on the computer helps make the desktop attractive. What exactly is the desktop background?",
-    options: ["A file", "A color or picture behind icons", "A keyboard", "A program"],
-    answer: "A color or picture behind icons"
-  },
-  {
-    q: "10. You want to change the desktop wallpaper. Which option should you choose after right-clicking the screen?",
-    options: ["Copy", "Paste", "Personalize", "Delete"],
-    answer: "Personalize"
-  },
-  {
-    q: "11. Icons make it easy to open programs quickly. What do these icons represent?",
-    options: ["Songs", "Pictures of files or programs", "Boxes", "Letters"],
-    answer: "Pictures of files or programs"
-  },
-  {
-    q: "12. Your computer is full of files. Which feature helps you group related files together for easy access?",
-    options: ["Delete", "Open", "Organize with folders", "Close"],
-    answer: "Organize with folders"
-  },
-  {
-    q: "13. A student wants to save classwork and take it home. Which of these devices will store the work safely and can be plugged into another computer?",
-    options: ["Flash drive", "Speaker", "Monitor", "Mouse"],
-    answer: "Flash drive"
-  },
-  {
-    q: "14. You want to keep your photos in a separate place on the desktop. What step should you take to create a new folder?",
-    options: ["Right-click → New → Folder", "Press Delete", "Double-click any icon", "Turn off the computer"],
-    answer: "Right-click → New → Folder"
-  },
-  {
-    q: "15. Why is the Recycle Bin important on a computer?",
-    options: [
-      "It stores deleted files in case you need them back",
-      "It saves new files",
-      "It opens documents automatically",
-      "It stores programs permanently"
-    ],
-    answer: "It stores deleted files in case you need them back"
-  },
-  {
-    q: "16. You have a picture on paper and want to send it by email. Which device helps you copy it into the computer?",
-    options: [
-      "Scanner",
-      "Speaker",
-      "Printer",
-      "Projector"
-    ],
-    answer: "Scanner"
-  },
-  {
-    q: "17. When organizing your work, you notice small yellow shapes on the desktop. What do these icons usually represent?",
-    options: ["Bags", "Yellow folders for storing files", "Books", "Programs"],
-    answer: "Yellow folders for storing files"
-  },
-  {
-    q: "18. Which device is most useful for carrying large projects from one computer to another?",
-    options: ["Mouse", "Flash drive", "Speaker", "Monitor"],
-    answer: "Flash drive"
-  },
-  {
-    q: "19. After naming a folder wrongly, how can you correct it?",
-    options: ["Right-click and choose Rename", "Right-click and choose Delete", "Double-click and press Enter", "Press the Spacebar"],
-    answer: "Right-click and choose Rename"
-  },
-  {
-    q: "20. Why should we keep the desktop well arranged and neat?",
-    options: [
-      "To find files easily and make the computer look organized",
-      "To confuse anyone who uses the computer",
-      "To make the computer run slower",
-      "To hide programs from others"
-    ],
-    answer: "To find files easily and make the computer look organized"
-  }
-];
+    // Quiz Configuration
+    const QUIZ_DURATION = 15 * 60; // 15 minutes in seconds
+    const TOTAL_QUESTIONS = 20;
+    const COOLDOWN_HOURS = 12;
 
+    // Quiz Data - All 40 questions
+    const allQuestions = [
+      {
+        q: "1. Early scientists built the first generation computers mainly for which reason?",
+        options: [
+          "To play music and movies",
+          "To solve scientific and military problems",
+          "To design games for children",
+          "To teach typing in schools"
+        ],
+        answer: "To solve scientific and military problems"
+      },
+      {
+        q: "2. The fourth generation of computers became faster because they used ________.",
+        options: ["Vacuum tubes", "Microprocessors", "Transistors", "Magnetic tapes"],
+        answer: "Microprocessors"
+      },
+      {
+        q: "3. When comparing first and fifth generation computers, which feature shows the greatest change?",
+        options: [
+          "Colour of the monitor",
+          "Speed and size of the processor",
+          "Number of keys on the keyboard",
+          "Shape of the mouse"
+        ],
+        answer: "Speed and size of the processor"
+      },
+      {
+        q: "4. A student wants to prepare charts using data. Which computer component will process her data into information?",
+        options: ["CPU", "Monitor", "Keyboard", "Printer"],
+        answer: "CPU"
+      },
+      {
+        q: "5. Which part of the computer is best described as its 'brain' because it carries out instructions?",
+        options: ["CPU", "RAM", "Monitor", "Keyboard"],
+        answer: "CPU"
+      },
+      {
+        q: "6. When a computer user moves the mouse, which item on the screen also moves?",
+        options: ["Cursor", "Icon", "Window", "Folder"],
+        answer: "Cursor"
+      },
+      {
+        q: "7. The scroll wheel on a mouse helps a user to ________.",
+        options: [
+          "Turn on the computer",
+          "Move up and down long pages easily",
+          "Save documents automatically",
+          "Switch between computers"
+        ],
+        answer: "Move up and down long pages easily"
+      },
+      {
+        q: "8. Which of these shows the correct flow of data in a computer system?",
+        options: [
+          "Input → Processing → Output",
+          "Output → Input → Processing",
+          "Processing → Output → Input",
+          "Input → Output → Processing"
+        ],
+        answer: "Input → Processing → Output"
+      },
+      {
+        q: "9. If a computer shows no picture but the power light is on, which part may be faulty?",
+        options: ["Monitor", "Keyboard", "Mouse", "Speaker"],
+        answer: "Monitor"
+      },
+      {
+        q: "10. The RAM in a computer is used to ________.",
+        options: [
+          "Store temporary data while the computer is working",
+          "Store pictures permanently",
+          "Control external devices",
+          "Print text on paper"
+        ],
+        answer: "Store temporary data while the computer is working"
+      },
+      {
+        q: "11. The physical parts of a computer that can be touched are known as ________.",
+        options: ["Hardware", "Software", "Data", "Applications"],
+        answer: "Hardware"
+      },
+      {
+        q: "12. Which of the following groups contains only input devices?",
+        options: [
+          "Mouse, Keyboard, Scanner",
+          "Printer, Monitor, CPU",
+          "Speaker, Microphone, Mouse",
+          "Flash drive, Keyboard, Monitor"
+        ],
+        answer: "Mouse, Keyboard, Scanner"
+      },
+      {
+        q: "13. The main function of output devices is to ________.",
+        options: [
+          "Send results from the computer to the user",
+          "Store information permanently",
+          "Type commands into the computer",
+          "Transfer data between computers"
+        ],
+        answer: "Send results from the computer to the user"
+      },
+      {
+        q: "14. A learner inserted a flash drive to copy pictures. What type of device is the flash drive?",
+        options: ["Storage", "Input", "Output", "Processing"],
+        answer: "Storage"
+      },
+      {
+        q: "15. The small pictures that represent files or programs on the desktop are called ________.",
+        options: ["Icons", "Windows", "Folders", "Pointers"],
+        answer: "Icons"
+      },
+      {
+        q: "16. Which desktop action helps to open a shortcut menu for quick commands?",
+        options: [
+          "Left-click",
+          "Double-click",
+          "Right-click",
+          "Scroll up"
+        ],
+        answer: "Right-click"
+      },
+      {
+        q: "17. Why is organizing files into folders important?",
+        options: [
+          "It keeps the desktop neat and helps locate files quickly",
+          "It makes the computer look colourful",
+          "It deletes old files automatically",
+          "It prevents viruses"
+        ],
+        answer: "It keeps the desktop neat and helps locate files quickly"
+      },
+      {
+        q: "18. The Recycle Bin is useful because it allows the user to ________.",
+        options: [
+          "Recover deleted files",
+          "Install new programs",
+          "Store music permanently",
+          "Print documents faster"
+        ],
+        answer: "Recover deleted files"
+      },
+      {
+        q: "19. The third generation of computers replaced transistors with ________.",
+        options: ["Integrated circuits", "Vacuum tubes", "Microprocessors", "Magnetic tapes"],
+        answer: "Integrated circuits"
+      },
+      {
+        q: "20. The combination of monitor, CPU, mouse, and keyboard makes up the ________.",
+        options: ["Computer system", "Input unit", "Output unit", "Software group"],
+        answer: "Computer system"
+      },
+      {
+        q: "21. Why was the invention of the microprocessor an important step in computing history?",
+        options: [
+          "It made computers smaller and faster",
+          "It increased electricity consumption",
+          "It removed the need for software",
+          "It stopped computers from using memory"
+        ],
+        answer: "It made computers smaller and faster"
+      },
+      {
+        q: "22. Which device allows a user to speak to the computer during recording?",
+        options: ["Microphone", "Speaker", "Printer", "Mouse"],
+        answer: "Microphone"
+      },
+      {
+        q: "23. When a student right-clicks the desktop and selects 'Personalize', what is the purpose?",
+        options: [
+          "To change or set the desktop background",
+          "To delete all folders",
+          "To open a new program",
+          "To restart the computer"
+        ],
+        answer: "To change or set the desktop background"
+      },
+      {
+        q: "24. If you rename a folder incorrectly, what is the best way to correct the name?",
+        options: [
+          "Right-click and choose Rename again",
+          "Delete and create a new folder",
+          "Turn off the computer",
+          "Drag the folder to Recycle Bin"
+        ],
+        answer: "Right-click and choose Rename again"
+      },
+      {
+        q: "25. The storage device that uses magnetic plates to store large amounts of data is called ________.",
+        options: ["Hard disk", "Flash drive", "CD-ROM", "DVD"],
+        answer: "Hard disk"
+      },
+      {
+        q: "26. Which group of devices belongs to the fourth generation of computers?",
+        options: [
+          "Vacuum tubes",
+          "Transistors",
+          "Microprocessors",
+          "Integrated circuits"
+        ],
+        answer: "Microprocessors"
+      },
+      {
+        q: "27. A computer with touch screen input is an example of combining which two functions?",
+        options: [
+          "Input and Output",
+          "Storage and Processing",
+          "Output and Power supply",
+          "Input and Storage"
+        ],
+        answer: "Input and Output"
+      },
+      {
+        q: "28. When you double-click an icon, what usually happens?",
+        options: [
+          "The related program or file opens",
+          "The icon is deleted",
+          "The background changes",
+          "The computer shuts down"
+        ],
+        answer: "The related program or file opens"
+      },
+      {
+        q: "29. Which part of the computer stores programs and data permanently even when power is off?",
+        options: ["Hard disk", "RAM", "Cache", "Processor"],
+        answer: "Hard disk"
+      },
+      {
+        q: "30. Why do modern computers consume less power than early computers?",
+        options: [
+          "They use efficient microprocessors instead of vacuum tubes",
+          "They use more lights and fans",
+          "They have larger screens",
+          "They store more information"
+        ],
+        answer: "They use efficient microprocessors instead of vacuum tubes"
+      },
+      {
+        q: "31. The purpose of an operating system is to ________.",
+        options: [
+          "Control how the computer's hardware and software work together",
+          "Print documents automatically",
+          "Display pictures only",
+          "Replace the keyboard"
+        ],
+        answer: "Control how the computer's hardware and software work together"
+      },
+      {
+        q: "32. Which of these is the correct order from earliest to latest computer generation?",
+        options: [
+          "Vacuum tubes → Transistors → Integrated circuits → Microprocessors",
+          "Microprocessors → Transistors → Integrated circuits → Vacuum tubes",
+          "Transistors → Microprocessors → Vacuum tubes → Integrated circuits",
+          "Integrated circuits → Vacuum tubes → Transistors → Microprocessors"
+        ],
+        answer: "Vacuum tubes → Transistors → Integrated circuits → Microprocessors"
+      },
+      {
+        q: "33. A student wants to move an icon from one side of the desktop to another. Which mouse action should be used?",
+        options: ["Click and drag", "Right-click", "Double-click", "Scroll"],
+        answer: "Click and drag"
+      },
+      {
+        q: "34. If a printer is connected but does not print, which step should come first?",
+        options: [
+          "Check if the printer is powered on",
+          "Replace the mouse",
+          "Restart the computer",
+          "Change the desktop background"
+        ],
+        answer: "Check if the printer is powered on"
+      },
+      {
+        q: "35. Which component temporarily holds data that the CPU is currently using?",
+        options: ["RAM", "Hard disk", "Monitor", "Cache"],
+        answer: "RAM"
+      },
+      {
+        q: "36. What is the main difference between hardware and software?",
+        options: [
+          "Hardware can be touched; software cannot",
+          "Software is heavier than hardware",
+          "Hardware is always faster than software",
+          "Software is made of metal"
+        ],
+        answer: "Hardware can be touched; software cannot"
+      },
+      {
+        q: "37. The unit that controls all other parts of the computer is the ________.",
+        options: ["Control Unit", "Mouse", "Monitor", "Memory Unit"],
+        answer: "Control Unit"
+      },
+      {
+        q: "38. Which device changes digital documents into printed form?",
+        options: ["Printer", "Scanner", "Camera", "Speaker"],
+        answer: "Printer"
+      },
+      {
+        q: "39. Which of the following activities mainly uses an output device?",
+        options: [
+          "Displaying a chart on the screen",
+          "Typing with a keyboard",
+          "Recording a song with a microphone",
+          "Saving files to a flash drive"
+        ],
+        answer: "Displaying a chart on the screen"
+      },
+      {
+        q: "40. A learner wants to create a personal folder for saving homework. Which is the correct sequence of steps?",
+        options: [
+          "Right-click desktop → New → Folder → Name it",
+          "Click Start → Delete → Folder",
+          "Open Recycle Bin → New → File",
+          "Press Enter → Right-click → Print"
+        ],
+        answer: "Right-click desktop → New → Folder → Name it"
+      }
+    ];
 
-  let studentName = "";
-  let currentQuestion = 0;
-  let answers = [];
-  let timer;
-  let timeLeft = 15 * 60; 
-  const lockDuration = 12 * 60 * 60 * 1000;
+    // Global Variables
+    let studentName = "";
+    let currentQuestion = 0;
+    let selectedQuestions = [];
+    let userAnswers = [];
+    let quizTimer;
+    let timeRemaining = QUIZ_DURATION;
+    let quizStarted = false;
 
-  const namePage = document.getElementById("namePage");
-  const welcomePage = document.getElementById("welcomePage");
-  const countdownScreen = document.getElementById("countdownScreen");
-  const quizArea = document.getElementById("quizArea");
-  const resultsDiv = document.getElementById("results");
-  const questionDiv = document.getElementById("question");
-  const optionsDiv = document.getElementById("options");
-  const shortAnswer = document.getElementById("shortAnswer");
-  const prevBtn = document.getElementById("prevBtn");
-  const nextBtn = document.getElementById("nextBtn");
-  const submitBtn = document.getElementById("submitBtn");
-  const timerDiv = document.getElementById("timer");
-  const lockMsg = document.getElementById("lockMessage");
+    // DOM Elements
+    const namePage = document.getElementById("namePage");
+    const welcomePage = document.getElementById("welcomePage");
+    const countdownScreen = document.getElementById("countdownScreen");
+    const quizArea = document.getElementById("quizArea");
+    const resultsArea = document.getElementById("resultsArea");
+    const lockMessage = document.getElementById("lockMessage");
 
-  document.getElementById("proceedBtn").addEventListener("click", async () => {
-    const nameInput = document.getElementById("studentName").value.trim();
-    if (nameInput === "") {
-      alert("Please enter your name before proceeding!");
-      return;
+    // Quiz Elements
+    const questionCounter = document.getElementById("questionCounter");
+    const timer = document.getElementById("timer");
+    const questionText = document.getElementById("questionText");
+    const optionsContainer = document.getElementById("optionsContainer");
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const submitBtn = document.getElementById("submitBtn");
+
+    // Results Elements
+    const scoreDisplay = document.getElementById("scoreDisplay");
+    const summaryContainer = document.getElementById("summaryContainer");
+
+    // Utility Functions
+    function shuffleArray(array) {
+      const shuffled = [...array];
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+      return shuffled;
     }
-    studentName = nameInput;
 
-    const userRef = ref(db, "quizResults/" + studentName);
-    const snapshot = await get(userRef);
-    if (snapshot.exists()) {
-      const data = snapshot.val();
-      if (data.lockedUntil && Date.now() < data.lockedUntil) {
-        const unlockTime = new Date(data.lockedUntil).toLocaleString();
-        lockMsg.textContent = `You already completed this quiz. You can try again after ${unlockTime}`;
+    function formatTime(seconds) {
+      const minutes = Math.floor(seconds / 60);
+      const remainingSeconds = seconds % 60;
+      return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+    }
+
+    // Check Student Eligibility
+    async function checkStudentEligibility(name) {
+      try {
+        const studentRef = ref(db, `quizResults`);
+        const snapshot = await get(studentRef);
+        
+        if (!snapshot.exists()) {
+          return { canTake: true };
+        }
+
+        const allScores = snapshot.val();
+        const studentScores = Object.values(allScores).filter(score => 
+          score.name && score.name.toLowerCase() === name.toLowerCase()
+        );
+
+        if (studentScores.length === 0) {
+          return { canTake: true };
+        }
+
+        // Find most recent submission
+        const lastSubmission = studentScores.sort((a, b) => 
+          new Date(b.date) - new Date(a.date)
+        )[0];
+
+        const lastSubmissionTime = new Date(lastSubmission.date);
+        const now = new Date();
+        const timeDiff = now - lastSubmissionTime;
+        const hoursDiff = timeDiff / (1000 * 60 * 60);
+
+        if (hoursDiff < COOLDOWN_HOURS) {
+          const remainingTime = (COOLDOWN_HOURS * 60 * 60 * 1000) - timeDiff;
+          return { 
+            canTake: false, 
+            remainingTime: remainingTime,
+            lastScore: lastSubmission.total || 0,
+            lastPercentage: Math.round((lastSubmission.total || 0) / 20 * 100)
+          };
+        }
+
+        return { canTake: true };
+      } catch (error) {
+        console.error("Error checking eligibility:", error);
+        return { canTake: true };
+      }
+    }
+
+    // Event Listeners
+    document.getElementById("proceedBtn").addEventListener("click", async () => {
+      const nameInput = document.getElementById("studentName").value.trim();
+      if (!nameInput) {
+        alert("Please enter your name before proceeding!");
         return;
       }
+      
+      studentName = nameInput;
+      const eligibility = await checkStudentEligibility(studentName);
+      
+      if (!eligibility.canTake) {
+        const hours = Math.floor(eligibility.remainingTime / (1000 * 60 * 60));
+        const minutes = Math.floor((eligibility.remainingTime % (1000 * 60 * 60)) / (1000 * 60));
+        
+        lockMessage.classList.remove("hidden");
+        lockMessage.innerHTML = `
+          <p>⏰ You have already completed this quiz recently.</p>
+          <p>Last Score: ${eligibility.lastScore}/20 (${eligibility.lastPercentage}%)</p>
+          <p>You can try again in: ${hours}h ${minutes}m</p>
+        `;
+        return;
+      }
+
+      namePage.classList.add("hidden");
+      welcomePage.classList.remove("hidden");
+    });
+
+    document.getElementById("startBtn").addEventListener("click", () => {
+      welcomePage.classList.add("hidden");
+      startCountdown();
+    });
+
+    // Countdown Function
+    function startCountdown() {
+      countdownScreen.classList.remove("hidden");
+      let counter = 3;
+      countdownScreen.textContent = `Get Ready... ${counter}`;
+
+      const countdown = setInterval(() => {
+        counter--;
+        if (counter > 0) {
+          countdownScreen.textContent = `${counter}...`;
+        } else {
+          clearInterval(countdown);
+          countdownScreen.textContent = "Begin!";
+          setTimeout(() => {
+            countdownScreen.classList.add("hidden");
+            initializeQuiz();
+          }, 800);
+        }
+      }, 1000);
     }
 
-    namePage.classList.add("hidden");
-    welcomePage.classList.remove("hidden");
-  });
-
-  document.getElementById("startBtn").addEventListener("click", () => {
-    welcomePage.classList.add("hidden");
-    startCountdown();
-  });
-
-  function startCountdown() {
-    countdownScreen.classList.remove("hidden");
-    let counter = 3;
-    countdownScreen.textContent = "Get ready... " + counter;
-
-    const countdown = setInterval(() => {
-      counter--;
-      if (counter > 0) {
-        countdownScreen.textContent = counter + "...";
-      } else {
-        clearInterval(countdown);
-        countdownScreen.textContent = "Begin!";
-        setTimeout(() => {
-          countdownScreen.classList.add("hidden");
-          startQuiz();
-        }, 800);
-      }
-    }, 1000);
-  }
-
-  function startQuiz() {
-    quizArea.classList.remove("hidden");
-    loadQuestion();
-    startTimer();
-  }
-
-  function loadQuestion() {
-    const q = quizData[currentQuestion];
-    questionDiv.innerHTML = `<h2>${q.q}</h2>`;
-    optionsDiv.innerHTML = "";
-    shortAnswer.classList.add("hidden");
-
-    if (q.options) {
-      q.options.forEach(opt => {
-        const btn = document.createElement("button");
-        btn.textContent = opt;
-        btn.className = "secondary";
-        btn.onclick = () => saveAnswer(opt);
-        if (answers[currentQuestion] === opt) {
-          btn.style.background = "#4CAF50";
-          btn.style.color = "white";
+    // Initialize Quiz
+    function initializeQuiz() {
+      // Select random 20 questions
+      selectedQuestions = shuffleArray(allQuestions).slice(0, TOTAL_QUESTIONS);
+      userAnswers = new Array(TOTAL_QUESTIONS).fill(null);
+      currentQuestion = 0;
+      quizStarted = true;
+      
+      quizArea.classList.remove("hidden");
+      loadQuestion();
+      startTimer();
+      
+      // Prevent page refresh
+      window.addEventListener('beforeunload', function (e) {
+        if (quizStarted) {
+          e.preventDefault();
+          e.returnValue = '';
         }
-        optionsDiv.appendChild(btn);
       });
     }
 
-    prevBtn.disabled = currentQuestion === 0;
-    nextBtn.classList.toggle("hidden", currentQuestion === quizData.length - 1);
-    submitBtn.classList.toggle("hidden", currentQuestion !== quizData.length - 1);
-  }
-
-  function saveAnswer(ans) {
-    answers[currentQuestion] = ans;
-    loadQuestion();
-  }
-
-  nextBtn.onclick = () => {
-    if (currentQuestion < quizData.length - 1) {
-      currentQuestion++;
-      loadQuestion();
+    // Load Question
+    function loadQuestion() {
+      const question = selectedQuestions[currentQuestion];
+      
+      // Update counter
+      questionCounter.textContent = `Question ${currentQuestion + 1} of ${TOTAL_QUESTIONS}`;
+      
+      // Update question text
+      questionText.textContent = question.q;
+      
+      // Clear and populate options
+      optionsContainer.innerHTML = "";
+      question.options.forEach((option, index) => {
+        const button = document.createElement("button");
+        button.className = "option-button secondary";
+        button.textContent = option;
+        
+        if (userAnswers[currentQuestion] === option) {
+          button.classList.add("selected");
+        }
+        
+        button.addEventListener("click", () => selectAnswer(option));
+        optionsContainer.appendChild(button);
+      });
+      
+      // Update navigation buttons
+      prevBtn.disabled = currentQuestion === 0;
+      
+      if (currentQuestion === TOTAL_QUESTIONS - 1) {
+        nextBtn.classList.add("hidden");
+        submitBtn.classList.remove("hidden");
+      } else {
+        nextBtn.classList.remove("hidden");
+        submitBtn.classList.add("hidden");
+      }
     }
-  };
 
-  prevBtn.onclick = () => {
-    if (currentQuestion > 0) {
-      currentQuestion--;
-      loadQuestion();
+    // Select Answer
+    function selectAnswer(answer) {
+      userAnswers[currentQuestion] = answer;
+      loadQuestion(); // Refresh to show selection
     }
-  };
 
-  submitBtn.onclick = finishQuiz;
+    // Navigation
+    prevBtn.addEventListener("click", () => {
+      if (currentQuestion > 0) {
+        currentQuestion--;
+        loadQuestion();
+      }
+    });
 
-  function startTimer() {
-    timer = setInterval(() => {
-      timeLeft--;
-      let mins = Math.floor(timeLeft / 60);
-      let secs = timeLeft % 60;
-      timerDiv.textContent = `Time Left: ${mins}:${secs.toString().padStart(2, "0")}`;
-      if (timeLeft <= 0) {
-        clearInterval(timer);
+    nextBtn.addEventListener("click", () => {
+      if (currentQuestion < TOTAL_QUESTIONS - 1) {
+        currentQuestion++;
+        loadQuestion();
+      }
+    });
+
+    submitBtn.addEventListener("click", () => {
+      if (confirm("Are you sure you want to submit your quiz? You cannot change answers after submission.")) {
         finishQuiz();
       }
-    }, 1000);
-  }
-
-  function finishQuiz() {
-    clearInterval(timer);
-    quizArea.classList.add("hidden");
-    resultsDiv.classList.remove("hidden");
-
-    let score = 0;
-    let summaryHTML = "<div class='summary'><h3>Summary</h3>";
-
-    quizData.forEach((q, i) => {
-      const userAns = answers[i] || "(no answer)";
-      const correct = userAns === q.answer;
-      if (correct) score++;
-
-      summaryHTML += `<p><strong>Q${i + 1}:</strong> ${q.q}<br>
-      Your answer: <span class="${correct ? 'correct' : 'wrong'}">${userAns}</span><br>
-      Correct answer: <span class="correct">${q.answer}</span></p>`;
     });
 
-    const percentage = ((score / quizData.length) * 100).toFixed(2);
-    summaryHTML += "</div>";
+    // Timer Functions
+    function startTimer() {
+      updateTimerDisplay();
+      quizTimer = setInterval(() => {
+        timeRemaining--;
+        updateTimerDisplay();
+        
+        if (timeRemaining <= 0) {
+          clearInterval(quizTimer);
+          autoSubmitQuiz();
+        }
+      }, 1000);
+    }
 
-    resultsDiv.innerHTML = `
-      <h2>Quiz Completed!</h2>
-      <p><strong>Name:</strong> ${studentName}</p>
-      <p>Your Score: <strong>${score} / ${quizData.length}</strong> (${percentage}%)</p>
-      ${summaryHTML}
-    `;
+    function updateTimerDisplay() {
+      timer.textContent = formatTime(timeRemaining);
+      
+      // Add warning class for last 2 minutes
+      if (timeRemaining <= 120) {
+        timer.classList.add("warning");
+      }
+    }
 
-    const lockedUntil = Date.now() + lockDuration;
-    const quizRef = ref(db, "quizResults/" + studentName);
-    set(quizRef, {
-      name: studentName,
-      score: score,
-      percentage: percentage,
-      totalQuestions: quizData.length,
-      timestamp: new Date().toISOString(),
-      lockedUntil: lockedUntil
-    });
-  }
-</script>
+    function stopTimer() {
+      if (quizTimer) {
+        clearInterval(quizTimer);
+      }
+    }
+
+    // Auto Submit
+    function autoSubmitQuiz() {
+      alert("Time's up! Your quiz will be submitted automatically.");
+      finishQuiz(true);
+    }
+
+    // Finish Quiz
+    async function finishQuiz(isAutoSubmit = false) {
+      quizStarted = false;
+      stopTimer();
+      
+      quizArea.classList.add("hidden");
+      resultsArea.classList.remove("hidden");
+      
+      // Calculate score
+      let correctAnswers = 0;
+      const reviewHTML = [];
+      
+      selectedQuestions.forEach((question, index) => {
+        const userAnswer = userAnswers[index] || "(No answer)";
+        const isCorrect = userAnswer === question.answer;
+        
+        if (isCorrect) correctAnswers++;
+        
+        reviewHTML.push(`
+          <div class="question-review ${isCorrect ? 'correct' : 'wrong'}">
+            <p><strong>Q${index + 1}:</strong> ${question.q}</p>
+            <p>Your answer: <span class="${isCorrect ? 'correct' : 'wrong'}">${userAnswer}</span></p>
+            <p>Correct answer: <span class="correct">${question.answer}</span></p>
+          </div>
+        `);
+      });
+      
+      const percentage = Math.round((correctAnswers / TOTAL_QUESTIONS) * 100);
+      const timeUsed = QUIZ_DURATION - timeRemaining;
+      
+      // Display results
+      scoreDisplay.innerHTML = `
+        <h2>📊 Your Results</h2>
+        <p><strong>Student:</strong> ${studentName}</p>
+        <p><strong>Score:</strong> ${correctAnswers} / ${TOTAL_QUESTIONS} (${percentage}%)</p>
+        <p><strong>Time Used:</strong> ${formatTime(timeUsed)}</p>
+        ${isAutoSubmit ? '<p><strong>Status:</strong> Auto-submitted (Time expired)</p>' : ''}
+        <p><strong>Grade:</strong> ${percentage >= 70 ? '🎉 Excellent!' : percentage >= 50 ? '👍 Good!' : '📚 Keep studying!'}</p>
+      `;
+      
+      summaryContainer.innerHTML = `
+        <h3>📋 Detailed Review</h3>
+        ${reviewHTML.join('')}
+      `;
+      
+      // Save to Firebase - Using quizResults path for admin dashboard compatibility
+      try {
+        const newRef = push(ref(db, "quizResults"));
+        
+        await set(newRef, {
+          name: studentName,
+          sectionA: correctAnswers, // For compatibility with admin dashboard
+          sectionB: 0, // For compatibility with admin dashboard  
+          total: correctAnswers,
+          percentage: percentage,
+          timeUsed: timeUsed,
+          autoSubmitted: isAutoSubmit,
+          date: new Date().toLocaleString(),
+          timestamp: new Date().toISOString(),
+          subject: "Introduction to Computing"
+        });
+        
+        // Show success message
+        const successDiv = document.createElement('div');
+        successDiv.style.cssText = `
+          background: rgba(40, 167, 69, 0.9);
+          color: white;
+          padding: 15px;
+          border-radius: 10px;
+          margin-top: 20px;
+          text-align: center;
+          font-weight: 600;
+        `;
+        successDiv.innerHTML = `✅ Score saved successfully!<br>⏰ You can retake this quiz after ${COOLDOWN_HOURS} hours.`;
+        resultsArea.appendChild(successDiv);
+        
+      } catch (error) {
+        console.error("Error saving results:", error);
+        
+        // Show error message
+        const errorDiv = document.createElement('div');
+        errorDiv.style.cssText = `
+          background: rgba(220, 53, 69, 0.9);
+          color: white;
+          padding: 15px;
+          border-radius: 10px;
+          margin-top: 20px;
+          text-align: center;
+          font-weight: 600;
+        `;
+        errorDiv.innerHTML = '⚠️ Quiz completed but could not save to database. Please contact your instructor.';
+        resultsArea.appendChild(errorDiv);
+      }
+    }
+  </script>
 </body>
 </html>
-
-
