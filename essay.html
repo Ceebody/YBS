@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Essay Quiz – The Effects of Galamsey</title>
+<style>
+  body {
+    font-family: "Poppins", sans-serif;
+    background: #f3f8fe;
+    margin: 0;
+    padding: 0;
+  }
+  .container {
+    max-width: 900px;
+    margin: 40px auto;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.08);
+    padding: 30px;
+  }
+  h1 {
+    text-align: center;
+    color: #005a9c;
+    font-size: 24px;
+  }
+  label {
+    font-weight: 600;
+    margin-top: 10px;
+    display: block;
+  }
+  input, textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 16px;
+    margin-top: 5px;
+  }
+  textarea {
+    height: 250px;
+    resize: vertical;
+  }
+  button {
+    display: inline-block;
+    background: #005a9c;
+    color: #fff;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    margin-top: 15px;
+  }
+  button:hover {
+    background: #0071d8;
+  }
+  .result {
+    margin-top: 20px;
+    background: #eef7ff;
+    padding: 20px;
+    border-radius: 10px;
+    font-size: 16px;
+  }
+  .score {
+    font-weight: bold;
+    color: #005a9c;
+  }
+  .hidden {
+    display: none;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 30px;
+  }
+  th, td {
+    border: 1px solid #ccc;
+    padding: 10px;
+    text-align: left;
+  }
+  th {
+    background: #005a9c;
+    color: #fff;
+  }
+  tr:nth-child(even) {
+    background: #f9f9f9;
+  }
+  #adminLogin {
+    margin-top: 40px;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Essay Assessment – The Effects of Galamsey</h1>
+
+  <label>Full Name:</label>
+  <input type="text" id="studentName" placeholder="Enter your full name" required>
+
+  <label>Class:</label>
+  <input type="text" id="studentClass" placeholder="Enter your class (e.g., JHS 2)" required>
+
+  <p><strong>Instruction:</strong> Write a short essay (about 150–200 words) on <em>“The Effects of Galamsey.”</em></p>
+
+  <textarea id="essay" placeholder="Type your essay here..."></textarea>
+
+  <button onclick="submitEssay()">Submit Essay</button>
+
+  <div id="result" class="result hidden"></div>
+
+  <!-- Admin Login Section -->
+  <div id="adminLogin">
+    <h3 style="color:#005a9c;">Admin Access</h3>
+    <input type="password" id="adminPass" placeholder="Enter admin password">
+    <button onclick="checkAdmin()">Login</button>
+  </div>
+
+  <!-- Hidden Admin Table -->
+  <div id="adminSection" class="hidden">
+    <h2 style="margin-top:40px; color:#005a9c;">Submitted Essays</h2>
+    <table id="essayTable">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Class</th>
+          <th>Organization</th>
+          <th>Content</th>
+          <th>Expression</th>
+          <th>Mechanical</th>
+          <th>Total</th>
+          <th>Percentage</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody id="essayList"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+<script>
+  // ✅ Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyCY9oturc9bql33PSUkfNUptcHXla2RWN4",
+    authDomain: "tracha-xx.firebaseapp.com",
+    databaseURL: "https://tracha-xx-default-rtdb.firebaseio.com",
+    projectId: "tracha-xx",
+    storageBucket: "tracha-xx.appspot.com",
+    messagingSenderId: "914440906583",
+    appId: "1:914440906583:web:123abc456xyz"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+
+  function submitEssay() {
+    const name = document.getElementById("studentName").value.trim();
+    const studentClass = document.getElementById("studentClass").value.trim();
+    const essay = document.getElementById("essay").value.trim();
+    const resultDiv = document.getElementById("result");
+
+    if (!name || !studentClass || essay.length < 50) {
+      alert("Please fill all fields and write at least 50 words.");
+      return;
+    }
+
+    const lowerEssay = essay.toLowerCase();
+    const words = essay.split(/\s+/).length;
+
+    // Content
+    const keywords = ["pollution","river","environment","illegal","mining","health","soil","education","water","farming","forest","destroy","future"];
+    let contentCount = 0;
+    keywords.forEach(k => { if (lowerEssay.includes(k)) contentCount++; });
+    const content = Math.min(Math.round((contentCount / 10) * 10), 10);
+
+    // Organization
+    const hasIntro = /(introduction|today|i want to speak|i am writing)/i.test(essay);
+    const hasConclusion = /(in conclusion|finally|to conclude|to sum up|therefore)/i.test(essay);
+    const hasParagraphs = essay.includes("\n\n") || essay.match(/\n/g)?.length > 1;
+    let organization = 4;
+    if (hasIntro) organization += 3;
+    if (hasConclusion) organization += 3;
+    if (hasParagraphs) organization += 2;
+    organization = Math.min(organization, 10);
+
+    // Expression
+    let expression = 5;
+    if (words > 120) expression += 2;
+    if (essay.match(/[!?]/g)) expression += 1;
+    if (essay.match(/because|therefore|however|moreover|furthermore/i)) expression += 2;
+    expression = Math.min(expression, 10);
+
+    // Mechanical accuracy
+    const mistakes = essay.match(/  |,,|!!|\?\?| i |u |dont |wont |cuz|gonna/gi);
+    const mistakeCount = mistakes ? mistakes.length : 0;
+    let mechanical = 10 - Math.min(mistakeCount, 5);
+    mechanical = Math.max(mechanical, 3);
+
+    const total = organization + content + expression + mechanical;
+
+    // Save
+    const record = {
+      name,
+      class: studentClass,
+      essay,
+      organization,
+      content,
+      expression,
+      mechanical,
+      total,
+      percentage: ((total / 40) * 100).toFixed(2),
+      date: new Date().toLocaleString()
+    };
+
+    db.ref("essaySubmissions/" + Date.now()).set(record)
+      .then(() => {
+        resultDiv.classList.remove("hidden");
+        resultDiv.innerHTML = `
+          <h3>Essay Submitted Successfully ✅</h3>
+          <p><strong>Name:</strong> ${name}<br>
+          <strong>Class:</strong> ${studentClass}</p>
+          <p><span class="score">Organization:</span> ${organization}/10<br>
+          <span class="score">Content:</span> ${content}/10<br>
+          <span class="score">Expression:</span> ${expression}/10<br>
+          <span class="score">Mechanical Accuracy:</span> ${mechanical}/10</p>
+          <hr>
+          <p><strong>Total Score:</strong> ${total}/40 (${((total / 40) * 100).toFixed(2)}%)</p>
+        `;
+        document.getElementById("essay").value = "";
+      })
+      .catch(err => alert("Error saving to database: " + err));
+  }
+
+  // ✅ Admin login check
+  function checkAdmin() {
+    const pass = document.getElementById("adminPass").value.trim();
+    if (pass === "tinelo26") {
+      document.getElementById("adminLogin").classList.add("hidden");
+      document.getElementById("adminSection").classList.remove("hidden");
+      loadEssays();
+    } else {
+      alert("Incorrect password!");
+    }
+  }
+
+  // ✅ Load essays for admin
+  function loadEssays() {
+    const essayList = document.getElementById("essayList");
+    db.ref("essaySubmissions").on("value", (snapshot) => {
+      essayList.innerHTML = "";
+      snapshot.forEach((child) => {
+        const e = child.val();
+        const row = `
+          <tr>
+            <td>${e.name}</td>
+            <td>${e.class}</td>
+            <td>${e.organization}</td>
+            <td>${e.content}</td>
+            <td>${e.expression}</td>
+            <td>${e.mechanical}</td>
+            <td>${e.total}</td>
+            <td>${e.percentage}%</td>
+            <td>${e.date}</td>
+          </tr>
+        `;
+        essayList.innerHTML += row;
+      });
+    });
+  }
+</script>
+</body>
+</html>
