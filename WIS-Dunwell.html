@@ -1,0 +1,1758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monthly Returns — Methodist Church Ghana</title>
+    <link rel="icon" href="https://public-frontend-cos.metadl.com/mgx/img/favicon.png" type="image/png">
+    
+    <!-- SheetJS for Excel export -->
+    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #60a5fa 100%);
+            min-height: 100vh;
+            color: #1f2937;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Auth Screen Styles */
+        .auth-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .auth-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+            padding: 2.5rem;
+            width: 100%;
+            max-width: 420px;
+            border: 2px solid #3b82f6;
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .auth-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+        }
+
+        .auth-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: #1e3a8a;
+        }
+
+        .auth-subtitle {
+            color: #3b82f6;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        .tabs {
+            display: flex;
+            background: #eff6ff;
+            border-radius: 12px;
+            padding: 6px;
+            margin-bottom: 1.5rem;
+            border: 1px solid #bfdbfe;
+        }
+
+        .tab-button {
+            flex: 1;
+            background: none;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            color: #3b82f6;
+        }
+
+        .tab-button.active {
+            background: #3b82f6;
+            color: white;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: #1e3a8a;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.875rem;
+            border: 2px solid #bfdbfe;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+            background: #f8fafc;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+            background: white;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+            border: none;
+            padding: 0.875rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+        }
+
+        .btn:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-outline {
+            background: white;
+            color: #3b82f6;
+            border: 2px solid #3b82f6;
+        }
+
+        .btn-outline:hover {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+            width: auto;
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .alert-error {
+            background: #fef2f2;
+            color: #dc2626;
+            border: 2px solid #fecaca;
+        }
+
+        .alert-success {
+            background: #f0fdf4;
+            color: #16a34a;
+            border: 2px solid #bbf7d0;
+        }
+
+        /* Main App Styles */
+        .header {
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+            color: white;
+            box-shadow: 0 4px 20px rgba(30, 58, 138, 0.3);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1.25rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .header-icon {
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .header-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .header-subtitle {
+            color: #bfdbfe;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .date-selectors {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.75rem;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+        }
+
+        .select {
+            padding: 0.5rem 0.75rem;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.9);
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #1e3a8a;
+        }
+
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        .main-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            border: 2px solid #bfdbfe;
+        }
+
+        .main-header {
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .main-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .main-subtitle {
+            font-size: 1rem;
+            color: #bfdbfe;
+            font-weight: 500;
+        }
+
+        .nav-tabs {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            background: #f8fafc;
+            border-bottom: 3px solid #3b82f6;
+        }
+
+        .nav-tab {
+            background: none;
+            border: none;
+            padding: 1.25rem;
+            cursor: pointer;
+            border-bottom: 4px solid transparent;
+            transition: all 0.3s;
+            font-weight: 600;
+            color: #64748b;
+            font-size: 0.95rem;
+        }
+
+        .nav-tab:hover {
+            background: #eff6ff;
+            color: #3b82f6;
+        }
+
+        .nav-tab.active {
+            background: #eff6ff;
+            color: #1e3a8a;
+            border-bottom-color: #3b82f6;
+        }
+
+        .tab-content {
+            padding: 2rem;
+            background: #fafbfc;
+        }
+
+        /* Excel-style table */
+        .excel-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+
+        .excel-table th {
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+            color: white;
+            padding: 0.75rem;
+            text-align: center;
+            font-weight: 700;
+            font-size: 0.85rem;
+            border: 1px solid #1d4ed8;
+        }
+
+        .excel-table td {
+            padding: 0.5rem;
+            text-align: center;
+            border: 1px solid #d1d5db;
+            font-size: 0.85rem;
+            background: white;
+        }
+
+        .excel-table tr:nth-child(even) td {
+            background: #f8fafc;
+        }
+
+        .excel-table tr:hover td {
+            background: #eff6ff;
+        }
+
+        .excel-table .row-header {
+            background: #eff6ff !important;
+            font-weight: 600;
+            text-align: left;
+            color: #1e3a8a;
+            padding-left: 1rem;
+        }
+
+        .excel-table .section-header {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8) !important;
+            color: white;
+            font-weight: 700;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        .excel-table input {
+            width: 100%;
+            border: none;
+            background: transparent;
+            text-align: center;
+            font-size: 0.85rem;
+            padding: 0.25rem;
+        }
+
+        .excel-table input:focus {
+            outline: 2px solid #3b82f6;
+            background: #eff6ff;
+            border-radius: 4px;
+        }
+
+        .excel-table .total-cell {
+            background: #dbeafe !important;
+            font-weight: 700;
+            color: #1e3a8a;
+        }
+
+        .card {
+            background: white;
+            border: 2px solid #bfdbfe;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid #eff6ff;
+        }
+
+        .grid {
+            display: grid;
+            gap: 1.25rem;
+        }
+
+        .grid-2 {
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        }
+
+        .grid-3 {
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        }
+
+        .form-input-card {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #bfdbfe;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            transition: all 0.3s;
+            background: #f8fafc;
+        }
+
+        .form-input-card:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+            background: white;
+        }
+
+        .textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #bfdbfe;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            resize: vertical;
+            min-height: 120px;
+            background: #f8fafc;
+            transition: all 0.3s;
+        }
+
+        .textarea:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+            background: white;
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, #eff6ff, #dbeafe);
+            border: 2px solid #3b82f6;
+            border-radius: 12px;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .info-box-content {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .toast {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            background: linear-gradient(135deg, #16a34a, #15803d);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+            font-weight: 600;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.error {
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
+        }
+
+        .quarter-selector {
+            background: white;
+            border: 2px solid #3b82f6;
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .quarter-btn {
+            background: linear-gradient(135deg, #eff6ff, #dbeafe);
+            color: #1e3a8a;
+            border: 2px solid #3b82f6;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .quarter-btn:hover,
+        .quarter-btn.active {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-tabs {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .nav-tab {
+                font-size: 0.8rem;
+                padding: 1rem 0.5rem;
+            }
+
+            .grid-2,
+            .grid-3 {
+                grid-template-columns: 1fr;
+            }
+
+            .date-selectors {
+                flex-wrap: wrap;
+            }
+
+            .excel-table {
+                font-size: 0.75rem;
+            }
+
+            .excel-table th,
+            .excel-table td {
+                padding: 0.4rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Auth Screen -->
+    <div id="auth-screen" class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <div class="auth-icon">
+                    <i data-lucide="church" style="color: white; width: 32px; height: 32px;"></i>
+                </div>
+                <h1 class="auth-title">Methodist Church Ghana</h1>
+                <p class="auth-subtitle">Monthly Operating Statistical Returns</p>
+            </div>
+
+            <div class="tabs">
+                <button class="tab-button active" onclick="switchAuthTab('signin')">Sign In</button>
+                <button class="tab-button" onclick="switchAuthTab('signup')">Create Admin</button>
+            </div>
+
+            <div id="signin-tab">
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-input" id="signin-email" placeholder="Enter your email">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="password" class="form-input" id="signin-password" placeholder="Enter your password">
+                </div>
+                <button class="btn" onclick="handleSignIn()">Sign In</button>
+            </div>
+
+            <div id="signup-tab" class="hidden">
+                <div class="form-group">
+                    <label class="form-label">Admin Email</label>
+                    <input type="email" class="form-input" id="signup-email" placeholder="Enter admin email">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Admin Password</label>
+                    <input type="password" class="form-input" id="signup-password" placeholder="Enter admin password (min 6 chars)">
+                </div>
+                <button class="btn" onclick="handleSignUp()">Create Admin Account</button>
+            </div>
+
+            <div id="auth-message"></div>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div id="main-app" class="hidden">
+        <header class="header">
+            <div class="header-content">
+                <div class="header-left">
+                    <div class="header-icon">
+                        <i data-lucide="church" style="color: white; width: 24px; height: 24px;"></i>
+                    </div>
+                    <div>
+                        <h1 class="header-title">Monthly Returns</h1>
+                        <p class="header-subtitle">Methodist Church Ghana</p>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <div class="date-selectors">
+                        <i data-lucide="calendar" style="color: white;"></i>
+                        <select class="select" id="year-select"></select>
+                        <select class="select" id="month-select"></select>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <span style="font-size: 0.9rem; color: #bfdbfe; font-weight: 500;">Welcome, <span id="current-user"></span></span>
+                        <button class="btn btn-outline btn-sm" onclick="handleSignOut()">
+                            <i data-lucide="log-out" style="width: 14px; height: 14px; margin-right: 0.5rem;"></i>
+                            Sign Out
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="main-card">
+                <div class="main-header">
+                    <h2 class="main-title" id="main-title">Monthly Operating Statistical Returns</h2>
+                    <p class="main-subtitle">The Methodist Church Ghana</p>
+                </div>
+
+                <nav class="nav-tabs">
+                    <button class="nav-tab active" onclick="switchTab('monthly')">📊 Monthly View</button>
+                    <button class="nav-tab" onclick="switchTab('quarterly')">📈 Quarterly Summary</button>
+                    <button class="nav-tab" onclick="switchTab('comments')">✍️ Comments</button>
+                    <button class="nav-tab" onclick="switchTab('export')">📤 Export</button>
+                </nav>
+
+                <!-- Monthly View Tab -->
+                <div id="monthly-tab" class="tab-content">
+                    <div class="card">
+                        <div class="card-header">
+                            <span>📊</span>
+                            Monthly Operating Statistical Returns (<span id="current-month-year"></span>)
+                        </div>
+                        
+                        <!-- Church Information -->
+                        <div style="margin-bottom: 2rem;">
+                            <div class="grid grid-2">
+                                <div class="form-group">
+                                    <label class="form-label">Diocese</label>
+                                    <input type="text" class="form-input-card" id="diocese" placeholder="Enter diocese name">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Circuit</label>
+                                    <input type="text" class="form-input-card" id="circuit" placeholder="Enter circuit name">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Society</label>
+                                    <input type="text" class="form-input-card" id="society" placeholder="Enter society name">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Location</label>
+                                    <input type="text" class="form-input-card" id="location" placeholder="Enter location">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Excel-style Monthly Table -->
+                        <table class="excel-table" id="monthly-table">
+                            <thead>
+                                <tr>
+                                    <th rowspan="2" style="width: 40px;">ID</th>
+                                    <th rowspan="2" style="width: 300px;">Description</th>
+                                    <th colspan="5">Weekly Data</th>
+                                    <th rowspan="2" style="width: 100px;"><span id="month-total-header">Jul-Total</span></th>
+                                </tr>
+                                <tr>
+                                    <th>Week1</th>
+                                    <th>Week2</th>
+                                    <th>Week3</th>
+                                    <th>Week4</th>
+                                    <th>Week5</th>
+                                </tr>
+                            </thead>
+                            <tbody id="monthly-table-body">
+                                <!-- Database Section -->
+                                <tr><td colspan="8" class="section-header">Database</td></tr>
+                                <tr><td></td><td class="row-header"></td><td class="row-header">Males</td><td class="row-header">Females</td><td class="row-header">Total</td><td></td><td></td><td></td></tr>
+                                
+                                <!-- Operations Section -->
+                                <tr><td colspan="8" class="section-header">Operations</td></tr>
+                            </tbody>
+                        </table>
+
+                        <div style="margin-top: 1.5rem; display: flex; gap: 1rem; flex-wrap: wrap;">
+                            <button class="btn" onclick="saveMonthlyData()">Save Monthly Data</button>
+                            <button class="btn btn-outline" onclick="addWeekColumn()">Add Week Column</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quarterly Summary Tab -->
+                <div id="quarterly-tab" class="tab-content hidden">
+                    <div class="quarter-selector">
+                        <span style="font-weight: 700; color: #1e3a8a;">Select Quarter:</span>
+                        <button class="quarter-btn active" onclick="selectQuarter(1)" id="q1-btn">Q1 (Jan-Mar)</button>
+                        <button class="quarter-btn" onclick="selectQuarter(2)" id="q2-btn">Q2 (Apr-Jun)</button>
+                        <button class="quarter-btn" onclick="selectQuarter(3)" id="q3-btn">Q3 (Jul-Sep)</button>
+                        <button class="quarter-btn" onclick="selectQuarter(4)" id="q4-btn">Q4 (Oct-Dec)</button>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <span>📈</span>
+                            Quarterly Summary - <span id="current-quarter">Quarter 1</span> (<span id="current-quarter-year"></span>)
+                        </div>
+
+                        <table class="excel-table" id="quarterly-table">
+                            <thead>
+                                <tr>
+                                    <th rowspan="2" style="width: 40px;">ID</th>
+                                    <th rowspan="2" style="width: 300px;">Description</th>
+                                    <th colspan="3">Monthly Averages</th>
+                                    <th rowspan="2" style="width: 120px;">Qtr Total</th>
+                                </tr>
+                                <tr id="quarterly-months-header">
+                                    <th>Jan</th>
+                                    <th>Feb</th>
+                                    <th>Mar</th>
+                                </tr>
+                            </thead>
+                            <tbody id="quarterly-table-body"></tbody>
+                        </table>
+
+                        <button class="btn" onclick="generateQuarterlySummary()" style="margin-top: 1.5rem;">Generate Quarterly Summary</button>
+                    </div>
+                </div>
+
+                <!-- Comments Tab -->
+                <div id="comments-tab" class="tab-content hidden">
+                    <div class="card">
+                        <div class="card-header">
+                            <i data-lucide="message-square"></i>
+                            Comments & Additional Information
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Comments</label>
+                            <textarea class="textarea" id="comments" placeholder="Enter any additional comments or notes..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Measure What Matters</label>
+                            <textarea class="textarea" id="measure-what-matters" placeholder="Enter key metrics and observations..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <i data-lucide="users"></i>
+                            Society Statistician
+                        </div>
+                        <div class="grid grid-3">
+                            <div class="form-group">
+                                <label class="form-label">Name</label>
+                                <input type="text" class="form-input-card" id="stat-name" placeholder="Statistician name">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Contact</label>
+                                <input type="text" class="form-input-card" id="stat-contact" placeholder="Phone number">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Signature</label>
+                                <input type="text" class="form-input-card" id="stat-signature" placeholder="Digital signature">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Date</label>
+                            <input type="date" class="form-input-card" id="stat-date">
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <i data-lucide="user-check"></i>
+                            Society Steward
+                        </div>
+                        <div class="grid grid-3">
+                            <div class="form-group">
+                                <label class="form-label">Name</label>
+                                <input type="text" class="form-input-card" id="steward-name" placeholder="Steward name">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Contact</label>
+                                <input type="text" class="form-input-card" id="steward-contact" placeholder="Phone number">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Signature</label>
+                                <input type="text" class="form-input-card" id="steward-signature" placeholder="Digital signature">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Date</label>
+                            <input type="date" class="form-input-card" id="steward-date">
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <i data-lucide="crown"></i>
+                            Minister-in-Charge
+                        </div>
+                        <div class="grid grid-3">
+                            <div class="form-group">
+                                <label class="form-label">Name</label>
+                                <input type="text" class="form-input-card" id="minister-name" placeholder="Minister name">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Contact</label>
+                                <input type="text" class="form-input-card" id="minister-contact" placeholder="Phone number">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Signature</label>
+                                <input type="text" class="form-input-card" id="minister-signature" placeholder="Digital signature">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Date</label>
+                            <input type="date" class="form-input-card" id="minister-date">
+                        </div>
+                    </div>
+
+                    <button class="btn" onclick="saveComments()">Save Comments & Signatures</button>
+                </div>
+
+                <!-- Export Tab -->
+                <div id="export-tab" class="tab-content hidden">
+                    <div class="card">
+                        <div class="card-header">
+                            <i data-lucide="file-spreadsheet"></i>
+                            Export to Excel
+                        </div>
+                        <div class="info-box">
+                            <div class="info-box-content">
+                                <i data-lucide="info" style="color: #3b82f6; flex-shrink: 0;"></i>
+                                <div>
+                                    <p><strong>Export Options:</strong></p>
+                                    <ul style="margin-left: 1rem; margin-top: 0.5rem;">
+                                        <li>Monthly reports with separate sheets for each month</li>
+                                        <li>Quarterly summaries with averaged data</li>
+                                        <li>Complete yearly report with all data</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+                            <button class="btn" onclick="exportMonthly()">
+                                <i data-lucide="calendar" style="width: 16px; height: 16px; margin-right: 0.5rem;"></i>
+                                Export Current Month
+                            </button>
+                            <button class="btn" onclick="exportQuarterly()">
+                                <i data-lucide="bar-chart-3" style="width: 16px; height: 16px; margin-right: 0.5rem;"></i>
+                                Export Current Quarter
+                            </button>
+                            <button class="btn" onclick="exportYearly()">
+                                <i data-lucide="download" style="width: 16px; height: 16px; margin-right: 0.5rem;"></i>
+                                Export Full Year
+                            </button>
+                        </div>
+                        
+                        <div id="export-status" style="font-size: 0.875rem; color: #6b7280; text-align: center; font-weight: 500;"></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Constants matching the Excel format
+        const DATABASE_CODES = [
+            { id: 'A', name: 'Christian Community', type: 'database' },
+            { id: 'B', name: 'Full Members', type: 'database' },
+            { id: 'C', name: 'Junior Members', type: 'database' },
+            { id: 'D', name: 'Catechumens', type: 'database' },
+            { id: 'E', name: 'Adherents', type: 'database' }
+        ];
+
+        const OPERATION_ITEMS = [
+            { id: '1', name: 'Number of Classes', type: 'operations' },
+            { id: '2', name: 'Class Membership (Total)', type: 'operations' },
+            { id: '3', name: 'Class Meeting Attendance', type: 'operations' },
+            { id: '4', name: 'Church Services Attendance', type: 'operations' },
+            { id: '4a', name: 'Adults Services Attendance', type: 'operations' },
+            { id: '4b', name: 'Youth/Teens Services Attendance', type: 'operations' },
+            { id: '4c', name: 'Children Services Attendance', type: 'operations' },
+            { id: '5', name: 'Communion Services Participants', type: 'operations' },
+            { id: '6', name: 'New Members Received at Leaders Meeting', type: 'operations' },
+            { id: '7', name: 'Visitors', type: 'operations' },
+            { id: '8', name: 'Prayer Meeting Attendance', type: 'operations' },
+            { id: '9', name: 'MPRP Attendance', type: 'operations' },
+            { id: '10', name: 'Revival Meeting Attendance', type: 'operations' },
+            { id: '11', name: 'Outreach Members Participating', type: 'operations' },
+            { id: '12', name: 'Souls Won(New Members)', type: 'operations' },
+            { id: '13', name: 'Marriages', type: 'operations' },
+            { id: '14', name: 'Births', type: 'operations' },
+            { id: '15', name: 'Baptisms', type: 'operations' },
+            { id: '16', name: 'Confirmations', type: 'operations' },
+            { id: '17', name: 'Organisation Membership', type: 'operations' },
+            { id: '18', name: 'Organisation Meeting Attendance', type: 'operations' },
+            { id: 'a', name: 'Boys and Girls Brigade', type: 'operations' },
+            { id: 'b', name: 'Girls Fellowship', type: 'operations' },
+            { id: 'c', name: 'Youth Ministry', type: 'operations' },
+            { id: 'd', name: 'Women\'s Ministry', type: 'operations' },
+            { id: 'e', name: 'Men\'s Ministry', type: 'operations' },
+            { id: 'f', name: 'Susanna Wesley Auxiliary', type: 'operations' },
+            { id: 'g', name: 'Singing Ministry', type: 'operations' },
+            { id: '19', name: 'Deaths', type: 'operations' },
+            { id: '20', name: 'Number of members paying tithe', type: 'operations' },
+            { id: '21', name: 'Amount of tithe paid', type: 'operations' }
+        ];
+
+        const MONTHS = [
+            'January', 'February', 'March', 'April', 'May', 'June',
+            'July', 'August', 'September', 'October', 'November', 'December'
+        ];
+
+        const MONTH_ABBREV = [
+            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+            'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+        ];
+
+        const QUARTERS = {
+            1: { months: [0, 1, 2], name: 'Quarter 1', abbrev: ['Jan', 'Feb', 'Mar'] },
+            2: { months: [3, 4, 5], name: 'Quarter 2', abbrev: ['Apr', 'May', 'Jun'] },
+            3: { months: [6, 7, 8], name: 'Quarter 3', abbrev: ['Jul', 'Aug', 'Sep'] },
+            4: { months: [9, 10, 11], name: 'Quarter 4', abbrev: ['Oct', 'Nov', 'Dec'] }
+        };
+
+        // Global state
+        let currentUser = null;
+        let selectedYear = new Date().getFullYear();
+        let selectedMonth = MONTHS[new Date().getMonth()];
+        let selectedQuarter = Math.ceil((new Date().getMonth() + 1) / 3);
+        let weekColumns = 5; // Default 5 weeks
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', function() {
+            lucide.createIcons();
+            initializeDateSelectors();
+            checkAuthentication();
+        });
+
+        // Authentication functions (same as before)
+        function checkAuthentication() {
+            currentUser = localStorage.getItem('mgx_current_user');
+            if (currentUser) {
+                showMainApp();
+            } else {
+                showAuthScreen();
+            }
+        }
+
+        function switchAuthTab(tab) {
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`[onclick="switchAuthTab('${tab}')"]`).classList.add('active');
+            
+            document.getElementById('signin-tab').classList.toggle('hidden', tab !== 'signin');
+            document.getElementById('signup-tab').classList.toggle('hidden', tab !== 'signup');
+        }
+
+        function handleSignIn() {
+            const email = document.getElementById('signin-email').value.trim();
+            const password = document.getElementById('signin-password').value.trim();
+            
+            if (!email || !password) {
+                showMessage('Please enter both email and password', 'error');
+                return;
+            }
+
+            const users = JSON.parse(localStorage.getItem('mgx_users') || '[]');
+            const user = users.find(u => u.email === email && u.password === password);
+            
+            if (user) {
+                localStorage.setItem('mgx_current_user', email);
+                currentUser = email;
+                showMainApp();
+            } else {
+                showMessage('Invalid email or password', 'error');
+            }
+        }
+
+        function handleSignUp() {
+            const email = document.getElementById('signup-email').value.trim();
+            const password = document.getElementById('signup-password').value.trim();
+            
+            if (!email || !password) {
+                showMessage('Please enter both email and password', 'error');
+                return;
+            }
+
+            if (password.length < 6) {
+                showMessage('Password must be at least 6 characters', 'error');
+                return;
+            }
+
+            const users = JSON.parse(localStorage.getItem('mgx_users') || '[]');
+            users.push({ email, password, createdAt: Date.now() });
+            localStorage.setItem('mgx_users', JSON.stringify(users));
+            
+            showMessage('Admin account created successfully! You can now sign in.', 'success');
+            document.getElementById('signup-email').value = '';
+            document.getElementById('signup-password').value = '';
+        }
+
+        function handleSignOut() {
+            localStorage.removeItem('mgx_current_user');
+            currentUser = null;
+            showAuthScreen();
+        }
+
+        function showAuthScreen() {
+            document.getElementById('auth-screen').classList.remove('hidden');
+            document.getElementById('main-app').classList.add('hidden');
+        }
+
+        function showMainApp() {
+            document.getElementById('auth-screen').classList.add('hidden');
+            document.getElementById('main-app').classList.remove('hidden');
+            document.getElementById('current-user').textContent = currentUser;
+            updateTitles();
+            initializeMonthlyTable();
+            loadAllData();
+        }
+
+        function showMessage(message, type) {
+            const messageDiv = document.getElementById('auth-message');
+            messageDiv.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
+            setTimeout(() => messageDiv.innerHTML = '', 5000);
+        }
+
+        // Toast notifications
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => toast.classList.add('show'), 100);
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => document.body.removeChild(toast), 300);
+            }, 3000);
+        }
+
+        // Date selectors
+        function initializeDateSelectors() {
+            const yearSelect = document.getElementById('year-select');
+            const monthSelect = document.getElementById('month-select');
+            
+            // Populate years
+            for (let year = selectedYear - 2; year <= selectedYear + 1; year++) {
+                const option = document.createElement('option');
+                option.value = year;
+                option.textContent = year;
+                option.selected = year === selectedYear;
+                yearSelect.appendChild(option);
+            }
+            
+            // Populate months
+            MONTHS.forEach((month, index) => {
+                const option = document.createElement('option');
+                option.value = month;
+                option.textContent = month;
+                option.selected = index === new Date().getMonth();
+                monthSelect.appendChild(option);
+            });
+            
+            yearSelect.addEventListener('change', (e) => {
+                selectedYear = parseInt(e.target.value);
+                updateTitles();
+                loadAllData();
+            });
+            
+            monthSelect.addEventListener('change', (e) => {
+                selectedMonth = e.target.value;
+                updateTitles();
+                loadAllData();
+            });
+        }
+
+        function updateTitles() {
+            document.getElementById('main-title').textContent = 
+                `Monthly Operating Statistical Returns — ${selectedMonth} ${selectedYear}`;
+            document.getElementById('current-month-year').textContent = `${selectedMonth} ${selectedYear}`;
+            document.getElementById('current-quarter-year').textContent = selectedYear;
+            document.getElementById('month-total-header').textContent = `${MONTH_ABBREV[MONTHS.indexOf(selectedMonth)]}-Total`;
+        }
+
+        // Tab switching
+        function switchTab(tab) {
+            document.querySelectorAll('.nav-tab').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`[onclick="switchTab('${tab}')"]`).classList.add('active');
+            
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.add('hidden'));
+            document.getElementById(`${tab}-tab`).classList.remove('hidden');
+            
+            if (tab === 'quarterly') {
+                initializeQuarterlyTable();
+            }
+        }
+
+        // Initialize monthly table with Excel-like structure
+        function initializeMonthlyTable() {
+            const tbody = document.getElementById('monthly-table-body');
+            tbody.innerHTML = '';
+            
+            // Database section
+            const dbHeader = document.createElement('tr');
+            dbHeader.innerHTML = '<td colspan="8" class="section-header">Database</td>';
+            tbody.appendChild(dbHeader);
+            
+            const dbSubHeader = document.createElement('tr');
+            dbSubHeader.innerHTML = '<td></td><td class="row-header"></td><td class="row-header">Males</td><td class="row-header">Females</td><td class="row-header">Total</td><td></td><td></td><td></td>';
+            tbody.appendChild(dbSubHeader);
+            
+            DATABASE_CODES.forEach(({ id, name }) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="row-header">${id}</td>
+                    <td class="row-header">${name}</td>
+                    <td><input type="number" min="0" data-type="database" data-id="${id}" data-field="males" oninput="calculateDatabaseTotal('${id}')"></td>
+                    <td><input type="number" min="0" data-type="database" data-id="${id}" data-field="females" oninput="calculateDatabaseTotal('${id}')"></td>
+                    <td class="total-cell" data-id="${id}-total">0</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                `;
+                tbody.appendChild(row);
+            });
+            
+            // Operations section
+            const opsHeader = document.createElement('tr');
+            opsHeader.innerHTML = '<td colspan="8" class="section-header">Operations</td>';
+            tbody.appendChild(opsHeader);
+            
+            OPERATION_ITEMS.forEach(({ id, name }) => {
+                const row = document.createElement('tr');
+                let weekInputs = '';
+                for (let i = 1; i <= weekColumns; i++) {
+                    weekInputs += `<td><input type="number" min="0" data-type="operations" data-id="${id}" data-week="${i}" oninput="calculateOperationTotal('${id}')"></td>`;
+                }
+                
+                row.innerHTML = `
+                    <td class="row-header">${id}</td>
+                    <td class="row-header">${name}</td>
+                    ${weekInputs}
+                    <td class="total-cell" data-id="${id}-total">0</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function calculateDatabaseTotal(id) {
+            const males = parseInt(document.querySelector(`input[data-id="${id}"][data-field="males"]`).value) || 0;
+            const females = parseInt(document.querySelector(`input[data-id="${id}"][data-field="females"]`).value) || 0;
+            document.querySelector(`[data-id="${id}-total"]`).textContent = males + females;
+        }
+
+        function calculateOperationTotal(id) {
+            let total = 0;
+            for (let i = 1; i <= weekColumns; i++) {
+                const input = document.querySelector(`input[data-id="${id}"][data-week="${i}"]`);
+                if (input) {
+                    total += parseInt(input.value) || 0;
+                }
+            }
+            document.querySelector(`[data-id="${id}-total"]`).textContent = total;
+        }
+
+        function addWeekColumn() {
+            if (weekColumns >= 6) {
+                showToast('Maximum 6 weeks allowed', 'error');
+                return;
+            }
+            
+            weekColumns++;
+            initializeMonthlyTable();
+            loadAllData();
+            showToast(`Week ${weekColumns} column added`);
+        }
+
+        // Quarter functions
+        function selectQuarter(quarter) {
+            selectedQuarter = quarter;
+            document.querySelectorAll('.quarter-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`q${quarter}-btn`).classList.add('active');
+            document.getElementById('current-quarter').textContent = QUARTERS[quarter].name;
+            
+            // Update quarterly table headers
+            const monthsHeader = document.getElementById('quarterly-months-header');
+            monthsHeader.innerHTML = QUARTERS[quarter].abbrev.map(month => `<th>${month}</th>`).join('');
+            
+            initializeQuarterlyTable();
+        }
+
+        function initializeQuarterlyTable() {
+            const tbody = document.getElementById('quarterly-table-body');
+            tbody.innerHTML = '';
+            
+            // Database section
+            const dbHeader = document.createElement('tr');
+            dbHeader.innerHTML = '<td colspan="6" class="section-header">Database</td>';
+            tbody.appendChild(dbHeader);
+            
+            DATABASE_CODES.forEach(({ id, name }) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="row-header">${id}</td>
+                    <td class="row-header">${name}</td>
+                    <td class="total-cell" data-quarter-id="${id}-month1">0</td>
+                    <td class="total-cell" data-quarter-id="${id}-month2">0</td>
+                    <td class="total-cell" data-quarter-id="${id}-month3">0</td>
+                    <td class="total-cell" data-quarter-id="${id}-total">0</td>
+                `;
+                tbody.appendChild(row);
+            });
+            
+            // Operations section
+            const opsHeader = document.createElement('tr');
+            opsHeader.innerHTML = '<td colspan="6" class="section-header">Operations</td>';
+            tbody.appendChild(opsHeader);
+            
+            OPERATION_ITEMS.forEach(({ id, name }) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="row-header">${id}</td>
+                    <td class="row-header">${name}</td>
+                    <td class="total-cell" data-quarter-id="${id}-month1">0</td>
+                    <td class="total-cell" data-quarter-id="${id}-month2">0</td>
+                    <td class="total-cell" data-quarter-id="${id}-month3">0</td>
+                    <td class="total-cell" data-quarter-id="${id}-total">0</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function generateQuarterlySummary() {
+            const quarter = QUARTERS[selectedQuarter];
+            const quarterData = {};
+            
+            quarter.months.forEach((monthIndex, i) => {
+                const monthName = MONTHS[monthIndex];
+                const monthData = getMonthlyData(selectedYear, monthName);
+                
+                if (monthData) {
+                    // Process database data
+                    DATABASE_CODES.forEach(({ id }) => {
+                        if (!quarterData[id]) quarterData[id] = { month1: 0, month2: 0, month3: 0 };
+                        quarterData[id][`month${i + 1}`] = monthData.database?.[id]?.total || 0;
+                    });
+                    
+                    // Process operations data
+                    OPERATION_ITEMS.forEach(({ id }) => {
+                        if (!quarterData[id]) quarterData[id] = { month1: 0, month2: 0, month3: 0 };
+                        quarterData[id][`month${i + 1}`] = monthData.operations?.[id]?.total || 0;
+                    });
+                }
+            });
+            
+            // Update quarterly table
+            Object.keys(quarterData).forEach(id => {
+                const data = quarterData[id];
+                const total = data.month1 + data.month2 + data.month3;
+                
+                document.querySelector(`[data-quarter-id="${id}-month1"]`).textContent = data.month1;
+                document.querySelector(`[data-quarter-id="${id}-month2"]`).textContent = data.month2;
+                document.querySelector(`[data-quarter-id="${id}-month3"]`).textContent = data.month3;
+                document.querySelector(`[data-quarter-id="${id}-total"]`).textContent = total;
+            });
+            
+            showToast('Quarterly summary generated successfully!');
+        }
+
+        // Data management functions
+        function getMonthlyData(year = selectedYear, month = selectedMonth) {
+            const key = `mgx_monthly_${year}_${month}`;
+            const data = localStorage.getItem(key);
+            return data ? JSON.parse(data) : null;
+        }
+
+        function saveMonthlyDataToStorage(year = selectedYear, month = selectedMonth, newData) {
+            const key = `mgx_monthly_${year}_${month}`;
+            const existing = getMonthlyData(year, month) || {
+                meta: { diocese: '', circuit: '', society: '', location: '' },
+                database: {},
+                operations: {},
+                comments: { comments: '', measureWhatMatters: '', statistician: {}, steward: {}, minister: {} }
+            };
+            const updated = { ...existing, ...newData };
+            localStorage.setItem(key, JSON.stringify(updated));
+        }
+
+        function saveMonthlyData() {
+            // Collect meta data
+            const meta = {
+                diocese: document.getElementById('diocese').value,
+                circuit: document.getElementById('circuit').value,
+                society: document.getElementById('society').value,
+                location: document.getElementById('location').value
+            };
+            
+            // Collect database data
+            const database = {};
+            DATABASE_CODES.forEach(({ id, name }) => {
+                const males = parseInt(document.querySelector(`input[data-id="${id}"][data-field="males"]`).value) || 0;
+                const females = parseInt(document.querySelector(`input[data-id="${id}"][data-field="females"]`).value) || 0;
+                database[id] = { id, name, males, females, total: males + females };
+            });
+            
+            // Collect operations data
+            const operations = {};
+            OPERATION_ITEMS.forEach(({ id, name }) => {
+                const weeks = {};
+                let total = 0;
+                for (let i = 1; i <= weekColumns; i++) {
+                    const input = document.querySelector(`input[data-id="${id}"][data-week="${i}"]`);
+                    const value = input ? (parseInt(input.value) || 0) : 0;
+                    weeks[`week${i}`] = value;
+                    total += value;
+                }
+                operations[id] = { id, name, weeks, total };
+            });
+            
+            saveMonthlyDataToStorage(selectedYear, selectedMonth, { meta, database, operations });
+            showToast('Monthly data saved successfully!');
+        }
+
+        function saveComments() {
+            const comments = {
+                comments: document.getElementById('comments').value,
+                measureWhatMatters: document.getElementById('measure-what-matters').value,
+                statistician: {
+                    name: document.getElementById('stat-name').value,
+                    contact: document.getElementById('stat-contact').value,
+                    signature: document.getElementById('stat-signature').value,
+                    date: document.getElementById('stat-date').value
+                },
+                steward: {
+                    name: document.getElementById('steward-name').value,
+                    contact: document.getElementById('steward-contact').value,
+                    signature: document.getElementById('steward-signature').value,
+                    date: document.getElementById('steward-date').value
+                },
+                minister: {
+                    name: document.getElementById('minister-name').value,
+                    contact: document.getElementById('minister-contact').value,
+                    signature: document.getElementById('minister-signature').value,
+                    date: document.getElementById('minister-date').value
+                }
+            };
+            
+            saveMonthlyDataToStorage(selectedYear, selectedMonth, { comments });
+            showToast('Comments and signatures saved successfully!');
+        }
+
+        function loadAllData() {
+            const data = getMonthlyData();
+            if (!data) return;
+            
+            // Load meta data
+            if (data.meta) {
+                document.getElementById('diocese').value = data.meta.diocese || '';
+                document.getElementById('circuit').value = data.meta.circuit || '';
+                document.getElementById('society').value = data.meta.society || '';
+                document.getElementById('location').value = data.meta.location || '';
+            }
+            
+            // Load database data
+            if (data.database) {
+                DATABASE_CODES.forEach(({ id }) => {
+                    const entry = data.database[id];
+                    if (entry) {
+                        const malesInput = document.querySelector(`input[data-id="${id}"][data-field="males"]`);
+                        const femalesInput = document.querySelector(`input[data-id="${id}"][data-field="females"]`);
+                        if (malesInput) malesInput.value = entry.males || 0;
+                        if (femalesInput) femalesInput.value = entry.females || 0;
+                        calculateDatabaseTotal(id);
+                    }
+                });
+            }
+            
+            // Load operations data
+            if (data.operations) {
+                OPERATION_ITEMS.forEach(({ id }) => {
+                    const entry = data.operations[id];
+                    if (entry && entry.weeks) {
+                        for (let i = 1; i <= weekColumns; i++) {
+                            const input = document.querySelector(`input[data-id="${id}"][data-week="${i}"]`);
+                            if (input) {
+                                input.value = entry.weeks[`week${i}`] || 0;
+                            }
+                        }
+                        calculateOperationTotal(id);
+                    }
+                });
+            }
+            
+            // Load comments data
+            if (data.comments) {
+                document.getElementById('comments').value = data.comments.comments || '';
+                document.getElementById('measure-what-matters').value = data.comments.measureWhatMatters || '';
+                
+                if (data.comments.statistician) {
+                    document.getElementById('stat-name').value = data.comments.statistician.name || '';
+                    document.getElementById('stat-contact').value = data.comments.statistician.contact || '';
+                    document.getElementById('stat-signature').value = data.comments.statistician.signature || '';
+                    document.getElementById('stat-date').value = data.comments.statistician.date || '';
+                }
+                
+                if (data.comments.steward) {
+                    document.getElementById('steward-name').value = data.comments.steward.name || '';
+                    document.getElementById('steward-contact').value = data.comments.steward.contact || '';
+                    document.getElementById('steward-signature').value = data.comments.steward.signature || '';
+                    document.getElementById('steward-date').value = data.comments.steward.date || '';
+                }
+                
+                if (data.comments.minister) {
+                    document.getElementById('minister-name').value = data.comments.minister.name || '';
+                    document.getElementById('minister-contact').value = data.comments.minister.contact || '';
+                    document.getElementById('minister-signature').value = data.comments.minister.signature || '';
+                    document.getElementById('minister-date').value = data.comments.minister.date || '';
+                }
+            }
+        }
+
+        // Export functions
+        function exportMonthly() {
+            if (!window.XLSX) {
+                showToast('Excel export library not loaded. Please refresh the page.', 'error');
+                return;
+            }
+            
+            const data = getMonthlyData();
+            if (!data) {
+                showToast('No data found for the selected month.', 'error');
+                return;
+            }
+            
+            document.getElementById('export-status').textContent = 'Exporting monthly data...';
+            
+            try {
+                const wb = XLSX.utils.book_new();
+                const wsData = [];
+                
+                // Header
+                wsData.push(['The Methodist Church Ghana']);
+                wsData.push(['Monthly Operating Statistical Returns (Society)']);
+                wsData.push([]);
+                wsData.push(['Month', selectedMonth, 'Year', selectedYear]);
+                wsData.push(['Diocese', data.meta?.diocese || '', 'Circuit', data.meta?.circuit || '', 'Society', data.meta?.society || '', 'Location', data.meta?.location || '']);
+                wsData.push([]);
+                
+                // Database section
+                wsData.push(['Database']);
+                wsData.push(['Code', 'Description', 'Males', 'Females', 'Total']);
+                DATABASE_CODES.forEach(({ id, name }) => {
+                    const entry = data.database?.[id] || { males: 0, females: 0, total: 0 };
+                    wsData.push([id, name, entry.males, entry.females, entry.total]);
+                });
+                wsData.push([]);
+                
+                // Operations section
+                wsData.push(['Operations', '', selectedMonth]);
+                const weekHeaders = ['ID', 'Description'];
+                for (let i = 1; i <= weekColumns; i++) {
+                    weekHeaders.push(`Week${i}`);
+                }
+                weekHeaders.push(`${MONTH_ABBREV[MONTHS.indexOf(selectedMonth)]}-Total`);
+                wsData.push(weekHeaders);
+                
+                OPERATION_ITEMS.forEach(({ id, name }) => {
+                    const entry = data.operations?.[id] || { weeks: {}, total: 0 };
+                    const row = [id, name];
+                    for (let i = 1; i <= weekColumns; i++) {
+                        row.push(entry.weeks?.[`week${i}`] || 0);
+                    }
+                    row.push(entry.total);
+                    wsData.push(row);
+                });
+                
+                wsData.push([]);
+                wsData.push(['Measure What Matters']);
+                wsData.push([data.comments?.measureWhatMatters || '']);
+                wsData.push([]);
+                wsData.push(['Comments']);
+                wsData.push([data.comments?.comments || '']);
+                wsData.push([]);
+                
+                // Signatures
+                wsData.push(['Dated', data.comments?.statistician?.date || '', 'Dated', data.comments?.steward?.date || '']);
+                wsData.push(['Society Statistician', data.comments?.statistician?.name || '', 'Society Steward', data.comments?.steward?.name || '']);
+                wsData.push(['Contact', data.comments?.statistician?.contact || '', 'Contact', data.comments?.steward?.contact || '']);
+                wsData.push(['Signature', data.comments?.statistician?.signature || '', 'Signature', data.comments?.steward?.signature || '']);
+                wsData.push([]);
+                wsData.push(['Dated', data.comments?.minister?.date || '']);
+                wsData.push(['Minister-in-Charge', data.comments?.minister?.name || '']);
+                wsData.push(['Contact', data.comments?.minister?.contact || '']);
+                wsData.push(['Signature', data.comments?.minister?.signature || '']);
+                
+                const ws = XLSX.utils.aoa_to_sheet(wsData);
+                XLSX.utils.book_append_sheet(wb, ws, `${selectedMonth}_${selectedYear}`);
+                
+                const fileName = `MonthlyReturns_${selectedMonth}_${selectedYear}.xlsx`;
+                XLSX.writeFile(wb, fileName);
+                
+                document.getElementById('export-status').textContent = `Successfully exported ${fileName}`;
+                showToast('Monthly Excel file downloaded successfully!');
+                
+            } catch (error) {
+                console.error('Export error:', error);
+                showToast('Failed to export Excel file. Please try again.', 'error');
+                document.getElementById('export-status').textContent = 'Export failed';
+            }
+        }
+
+        function exportQuarterly() {
+            if (!window.XLSX) {
+                showToast('Excel export library not loaded. Please refresh the page.', 'error');
+                return;
+            }
+            
+            document.getElementById('export-status').textContent = 'Exporting quarterly data...';
+            
+            try {
+                const wb = XLSX.utils.book_new();
+                const quarter = QUARTERS[selectedQuarter];
+                const wsData = [];
+                
+                // Header
+                wsData.push(['The Methodist Church Ghana']);
+                wsData.push(['Monthly Operating Statistical Returns (Society)']);
+                wsData.push([]);
+                wsData.push(['Month', quarter.name, 'Year', selectedYear]);
+                wsData.push([]);
+                
+                // Get data for all three months
+                const quarterData = {};
+                quarter.months.forEach((monthIndex, i) => {
+                    const monthName = MONTHS[monthIndex];
+                    const monthData = getMonthlyData(selectedYear, monthName);
+                    
+                    if (monthData) {
+                        DATABASE_CODES.forEach(({ id }) => {
+                            if (!quarterData[id]) quarterData[id] = { month1: 0, month2: 0, month3: 0 };
+                            quarterData[id][`month${i + 1}`] = monthData.database?.[id]?.total || 0;
+                        });
+                        
+                        OPERATION_ITEMS.forEach(({ id }) => {
+                            if (!quarterData[id]) quarterData[id] = { month1: 0, month2: 0, month3: 0 };
+                            quarterData[id][`month${i + 1}`] = monthData.operations?.[id]?.total || 0;
+                        });
+                    }
+                });
+                
+                // Database section
+                wsData.push(['Database']);
+                wsData.push(['Code', 'Description', ...quarter.abbrev, 'Qtr Total']);
+                DATABASE_CODES.forEach(({ id, name }) => {
+                    const data = quarterData[id] || { month1: 0, month2: 0, month3: 0 };
+                    const total = data.month1 + data.month2 + data.month3;
+                    wsData.push([id, name, data.month1, data.month2, data.month3, total]);
+                });
+                wsData.push([]);
+                
+                // Operations section
+                wsData.push(['Operations', '', `${quarter.name}- Averages`]);
+                wsData.push(['ID', 'Description', ...quarter.abbrev, 'Qtr 3-Total']);
+                OPERATION_ITEMS.forEach(({ id, name }) => {
+                    const data = quarterData[id] || { month1: 0, month2: 0, month3: 0 };
+                    const total = data.month1 + data.month2 + data.month3;
+                    wsData.push([id, name, data.month1, data.month2, data.month3, total]);
+                });
+                
+                const ws = XLSX.utils.aoa_to_sheet(wsData);
+                XLSX.utils.book_append_sheet(wb, ws, `${quarter.name}_${selectedYear}`);
+                
+                const fileName = `QuarterlyReturns_${quarter.name}_${selectedYear}.xlsx`;
+                XLSX.writeFile(wb, fileName);
+                
+                document.getElementById('export-status').textContent = `Successfully exported ${fileName}`;
+                showToast('Quarterly Excel file downloaded successfully!');
+                
+            } catch (error) {
+                console.error('Export error:', error);
+                showToast('Failed to export Excel file. Please try again.', 'error');
+                document.getElementById('export-status').textContent = 'Export failed';
+            }
+        }
+
+        function exportYearly() {
+            if (!window.XLSX) {
+                showToast('Excel export library not loaded. Please refresh the page.', 'error');
+                return;
+            }
+            
+            document.getElementById('export-status').textContent = 'Exporting yearly data...';
+            
+            try {
+                const wb = XLSX.utils.book_new();
+                
+                // Create a sheet for each month
+                MONTHS.forEach(month => {
+                    const monthData = getMonthlyData(selectedYear, month);
+                    if (monthData) {
+                        const wsData = [];
+                        
+                        // Header
+                        wsData.push(['The Methodist Church Ghana']);
+                        wsData.push(['Monthly Operating Statistical Returns (Society)']);
+                        wsData.push([]);
+                        wsData.push(['Month', month, 'Year', selectedYear]);
+                        wsData.push(['Diocese', monthData.meta?.diocese || '', 'Circuit', monthData.meta?.circuit || '', 'Society', monthData.meta?.society || '', 'Location', monthData.meta?.location || '']);
+                        wsData.push([]);
+                        
+                        // Database section
+                        wsData.push(['Database']);
+                        wsData.push(['Code', 'Description', 'Males', 'Females', 'Total']);
+                        DATABASE_CODES.forEach(({ id, name }) => {
+                            const entry = monthData.database?.[id] || { males: 0, females: 0, total: 0 };
+                            wsData.push([id, name, entry.males, entry.females, entry.total]);
+                        });
+                        wsData.push([]);
+                        
+                        // Operations section
+                        wsData.push(['Operations', '', month]);
+                        const weekHeaders = ['ID', 'Description'];
+                        for (let i = 1; i <= weekColumns; i++) {
+                            weekHeaders.push(`Week${i}`);
+                        }
+                        weekHeaders.push(`${MONTH_ABBREV[MONTHS.indexOf(month)]}-Total`);
+                        wsData.push(weekHeaders);
+                        
+                        OPERATION_ITEMS.forEach(({ id, name }) => {
+                            const entry = monthData.operations?.[id] || { weeks: {}, total: 0 };
+                            const row = [id, name];
+                            for (let i = 1; i <= weekColumns; i++) {
+                                row.push(entry.weeks?.[`week${i}`] || 0);
+                            }
+                            row.push(entry.total);
+                            wsData.push(row);
+                        });
+                        
+                        const ws = XLSX.utils.aoa_to_sheet(wsData);
+                        XLSX.utils.book_append_sheet(wb, ws, month.substring(0, 3));
+                    }
+                });
+                
+                // Create quarterly summary sheets
+                for (let q = 1; q <= 4; q++) {
+                    const quarter = QUARTERS[q];
+                    const wsData = [];
+                    
+                    wsData.push(['The Methodist Church Ghana']);
+                    wsData.push(['Monthly Operating Statistical Returns (Society)']);
+                    wsData.push([]);
+                    wsData.push(['Quarter', quarter.name, 'Year', selectedYear]);
+                    wsData.push([]);
+                    
+                    // Get quarterly data
+                    const quarterData = {};
+                    quarter.months.forEach((monthIndex, i) => {
+                        const monthName = MONTHS[monthIndex];
+                        const monthData = getMonthlyData(selectedYear, monthName);
+                        
+                        if (monthData) {
+                            DATABASE_CODES.forEach(({ id }) => {
+                                if (!quarterData[id]) quarterData[id] = { month1: 0, month2: 0, month3: 0 };
+                                quarterData[id][`month${i + 1}`] = monthData.database?.[id]?.total || 0;
+                            });
+                            
+                            OPERATION_ITEMS.forEach(({ id }) => {
+                                if (!quarterData[id]) quarterData[id] = { month1: 0, month2: 0, month3: 0 };
+                                quarterData[id][`month${i + 1}`] = monthData.operations?.[id]?.total || 0;
+                            });
+                        }
+                    });
+                    
+                    // Database section
+                    wsData.push(['Database']);
+                    wsData.push(['Code', 'Description', ...quarter.abbrev, 'Qtr Total']);
+                    DATABASE_CODES.forEach(({ id, name }) => {
+                        const data = quarterData[id] || { month1: 0, month2: 0, month3: 0 };
+                        const total = data.month1 + data.month2 + data.month3;
+                        wsData.push([id, name, data.month1, data.month2, data.month3, total]);
+                    });
+                    wsData.push([]);
+                    
+                    // Operations section
+                    wsData.push(['Operations', '', `${quarter.name}- Averages`]);
+                    wsData.push(['ID', 'Description', ...quarter.abbrev, `Qtr ${q}-Total`]);
+                    OPERATION_ITEMS.forEach(({ id, name }) => {
+                        const data = quarterData[id] || { month1: 0, month2: 0, month3: 0 };
+                        const total = data.month1 + data.month2 + data.month3;
+                        wsData.push([id, name, data.month1, data.month2, data.month3, total]);
+                    });
+                    
+                    const ws = XLSX.utils.aoa_to_sheet(wsData);
+                    XLSX.utils.book_append_sheet(wb, ws, `Q${q}_Summary`);
+                }
+                
+                const fileName = `YearlyReturns_${selectedYear}.xlsx`;
+                XLSX.writeFile(wb, fileName);
+                
+                document.getElementById('export-status').textContent = `Successfully exported ${fileName}`;
+                showToast('Yearly Excel file downloaded successfully!');
+                
+            } catch (error) {
+                console.error('Export error:', error);
+                showToast('Failed to export Excel file. Please try again.', 'error');
+                document.getElementById('export-status').textContent = 'Export failed';
+            }
+        }
+    </script>
+</body>
+</html>
