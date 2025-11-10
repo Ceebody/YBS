@@ -388,7 +388,7 @@
         <p>📚 <strong>Subject:</strong> Introduction to Computing</p>
         <marquee>Just select the correct answer for each question!</marquee>
         <p>⏱️ <strong>Time Limit:</strong> 30 minutes</p>
-        <p>❓ <strong>Questions:</strong> 40 questions (all questions included)</p>
+        <p>❓ <strong>Questions:</strong> 30 questions (from 40 available)</p>
         <p>🎯 <strong>Instructions:</strong> Use Next and Previous to navigate, click Submit when done</p>
       </div>
       <button id="startBtn">🎯 Sure, Let's Start Quiz!</button>
@@ -400,7 +400,7 @@
     <!-- Quiz Area -->
     <div id="quizArea" class="hidden">
       <div class="quiz-header">
-        <div class="question-counter" id="questionCounter">Question 1 of 40</div>
+        <div class="question-counter" id="questionCounter">Question 1 of 30</div>
         <div class="timer" id="timer">30:00</div>
       </div>
       
@@ -448,327 +448,237 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    // Quiz Configuration - Updated for all 40 questions
+    // Quiz Configuration
     const QUIZ_DURATION = 30 * 60; // 30 minutes in seconds
-    const TOTAL_QUESTIONS = 40; // Show all 40 questions
+    const TOTAL_QUESTIONS = 30; // Show 30 out of 40 questions
     const COOLDOWN_HOURS = 12;
 
     // Quiz Data - All 40 questions
-    const allQuestions = [
+    const quizData = [
       {
-        q: "1. Early scientists built the first generation computers mainly for which reason?",
+        q: "1. Which device is used to move items on the computer screen?",
+        options: ["Keyboard", "Mouse", "Monitor", "Printer"],
+        answer: "Mouse"
+      },
+      {
+        q: "2. When you right-click on the desktop, what usually appears?",
+        options: ["Recycle Bin", "Shortcut menu", "Toolbar", "File explorer"],
+        answer: "Shortcut menu"
+      },
+      {
+        q: "3. A folder is used to ________ files on the computer.",
+        options: ["Print", "Store and organize", "Delete", "Display"],
+        answer: "Store and organize"
+      },
+      {
+        q: "4. What is data?",
         options: [
-          "To play music and movies",
-          "To solve scientific and military problems",
-          "To design games for children",
-          "To teach typing in schools"
+          "Information collected for a purpose",
+          "A computer program",
+          "A keyboard key",
+          "A software error"
         ],
-        answer: "To solve scientific and military problems"
+        answer: "Information collected for a purpose"
       },
       {
-        q: "2. The fourth generation of computers became faster because they used ________.",
-        options: ["Vacuum tubes", "Microprocessors", "Transistors", "Magnetic tapes"],
-        answer: "Microprocessors"
+        q: "5. Which of these is an example of an input device?",
+        options: ["Printer", "Speaker", "Keyboard", "Monitor"],
+        answer: "Keyboard"
       },
       {
-        q: "3. When comparing first and fifth generation computers, which feature shows the greatest change?",
+        q: "6. The result produced after data has been processed is called ________.",
+        options: ["Input", "Output", "Storage", "Hardware"],
+        answer: "Output"
+      },
+      {
+        q: "7. The desktop background can be changed by choosing ________.",
+        options: ["Personalize", "Copy", "Paste", "Edit"],
+        answer: "Personalize"
+      },
+      {
+        q: "8. Which of the following is a good reason for using folders?",
         options: [
-          "Colour of the monitor",
-          "Speed and size of the processor",
-          "Number of keys on the keyboard",
-          "Shape of the mouse"
+          "To make the desktop look beautiful",
+          "To organize and find files easily",
+          "To delete all old files",
+          "To hide programs"
         ],
-        answer: "Speed and size of the processor"
+        answer: "To organize and find files easily"
       },
       {
-        q: "4. A student wants to prepare charts using data. Which computer component will process her data into information?",
-        options: ["CPU", "Monitor", "Keyboard", "Printer"],
-        answer: "CPU"
-      },
-      {
-        q: "5. Which part of the computer is best described as its 'brain' because it carries out instructions?",
-        options: ["CPU", "RAM", "Monitor", "Keyboard"],
-        answer: "CPU"
-      },
-      {
-        q: "6. When a computer user moves the mouse, which item on the screen also moves?",
-        options: ["Cursor", "Icon", "Window", "Folder"],
-        answer: "Cursor"
-      },
-      {
-        q: "7. The scroll wheel on a mouse helps a user to ________.",
+        q: "9. The fifth generation of computers is mainly known for ________.",
         options: [
-          "Turn on the computer",
-          "Move up and down long pages easily",
-          "Save documents automatically",
-          "Switch between computers"
+          "Artificial intelligence",
+          "Vacuum tubes",
+          "Punch cards",
+          "Magnetic drums"
         ],
-        answer: "Move up and down long pages easily"
+        answer: "Artificial intelligence"
       },
       {
-        q: "8. Which of these shows the correct flow of data in a computer system?",
-        options: [
-          "Input → Processing → Output",
-          "Output → Input → Processing",
-          "Processing → Output → Input",
-          "Input → Output → Processing"
-        ],
-        answer: "Input → Processing → Output"
+        q: "10. Which storage device uses laser light to store data?",
+        options: ["Flash drive", "Optical disc", "Floppy disk", "Hard disk"],
+        answer: "Optical disc"
       },
       {
-        q: "9. If a computer shows no picture but the power light is on, which part may be faulty?",
-        options: ["Monitor", "Keyboard", "Mouse", "Speaker"],
-        answer: "Monitor"
-      },
-      {
-        q: "10. The RAM in a computer is used to ________.",
-        options: [
-          "Store temporary data while the computer is working",
-          "Store pictures permanently",
-          "Control external devices",
-          "Print text on paper"
-        ],
-        answer: "Store temporary data while the computer is working"
-      },
-      {
-        q: "11. The physical parts of a computer that can be touched are known as ________.",
-        options: ["Hardware", "Software", "Data", "Applications"],
-        answer: "Hardware"
-      },
-      {
-        q: "12. Which of the following groups contains only input devices?",
-        options: [
-          "Mouse, Keyboard, Scanner",
-          "Printer, Monitor, CPU",
-          "Speaker, Microphone, Mouse",
-          "Flash drive, Keyboard, Monitor"
-        ],
-        answer: "Mouse, Keyboard, Scanner"
-      },
-      {
-        q: "13. The main function of output devices is to ________.",
-        options: [
-          "Send results from the computer to the user",
-          "Store information permanently",
-          "Type commands into the computer",
-          "Transfer data between computers"
-        ],
-        answer: "Send results from the computer to the user"
-      },
-      {
-        q: "14. A learner inserted a flash drive to copy pictures. What type of device is the flash drive?",
-        options: ["Storage", "Input", "Output", "Processing"],
-        answer: "Storage"
-      },
-      {
-        q: "15. The small pictures that represent files or programs on the desktop are called ________.",
-        options: ["Icons", "Windows", "Folders", "Pointers"],
-        answer: "Icons"
-      },
-      {
-        q: "16. Which desktop action helps to open a shortcut menu for quick commands?",
-        options: [
-          "Left-click",
-          "Double-click",
-          "Right-click",
-          "Scroll up"
-        ],
-        answer: "Right-click"
-      },
-      {
-        q: "17. Why is organizing files into folders important?",
-        options: [
-          "It keeps the desktop neat and helps locate files quickly",
-          "It makes the computer look colourful",
-          "It deletes old files automatically",
-          "It prevents viruses"
-        ],
-        answer: "It keeps the desktop neat and helps locate files quickly"
-      },
-      {
-        q: "18. The Recycle Bin is useful because it allows the user to ________.",
-        options: [
-          "Recover deleted files",
-          "Install new programs",
-          "Store music permanently",
-          "Print documents faster"
-        ],
-        answer: "Recover deleted files"
-      },
-      {
-        q: "19. The third generation of computers replaced transistors with ________.",
-        options: ["Integrated circuits", "Vacuum tubes", "Microprocessors", "Magnetic tapes"],
-        answer: "Integrated circuits"
-      },
-      {
-        q: "20. The combination of monitor, CPU, mouse, and keyboard makes up the ________.",
-        options: ["Computer system", "Input unit", "Output unit", "Software group"],
-        answer: "Computer system"
-      },
-      {
-        q: "21. Why was the invention of the microprocessor an important step in computing history?",
-        options: [
-          "It made computers smaller and faster",
-          "It increased electricity consumption",
-          "It removed the need for software",
-          "It stopped computers from using memory"
-        ],
-        answer: "It made computers smaller and faster"
-      },
-      {
-        q: "22. Which device allows a user to speak to the computer during recording?",
-        options: ["Microphone", "Speaker", "Printer", "Mouse"],
+        q: "11. Which device helps a teacher record her lesson as voice data?",
+        options: ["Microphone", "Printer", "Monitor", "Speaker"],
         answer: "Microphone"
       },
       {
-        q: "23. When a student right-clicks the desktop and selects 'Personalize', what is the purpose?",
+        q: "12. The data 12, 15, 18, 10, 20 — what is the maximum value?",
+        options: ["10", "12", "20", "15"],
+        answer: "20"
+      },
+      {
+        q: "13. To calculate the average of numbers, you ________.",
         options: [
-          "To change or set the desktop background",
-          "To delete all folders",
-          "To open a new program",
-          "To restart the computer"
+          "Add them and divide by how many they are",
+          "Subtract and multiply",
+          "Add and subtract",
+          "Only add the biggest one"
         ],
-        answer: "To change or set the desktop background"
+        answer: "Add them and divide by how many they are"
       },
       {
-        q: "24. If you rename a folder incorrectly, what is the best way to correct the name?",
-        options: [
-          "Right-click and choose Rename again",
-          "Delete and create a new folder",
-          "Turn off the computer",
-          "Drag the folder to Recycle Bin"
-        ],
-        answer: "Right-click and choose Rename again"
+        q: "14. Which part of the computer shows pictures and videos?",
+        options: ["CPU", "Monitor", "Mouse", "Keyboard"],
+        answer: "Monitor"
       },
       {
-        q: "25. The storage device that uses magnetic plates to store large amounts of data is called ________.",
-        options: ["Hard disk", "Flash drive", "CD-ROM", "DVD"],
-        answer: "Hard disk"
-      },
-      {
-        q: "26. Which group of devices belongs to the fourth generation of computers?",
-        options: [
-          "Vacuum tubes",
-          "Transistors",
-          "Microprocessors",
-          "Integrated circuits"
-        ],
-        answer: "Microprocessors"
-      },
-      {
-        q: "27. A computer with touch screen input is an example of combining which two functions?",
-        options: [
-          "Input and Output",
-          "Storage and Processing",
-          "Output and Power supply",
-          "Input and Storage"
-        ],
-        answer: "Input and Output"
-      },
-      {
-        q: "28. When you double-click an icon, what usually happens?",
-        options: [
-          "The related program or file opens",
-          "The icon is deleted",
-          "The background changes",
-          "The computer shuts down"
-        ],
-        answer: "The related program or file opens"
-      },
-      {
-        q: "29. Which part of the computer stores programs and data permanently even when power is off?",
-        options: ["Hard disk", "RAM", "Cache", "Processor"],
-        answer: "Hard disk"
-      },
-      {
-        q: "30. Why do modern computers consume less power than early computers?",
-        options: [
-          "They use efficient microprocessors instead of vacuum tubes",
-          "They use more lights and fans",
-          "They have larger screens",
-          "They store more information"
-        ],
-        answer: "They use efficient microprocessors instead of vacuum tubes"
-      },
-      {
-        q: "31. The purpose of an operating system is to ________.",
-        options: [
-          "Control how the computer's hardware and software work together",
-          "Print documents automatically",
-          "Display pictures only",
-          "Replace the keyboard"
-        ],
-        answer: "Control how the computer's hardware and software work together"
-      },
-      {
-        q: "32. Which of these is the correct order from earliest to latest computer generation?",
-        options: [
-          "Vacuum tubes → Transistors → Integrated circuits → Microprocessors",
-          "Microprocessors → Transistors → Integrated circuits → Vacuum tubes",
-          "Transistors → Microprocessors → Vacuum tubes → Integrated circuits",
-          "Integrated circuits → Vacuum tubes → Transistors → Microprocessors"
-        ],
-        answer: "Vacuum tubes → Transistors → Integrated circuits → Microprocessors"
-      },
-      {
-        q: "33. A student wants to move an icon from one side of the desktop to another. Which mouse action should be used?",
-        options: ["Click and drag", "Right-click", "Double-click", "Scroll"],
-        answer: "Click and drag"
-      },
-      {
-        q: "34. If a printer is connected but does not print, which step should come first?",
-        options: [
-          "Check if the printer is powered on",
-          "Replace the mouse",
-          "Restart the computer",
-          "Change the desktop background"
-        ],
-        answer: "Check if the printer is powered on"
-      },
-      {
-        q: "35. Which component temporarily holds data that the CPU is currently using?",
-        options: ["RAM", "Hard disk", "Monitor", "Cache"],
-        answer: "RAM"
-      },
-      {
-        q: "36. What is the main difference between hardware and software?",
-        options: [
-          "Hardware can be touched; software cannot",
-          "Software is heavier than hardware",
-          "Hardware is always faster than software",
-          "Software is made of metal"
-        ],
-        answer: "Hardware can be touched; software cannot"
-      },
-      {
-        q: "37. The unit that controls all other parts of the computer is the ________.",
-        options: ["Control Unit", "Mouse", "Monitor", "Memory Unit"],
-        answer: "Control Unit"
-      },
-      {
-        q: "38. Which device changes digital documents into printed form?",
-        options: ["Printer", "Scanner", "Camera", "Speaker"],
+        q: "15. A device used to print documents on paper is called ________.",
+        options: ["Scanner", "Speaker", "Printer", "Mouse"],
         answer: "Printer"
       },
       {
-        q: "39. Which of the following activities mainly uses an output device?",
+        q: "16. What does the term 'generation' of computers refer to?",
         options: [
-          "Displaying a chart on the screen",
-          "Typing with a keyboard",
-          "Recording a song with a microphone",
-          "Saving files to a flash drive"
+          "The age or technology level of computers",
+          "The brand of the computer",
+          "The color of computers",
+          "The size of the computer screen"
         ],
-        answer: "Displaying a chart on the screen"
+        answer: "The age or technology level of computers"
       },
       {
-        q: "40. A learner wants to create a personal folder for saving homework. Which is the correct sequence of steps?",
-        options: [
-          "Right-click desktop → New → Folder → Name it",
-          "Click Start → Delete → Folder",
-          "Open Recycle Bin → New → File",
-          "Press Enter → Right-click → Print"
-        ],
-        answer: "Right-click desktop → New → Folder → Name it"
+        q: "17. To open a program quickly using the mouse, you ________.",
+        options: ["Double-click", "Right-click", "Scroll", "Drag"],
+        answer: "Double-click"
+      },
+      {
+        q: "18. Which of these actions will delete a file completely?",
+        options: ["Right-click → Delete", "Copy → Paste", "Rename → Save", "Open → Print"],
+        answer: "Right-click → Delete"
+      },
+      {
+        q: "19. The brain of the computer that processes data is the ________.",
+        options: ["Monitor", "CPU", "Keyboard", "Speaker"],
+        answer: "CPU"
+      },
+      {
+        q: "20. A computer that is very large and used in banks is a ________.",
+        options: ["Laptop", "Desktop", "Mainframe", "Tablet"],
+        answer: "Mainframe"
+      },
+      {
+        q: "21. The mean of 5, 10, 15, 20, 25 is ________.",
+        options: ["10", "15", "20", "25"],
+        answer: "15"
+      },
+      {
+        q: "22. Which tool can record a teacher's voice lesson for later use?",
+        options: ["Camera", "Phone recorder", "Printer", "Monitor"],
+        answer: "Phone recorder"
+      },
+      {
+        q: "23. Which operation will you perform to find the total of numbers?",
+        options: ["Addition", "Division", "Subtraction", "Comparison"],
+        answer: "Addition"
+      },
+      {
+        q: "24. The best way to keep the mouse clean is to ________.",
+        options: ["Cover it and clean it gently", "Put it in water", "Drop it", "Paint it"],
+        answer: "Cover it and clean it gently"
+      },
+      {
+        q: "25. The process of changing raw data into useful information is called ________.",
+        options: ["Processing", "Typing", "Recording", "Saving"],
+        answer: "Processing"
+      },
+      {
+        q: "26. When you move the mouse, the ________ moves on the screen.",
+        options: ["Icon", "Cursor", "Keyboard", "Monitor"],
+        answer: "Cursor"
+      },
+      {
+        q: "27. Which generation of computers introduced the microprocessor?",
+        options: ["Second", "Third", "Fourth", "Fifth"],
+        answer: "Fourth"
+      },
+      {
+        q: "28. A file containing songs is best stored in which folder?",
+        options: ["My Music", "My Pictures", "My Documents", "Recycle Bin"],
+        answer: "My Music"
+      },
+      {
+        q: "29. To see files that were deleted, open the ________.",
+        options: ["Recycle Bin", "Documents folder", "Control Panel", "Settings"],
+        answer: "Recycle Bin"
+      },
+      {
+        q: "30. Data collected from a class test is an example of ________.",
+        options: ["Academic data", "Image data", "Sound data", "Random data"],
+        answer: "Academic data"
+      },
+      {
+        q: "31. Which of the following is NOT an output device?",
+        options: ["Monitor", "Printer", "Speaker", "Keyboard"],
+        answer: "Keyboard"
+      },
+      {
+        q: "32. RAM stands for ________.",
+        options: ["Random Access Memory", "Read Access Memory", "Rapid Access Memory", "Real Access Memory"],
+        answer: "Random Access Memory"
+      },
+      {
+        q: "33. The first generation of computers used ________.",
+        options: ["Transistors", "Vacuum tubes", "Integrated circuits", "Microprocessors"],
+        answer: "Vacuum tubes"
+      },
+      {
+        q: "34. Which key combination is used to copy text?",
+        options: ["Ctrl + C", "Ctrl + V", "Ctrl + X", "Ctrl + Z"],
+        answer: "Ctrl + C"
+      },
+      {
+        q: "35. A byte consists of ________ bits.",
+        options: ["4", "8", "16", "32"],
+        answer: "8"
+      },
+      {
+        q: "36. Which of these is a web browser?",
+        options: ["Microsoft Word", "Google Chrome", "Adobe Photoshop", "Windows Media Player"],
+        answer: "Google Chrome"
+      },
+      {
+        q: "37. The extension .txt indicates a ________ file.",
+        options: ["Image", "Video", "Text", "Audio"],
+        answer: "Text"
+      },
+      {
+        q: "38. Which component stores data permanently?",
+        options: ["RAM", "CPU", "Hard disk", "Cache"],
+        answer: "Hard disk"
+      },
+      {
+        q: "39. What does WWW stand for?",
+        options: ["World Wide Web", "World Web Wide", "Wide World Web", "Web World Wide"],
+        answer: "World Wide Web"
+      },
+      {
+        q: "40. Which of these is an example of system software?",
+        options: ["Microsoft Word", "Windows 10", "Google Chrome", "Adobe Photoshop"],
+        answer: "Windows 10"
       }
     ];
 
@@ -809,6 +719,15 @@
       return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
     }
 
+    function shuffleArray(array) {
+      const shuffled = [...array];
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+      return shuffled;
+    }
+
     // Check Student Eligibility
     async function checkStudentEligibility(name) {
       try {
@@ -844,7 +763,7 @@
             canTake: false, 
             remainingTime: remainingTime,
             lastScore: lastSubmission.total || 0,
-            lastPercentage: Math.round((lastSubmission.total || 0) / 40 * 100)
+            lastPercentage: Math.round((lastSubmission.total || 0) / TOTAL_QUESTIONS * 100)
           };
         }
 
@@ -873,7 +792,7 @@
         lockMessage.classList.remove("hidden");
         lockMessage.innerHTML = `
           <p>⏰ You have already completed this quiz recently.</p>
-          <p>Last Score: ${eligibility.lastScore}/40 (${eligibility.lastPercentage}%)</p>
+          <p>Last Score: ${eligibility.lastScore}/${TOTAL_QUESTIONS} (${eligibility.lastPercentage}%)</p>
           <p>You can try again in: ${hours}h ${minutes}m</p>
         `;
         return;
@@ -911,8 +830,9 @@
 
     // Initialize Quiz
     function initializeQuiz() {
-      // Use all 40 questions in order
-      selectedQuestions = [...allQuestions];
+      // Select 30 random questions from the 40 available
+      const shuffledQuestions = shuffleArray(quizData);
+      selectedQuestions = shuffledQuestions.slice(0, TOTAL_QUESTIONS);
       userAnswers = new Array(TOTAL_QUESTIONS).fill(null);
       currentQuestion = 0;
       quizStarted = true;
@@ -1074,14 +994,14 @@
         ${reviewHTML.join('')}
       `;
       
-      // Save to Firebase - Using quizResults path for admin dashboard compatibility
+      // Save to Firebase
       try {
         const newRef = push(ref(db, "quizResults"));
         
         await set(newRef, {
           name: studentName,
-          sectionA: correctAnswers, // For compatibility with admin dashboard
-          sectionB: 0, // For compatibility with admin dashboard  
+          sectionA: correctAnswers,
+          sectionB: 0,
           total: correctAnswers,
           percentage: percentage,
           timeUsed: timeUsed,
