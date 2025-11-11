@@ -827,7 +827,7 @@
             <div class="student-name">${result.name}</div>
             <div class="attempt-info">Attempt #${result.attemptNumber} of ${totalAttempts}</div>
           </td>
-          <td><strong>${result.total}/20</strong></td>
+          <td><strong>${result.total}/${result.maxScore || 20}</strong></td>
           <td><span class="score-badge ${scoreClass}">${result.percentage}%</span></td>
           <td>${timeUsedFormatted}</td>
           <td>
@@ -857,7 +857,7 @@
         headers.join(","),
         ...results.map(r => [
           `"${r.name}"`,
-          `${r.total}/20`,
+          `${r.total}/${r.maxScore || 20}`,
           `${r.percentage}%`,
           formatTime(r.timeUsed),
           r.date.toLocaleDateString(),
@@ -936,4 +936,5 @@
   </script>
 </body>
 </html>
+
 
