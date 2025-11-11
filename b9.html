@@ -1,0 +1,1215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Yeriel Bracha Computing Quiz</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #ff7b00 0%, #ff9500 50%, #ffb347 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+    
+    .container {
+      width: 90%;
+      max-width: 900px;
+      margin: 0 auto;
+      background: rgba(255, 255, 255, 0.95);
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 20px;
+      font-size: 2.2em;
+      font-weight: 700;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    h2 {
+      color: #34495e;
+      margin-bottom: 20px;
+      font-size: 1.3em;
+      text-align: center;
+    }
+    
+    .hidden { 
+      display: none; 
+    }
+    
+    /* Name Input Page */
+    .name-section {
+      text-align: center;
+      padding: 20px;
+    }
+    
+    .name-section p {
+      font-size: 1.1em;
+      color: #555;
+      margin-bottom: 20px;
+    }
+    
+    input[type="text"] {
+      width: 100%;
+      max-width: 400px;
+      padding: 15px;
+      border-radius: 10px;
+      border: 2px solid #bdc3c7;
+      font-size: 1.1em;
+      margin: 15px auto;
+      display: block;
+      transition: border-color 0.3s ease;
+    }
+    
+    input[type="text"]:focus {
+      outline: none;
+      border-color: #ff7b00;
+      box-shadow: 0 0 0 3px rgba(255, 123, 0, 0.1);
+    }
+    
+    /* Welcome Page */
+    .welcome-content {
+      text-align: center;
+      padding: 20px;
+    }
+    
+    .quiz-info {
+      background: rgba(255, 123, 0, 0.1);
+      border: 2px solid #ff7b00;
+      border-radius: 15px;
+      padding: 20px;
+      margin: 20px 0;
+    }
+    
+    .quiz-info p {
+      margin: 10px 0;
+      font-size: 1.1em;
+      color: #2c3e50;
+    }
+    
+    marquee {
+      background: linear-gradient(135deg, #ff7b00, #ff9500);
+      color: white;
+      padding: 10px;
+      border-radius: 8px;
+      margin: 15px 0;
+      font-weight: bold;
+    }
+    
+    /* Buttons */
+    button {
+      background: linear-gradient(135deg, #ff7b00, #ff9500);
+      color: white;
+      border: none;
+      padding: 15px 30px;
+      border-radius: 50px;
+      cursor: pointer;
+      font-size: 1.1em;
+      font-weight: 600;
+      margin: 10px;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    button:hover {
+      background: linear-gradient(135deg, #ff9500, #ff7b00);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(255, 123, 0, 0.4);
+    }
+    
+    button:disabled {
+      background: #95a5a6;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+    
+    button.secondary {
+      background: #ecf0f1;
+      color: #2c3e50;
+      text-transform: none;
+      letter-spacing: normal;
+      padding: 12px 20px;
+      margin: 5px;
+      border-radius: 10px;
+      font-weight: normal;
+    }
+    
+    button.secondary:hover {
+      background: #bdc3c7;
+      transform: translateY(-1px);
+    }
+    
+    button.selected {
+      background: linear-gradient(135deg, #27ae60, #2ecc71) !important;
+      color: white !important;
+    }
+    
+    /* Countdown Screen */
+    .countdown-screen {
+      text-align: center;
+      padding: 60px 20px;
+      font-size: 4em;
+      font-weight: bold;
+      color: #ff7b00;
+      animation: pulse 1s ease-in-out infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 0.8; }
+      50% { transform: scale(1.1); opacity: 1; }
+    }
+    
+    /* Quiz Area */
+    .quiz-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      padding: 15px;
+      background: rgba(255, 123, 0, 0.1);
+      border-radius: 10px;
+    }
+    
+    .question-counter {
+      font-weight: bold;
+      color: #2c3e50;
+      font-size: 1.1em;
+    }
+    
+    .timer {
+      font-weight: bold;
+      color: #e74c3c;
+      font-size: 1.2em;
+      padding: 8px 15px;
+      background: rgba(231, 76, 60, 0.1);
+      border-radius: 20px;
+    }
+    
+    .timer.warning {
+      animation: blink 1s infinite;
+    }
+    
+    @keyframes blink {
+      0%, 50% { opacity: 1; }
+      51%, 100% { opacity: 0.5; }
+    }
+    
+    .question-content {
+      background: rgba(255, 255, 255, 0.8);
+      padding: 25px;
+      border-radius: 15px;
+      margin-bottom: 25px;
+      border-left: 5px solid #ff7b00;
+    }
+    
+    .question-text {
+      font-size: 1.2em;
+      color: #2c3e50;
+      font-weight: 600;
+      line-height: 1.5;
+      margin-bottom: 20px;
+    }
+    
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin-bottom: 25px;
+    }
+    
+    .option-button {
+      text-align: left;
+      padding: 15px 20px;
+      border-radius: 10px;
+      font-size: 1em;
+      line-height: 1.4;
+      word-wrap: break-word;
+    }
+    
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 30px;
+    }
+    
+    .nav-buttons {
+      display: flex;
+      gap: 10px;
+    }
+    
+    /* Results */
+    .results {
+      padding: 20px;
+      text-align: center;
+    }
+    
+    .score-display {
+      background: linear-gradient(135deg, #2ecc71, #27ae60);
+      color: white;
+      padding: 25px;
+      border-radius: 15px;
+      margin: 20px 0;
+      font-size: 1.3em;
+    }
+    
+    .summary {
+      text-align: left;
+      margin-top: 30px;
+      padding: 20px;
+      background: rgba(236, 240, 241, 0.8);
+      border-radius: 15px;
+    }
+    
+    .summary h3 {
+      color: #2c3e50;
+      margin-bottom: 20px;
+      text-align: center;
+      font-size: 1.4em;
+    }
+    
+    .question-review {
+      margin: 15px 0;
+      padding: 15px;
+      background: white;
+      border-radius: 10px;
+      border-left: 4px solid #bdc3c7;
+    }
+    
+    .question-review.correct {
+      border-left-color: #27ae60;
+    }
+    
+    .question-review.wrong {
+      border-left-color: #e74c3c;
+    }
+    
+    .correct { 
+      color: #27ae60; 
+      font-weight: bold; 
+    }
+    
+    .wrong { 
+      color: #e74c3c; 
+      font-weight: bold; 
+    }
+    
+    /* Footer */
+    footer {
+      text-align: center;
+      margin-top: 40px;
+      padding: 20px;
+      background: linear-gradient(135deg, #2c3e50, #34495e);
+      color: white;
+      border-radius: 15px;
+      font-size: 14px;
+    }
+    
+    /* Lock Message */
+    .lock-message {
+      text-align: center;
+      color: #e74c3c;
+      font-weight: bold;
+      background: rgba(231, 76, 60, 0.1);
+      padding: 15px;
+      border-radius: 10px;
+      margin-top: 15px;
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .container {
+        padding: 20px;
+        margin: 10px;
+        width: calc(100% - 20px);
+      }
+      
+      h1 {
+        font-size: 1.8em;
+      }
+      
+      .countdown-screen {
+        font-size: 3em;
+        padding: 40px 20px;
+      }
+      
+      .quiz-header {
+        flex-direction: column;
+        gap: 10px;
+      }
+      
+      .controls {
+        flex-direction: column;
+        gap: 15px;
+      }
+      
+      .nav-buttons {
+        width: 100%;
+        justify-content: space-between;
+      }
+      
+      button {
+        padding: 12px 20px;
+        font-size: 1em;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Name Input Page -->
+    <div id="namePage" class="name-section">
+      <h1>🎓 Yeriel Bracha Computing Quiz</h1>
+      <p>Welcome! Please enter your full name to begin the quiz.</p>
+      <input type="text" id="studentName" placeholder="Enter your full name" />
+      <button id="proceedBtn">Proceed to Quiz</button>
+      <div id="lockMessage" class="lock-message hidden"></div>
+    </div>
+
+    <!-- Welcome Page -->
+    <div id="welcomePage" class="welcome-content hidden">
+      <h1>Welcome to Quizzilla! 🚀</h1>
+      <div class="quiz-info">
+        <p>📚 <strong>Subject:</strong> Introduction to Computing - BECE Mock Test</p>
+        <marquee>Just select the correct answer for each question!</marquee>
+        <p>⏱️ <strong>Time Limit:</strong> 50 minutes</p>
+        <p>❓ <strong>Questions:</strong> 80 questions (all questions included)</p>
+        <p>🎯 <strong>Instructions:</strong> Use Next and Previous to navigate, click Submit when done</p>
+      </div>
+      <button id="startBtn">🎯 Sure, Let's Start Quiz!</button>
+    </div>
+
+    <!-- Countdown Screen -->
+    <div id="countdownScreen" class="countdown-screen hidden"></div>
+
+    <!-- Quiz Area -->
+    <div id="quizArea" class="hidden">
+      <div class="quiz-header">
+        <div class="question-counter" id="questionCounter">Question 1 of 80</div>
+        <div class="timer" id="timer">50:00</div>
+      </div>
+      
+      <div class="question-content">
+        <div class="question-text" id="questionText"></div>
+        <div class="options-grid" id="optionsContainer"></div>
+      </div>
+      
+      <div class="controls">
+        <div class="nav-buttons">
+          <button type="button" id="prevBtn" class="secondary">← Previous</button>
+          <button type="button" id="nextBtn">Next →</button>
+        </div>
+        <button type="button" id="submitBtn" class="hidden">🎯 Submit Quiz</button>
+      </div>
+    </div>
+
+    <!-- Results Area -->
+    <div id="resultsArea" class="results hidden">
+      <h1>🎉 Quiz Completed!</h1>
+      <div id="scoreDisplay" class="score-display"></div>
+      <div id="summaryContainer" class="summary"></div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+      <p><strong>Yeriel Bracha Coding Club</strong><br>© 2025 - Excellence in Computing Education</p>
+    </footer>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getDatabase, ref, get, set, push } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCY9oturc9bql33PSUkfNUptcHXla2RWN4",
+      authDomain: "tracha-xx.firebaseapp.com",
+      databaseURL: "https://tracha-xx-default-rtdb.firebaseio.com",
+      projectId: "tracha-xx",
+      storageBucket: "tracha-xx.appspot.com",
+      messagingSenderId: "914440906583",
+      appId: "1:914440906583:web:123abc456xyz"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    // Quiz Configuration
+    const QUIZ_DURATION = 50 * 60; // 50 minutes in seconds
+    const TOTAL_QUESTIONS = 80; // Show all 80 questions
+    const COOLDOWN_HOURS = 12;
+
+    // Quiz Data - All 80 questions from both BECE Mock tests
+    const quizData = [
+      // Mock 3 Questions (1-40)
+      {
+        q: "1. Illegal reproduction and distribution of electronic files or software is referred to as...",
+        options: ["infringement", "induction", "piracy", "legal"],
+        answer: "piracy"
+      },
+      {
+        q: "2. All the following are advantages of cloud storage system except...",
+        options: ["cost effectiveness", "accessibility", "scalability", "durability"],
+        answer: "durability"
+      },
+      {
+        q: "3. The process of customizing various settings on the computer is referred to as...",
+        options: ["personalization of a computer", "personalization of themes", "personalization of device", "creating of a computer"],
+        answer: "personalization of a computer"
+      },
+      {
+        q: "4. Which of the following contains the Print command in MS Word?",
+        options: ["Help", "Insert", "View", "Office button"],
+        answer: "Office button"
+      },
+      {
+        q: "5. ... is written in simple English language",
+        options: ["Program", "Sequence", "Flowchart", "Algorithm"],
+        answer: "Algorithm"
+      },
+      {
+        q: "6. Which of the following components of a robot actually helps in moving the robot joints?",
+        options: ["Power supply", "Actuators", "Effectors", "Sensors"],
+        answer: "Actuators"
+      },
+      {
+        q: "7. Which of the following is a command to create a new document in MS Word?",
+        options: ["Ctrl + T", "Ctrl + N", "Ctrl + D", "Ctrl + P"],
+        answer: "Ctrl + N"
+      },
+      {
+        q: "8. ... is a type of digital currency which operates independently without control from the central bank or government",
+        options: ["Bitcash", "Bitcoin", "Bitdollar", "Bitpound"],
+        answer: "Bitcoin"
+      },
+      {
+        q: "9. Which of the following features of the computer mouse can you use to highlight a text?",
+        options: ["Cursor", "Pointer", "Button", "Scroll wheel"],
+        answer: "Button"
+      },
+      {
+        q: "10. Kwadwo has an account on facebook, he continuously sends threat messages to Bempa on that platform. This act is called...",
+        options: ["cyber bullying", "cyber shame", "cyber shade", "cyber fight"],
+        answer: "cyber bullying"
+      },
+      {
+        q: "11. Which of the following is a safety measure to prevent backache when using a desktop computer for a very long time?",
+        options: ["Use a swivel chair", "Use a wooden chair", "Position your body correctly", "Draw chair closer to the monitor"],
+        answer: "Position your body correctly"
+      },
+      {
+        q: "12. ... is an entity with fixed value",
+        options: ["Variable", "Constant", "Selection", "Operator"],
+        answer: "Constant"
+      },
+      {
+        q: "13. All the following are works that can be copyrighted in Ghana except...",
+        options: ["books", "music", "logos", "ideas"],
+        answer: "ideas"
+      },
+      {
+        q: "14. Which of the following is not a next generation computing?",
+        options: ["Blockchain", "Data computing", "Edge computing", "Quantum computing"],
+        answer: "Data computing"
+      },
+      {
+        q: "15. Ampadu has an email account. Which of the following can he use to log into his email account?",
+        options: ["Sign Out", "Sign Up", "Log Off", "Sign In"],
+        answer: "Sign In"
+      },
+      {
+        q: "16. All the following are sensors used in robotics except...",
+        options: ["device sensor", "pressure sensor", "moisture sensor", "temperature sensor"],
+        answer: "device sensor"
+      },
+      {
+        q: "17. Among the devices below, which of them cannot be used to store data and information?",
+        options: ["Compact disc drive", "Flash disk", "Hard disk", "Zip disk"],
+        answer: "Compact disc drive"
+      },
+      {
+        q: "18. Which of the following is a feature of perceptual computing?",
+        options: ["Network recognition", "Shadow recognition", "Speech recognition", "Skin recognition"],
+        answer: "Speech recognition"
+      },
+      {
+        q: "19. Mintah wants to connect his computer to the internet using a telephone line, which of these devices does he need?",
+        options: ["Plotter", "Router", "Modem", "Scanner"],
+        answer: "Modem"
+      },
+      {
+        q: "20. Storage location within the CPU that temporarily holds data and instructions is called...",
+        options: ["ALU", "Drive", "Circuit", "Memory"],
+        answer: "Memory"
+      },
+      {
+        q: "21. Mr Amponsah just started his computer to load the operating system, what action has he performed?",
+        options: ["Booting", "Dragging", "Scanning", "Highlighting"],
+        answer: "Booting"
+      },
+      {
+        q: "22. Choose the input device among the devices below",
+        options: ["Plotter", "Monitor", "Speaker", "Microphone"],
+        answer: "Microphone"
+      },
+      {
+        q: "23. Which of the following is a step by step method which is used to solve any kind of problem?",
+        options: ["Expression", "Algorithm", "Constant", "Program"],
+        answer: "Algorithm"
+      },
+      {
+        q: "24. In flowchart, process symbol is in the shape of...",
+        options: ["oval", "circle", "diamond", "rectangle"],
+        answer: "rectangle"
+      },
+      {
+        q: "25. Which of the following is not an effective search technique?",
+        options: ["Use specific keywords", "Simplify your search terms", "Use capital letters when searching", "Refine your search using an operator"],
+        answer: "Use capital letters when searching"
+      },
+      {
+        q: "26. As a Computing student, which of the following takes you anywhere on the internet and allows you to search for information, view images and videos?",
+        options: ["Excel", "Tiktok", "Web browser", "Artificial intelligence"],
+        answer: "Web browser"
+      },
+      {
+        q: "27. Perceptual computing technologies basically rely on...",
+        options: ["faster internet speed", "larger monitors for display", "standard keyboard and mouse for input", "sensors, cameras and microphone to detect user interactions"],
+        answer: "sensors, cameras and microphone to detect user interactions"
+      },
+      {
+        q: "28. All the following are disadvantages of the internet except...",
+        options: ["time wastage", "cyber crimes", "bullying and trolls", "information update"],
+        answer: "information update"
+      },
+      {
+        q: "29. Which of the following cables is used in computer network to deliver cable TV series to end users?",
+        options: ["Twisted pair cable", "Fiber optic cable", "Network cable", "Coaxial cable"],
+        answer: "Coaxial cable"
+      },
+      {
+        q: "30. All the following are photo sharing platforms except...",
+        options: ["Instagram", "Facebook", "Safari", "Flickr"],
+        answer: "Safari"
+      },
+      {
+        q: "31. Which of the following is a type of computing that is inspired by the human brain?",
+        options: ["Edge computing", "Quantum computing", "Artificial intelligence", "Neuromorphic computing"],
+        answer: "Neuromorphic computing"
+      },
+      {
+        q: "32. Before you change a font style, you must...",
+        options: ["select the text", "copy the text", "drag the text", "cut the text"],
+        answer: "select the text"
+      },
+      {
+        q: "33. All the following are wearable displays except...",
+        options: ["fitness tracker", "smart watch", "smart chain", "smart glass"],
+        answer: "smart chain"
+      },
+      {
+        q: "34. ... refers to any storage solution that is accessible over a network.",
+        options: ["Net solution", "Store solution", "Internet storage", "Network storage"],
+        answer: "Network storage"
+      },
+      {
+        q: "35. When you are given a mathematical expression to solve, it is important to follow and apply a rule called...",
+        options: ["MODMAS", "NOBMAS", "BODMAS", "LODMAS"],
+        answer: "BODMAS"
+      },
+      {
+        q: "36. Which of the following is a correct email address?",
+        options: ["info.cepme.com", "info-cepme.com", "info_cepme.com", "info@cepme.com"],
+        answer: "info@cepme.com"
+      },
+      {
+        q: "37. A computer is made up of two main components, they are...",
+        options: ["hardware and application", "system unit and monitor", "hardware and software", "software and desktop"],
+        answer: "hardware and software"
+      },
+      {
+        q: "38. Defrauding someone or an organization by creating fake document or modifying an existing document is referred to as...",
+        options: ["plagiarism", "copyright", "forgery", "patent"],
+        answer: "forgery"
+      },
+      {
+        q: "39. An Excel function to display date with year, month and day is...",
+        options: ["Day()", "Date()", "Year()", "Month()"],
+        answer: "Date()"
+      },
+      {
+        q: "40. Computer programming languages are mainly used to...",
+        options: ["develop hardware", "develop applications", "enhance network speed", "facilitate communication"],
+        answer: "develop applications"
+      },
+      // Mock 2 Questions (41-80)
+      {
+        q: "41. Which of the following reasons best describes copyright protection?",
+        options: ["To copy intellectual properties", "To hide intellectual properties", "To keep intellectual properties", "To protect intellectual properties"],
+        answer: "To protect intellectual properties"
+      },
+      {
+        q: "42. Developers of computer virus can technically be referred to as",
+        options: ["inventors", "specialist", "programmers", "users"],
+        answer: "programmers"
+      },
+      {
+        q: "43. Which of the following menu options will take a user to the symbol dialogue box in a Word processing application?",
+        options: ["Format", "Insert", "Table", "Tools"],
+        answer: "Insert"
+      },
+      {
+        q: "44. An application window that displays a message for a response between a user and a software is called",
+        options: ["window box", "message box", "dialogue box", "application box"],
+        answer: "dialogue box"
+      },
+      {
+        q: "45. The network topology is categorized into ........ types?",
+        options: ["One", "Two", "Three", "Four"],
+        answer: "Two"
+      },
+      {
+        q: "46. Which one of the following topologies describes the way computers connect with the help of cables?",
+        options: ["Physical", "Logical", "Both A and B", "None of the above"],
+        answer: "Physical"
+      },
+      {
+        q: "47. What is included in an E-mail address?",
+        options: ["Domain name followed by user's name", "User's name followed by domain name", "User's name followed by postal address", "User's name followed by street address"],
+        answer: "User's name followed by domain name"
+      },
+      {
+        q: "48. What are the advantages of tree topology?",
+        options: ["Easy to maintain", "Easy to manage", "Node expansion is easy and fast", "All of the above"],
+        answer: "All of the above"
+      },
+      {
+        q: "49. The data in the network layer is in the form of",
+        options: ["IP packets", "Frames", "Cables", "None of the above"],
+        answer: "IP packets"
+      },
+      {
+        q: "50. The IP packets are packed into frames in layer?",
+        options: ["Datalink", "Physical", "Both A and B", "None of the above"],
+        answer: "Datalink"
+      },
+      {
+        q: "51. Which of the following protocols is used to receive emails?",
+        options: ["SMTP", "HTTP", "FTP", "POP3"],
+        answer: "POP3"
+      },
+      {
+        q: "52. Which of the following is not a hardware?",
+        options: ["Mouse", "Random Access Memory", "Keyboard", "Operating System"],
+        answer: "Operating System"
+      },
+      {
+        q: "53. Which of the following devices is used to transfer data from source to destination over internet?",
+        options: ["Thumb drive", "RAM", "ROM", "MODEM"],
+        answer: "MODEM"
+      },
+      {
+        q: "54. Which of the following is not an operating system?",
+        options: ["MAC", "UNIX", "LINUX", "Microsoft"],
+        answer: "Microsoft"
+      },
+      {
+        q: "55. What is the full form of SMPS?",
+        options: ["Simple Machine Power Supply", "Simple Motor Power Supply", "Switched-Mode Power Supply", "System Mode Power Supply"],
+        answer: "Switched-Mode Power Supply"
+      },
+      {
+        q: "56. In what way a worksheet can be erased?",
+        options: ["By right clicking the sheet name and selecting 'delete' option from the drop-down list.", "By right clicking the sheet name and selecting 'erase' option from the drop-down list.", "By right clicking the sheet name and selecting 'remove' option from the drop-down list.", "None of the above."],
+        answer: "By right clicking the sheet name and selecting 'delete' option from the drop-down list."
+      },
+      {
+        q: "57. Which of the following functions is used to add the values of consecutive cells?",
+        options: ["total( )", "sum( )", "add( )", "None of the above"],
+        answer: "sum( )"
+      },
+      {
+        q: "58. The process that is used to recall a document previously saved is termed",
+        options: ["Copy", "Enter", "Open", "Save as"],
+        answer: "Open"
+      },
+      {
+        q: "59. What are robots in human form called?",
+        options: ["Humanoid robots", "Artificial robots", "Programmable robot", "Controlled robot"],
+        answer: "Humanoid robots"
+      },
+      {
+        q: "60. Double-clicking on a program icon on a computer desktop",
+        options: ["cuts the program's window", "copies the program's window", "closes the program's window", "opens the program's window"],
+        answer: "opens the program's window"
+      },
+      {
+        q: "61. Which of the following steps will open, close, and correct errors, and submit the files for safe keeping under a word processing application?",
+        options: ["File, Open, Edit and Save", "Open, File, Edit and Save", "Open, File, Close and Save", "Start, Open, Edit and Save"],
+        answer: "File, Open, Edit and Save"
+      },
+      {
+        q: "62. The process of a user placing the cursor at one end of a text, holds down the left mouse button and drags to the other end of the text is referred to as",
+        options: ["Copying", "Cutting", "Moving", "Selecting"],
+        answer: "Selecting"
+      },
+      {
+        q: "63. Windows operating system is popularly known as........",
+        options: ["Character User Interface", "Computer User Interface", "Graphical User Interface", "None"],
+        answer: "Graphical User Interface"
+      },
+      {
+        q: "64. LINUX is a:",
+        options: ["Multiprogramming OS", "MultiUser OS", "Multiprocessing OS", "None"],
+        answer: "MultiUser OS"
+      },
+      {
+        q: "65. Which of the following media uses laser technology to write and read data?",
+        options: ["Floppy disk", "Hard disk", "Optical disc", "Pen drive"],
+        answer: "Optical disc"
+      },
+      {
+        q: "66. The following techniques are primary sources of data collection except",
+        options: ["Surveys", "Interviews", "Information", "Questionnaire"],
+        answer: "Information"
+      },
+      {
+        q: "67. A program terminating without any information is termed........",
+        options: ["A Bend", "Compilation", "Code", "Bug"],
+        answer: "Bug"
+      },
+      {
+        q: "68. ........is a machine programmed by a computer, capable of carrying out complex tasks automatically.",
+        options: ["Laptop", "Programmer", "Robot", "Intelligence"],
+        answer: "Robot"
+      },
+      {
+        q: "69. Which of the following statements is incorrect with respect to writing e-mails?",
+        options: ["We cannot add more than one address in the 'To' field", "We can leave the 'Bcc' field blank", "We can leave the 'Cc' field blank", "The 'To' and 'Cc' fields are often used interchangeably"],
+        answer: "We cannot add more than one address in the 'To' field"
+      },
+      {
+        q: "70. Which of the following icon is used to add an attachment to an email?",
+        options: ["Stationery icon", "Paper clip icon", "GIF icon", "Emoji icon"],
+        answer: "Paper clip icon"
+      },
+      {
+        q: "71. Which of the following is mandatory for sending an email?",
+        options: ["Body", "Receiver's mail ID", "Attachment", "Subject"],
+        answer: "Receiver's mail ID"
+      },
+      {
+        q: "72. A block of text automatically added to the end of an outgoing email is called an/a........",
+        options: ["Attachment", "Signature", "Description", "Encryption"],
+        answer: "Signature"
+      },
+      {
+        q: "73. Which one of the following is a reason for using robots?",
+        options: ["to replace humans in a working environment", "to consume more electricity", "to do things they are not designed for.", "to work in a hazardous environment."],
+        answer: "to work in a hazardous environment."
+      },
+      {
+        q: "74. The application of scientific knowledge to create tools for solving problems is known ........",
+        options: ["Scientific methods", "Applied science", "Technology", "Machinery"],
+        answer: "Technology"
+      },
+      {
+        q: "75. All the following are the importance of playing scrabble except........",
+        options: ["Learning mathematics", "Improve creativity", "Improve vocabulary", "Learn programming"],
+        answer: "Learn programming"
+      },
+      {
+        q: "76. Which topology uses a single cable to connects all the nodes?",
+        options: ["Star", "Bus", "Ring", "P2P"],
+        answer: "Bus"
+      },
+      {
+        q: "77. Which of the following computer program can be used to write computer games and other programs?",
+        options: ["Scrabble", "Scratch", "PowerPoint", "Ms. Word"],
+        answer: "Scratch"
+      },
+      {
+        q: "78. All the following are causes of RSI except",
+        options: ["using the mouse for a long period", "poor keyboard design.", "looking at the monitor for a long period of time.", "wrong height of workstation chair."],
+        answer: "looking at the monitor for a long period of time."
+      },
+      {
+        q: "79. The page colour and page border commands are found on........",
+        options: ["Home tab", "Insert tab", "Design tab", "Layout tab"],
+        answer: "Design tab"
+      },
+      {
+        q: "80. Which of the following tabs allow users to add tables and illustrations to a word document?",
+        options: ["Home tab", "Insert tab", "Design tab", "Layout tab"],
+        answer: "Insert tab"
+      }
+    ];
+
+    // Global Variables
+    let studentName = "";
+    let currentQuestion = 0;
+    let selectedQuestions = [];
+    let userAnswers = [];
+    let quizTimer;
+    let timeRemaining = QUIZ_DURATION;
+    let quizStarted = false;
+
+    // DOM Elements
+    const namePage = document.getElementById("namePage");
+    const welcomePage = document.getElementById("welcomePage");
+    const countdownScreen = document.getElementById("countdownScreen");
+    const quizArea = document.getElementById("quizArea");
+    const resultsArea = document.getElementById("resultsArea");
+    const lockMessage = document.getElementById("lockMessage");
+
+    // Quiz Elements
+    const questionCounter = document.getElementById("questionCounter");
+    const timer = document.getElementById("timer");
+    const questionText = document.getElementById("questionText");
+    const optionsContainer = document.getElementById("optionsContainer");
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const submitBtn = document.getElementById("submitBtn");
+
+    // Results Elements
+    const scoreDisplay = document.getElementById("scoreDisplay");
+    const summaryContainer = document.getElementById("summaryContainer");
+
+    // Utility Functions
+    function formatTime(seconds) {
+      const minutes = Math.floor(seconds / 60);
+      const remainingSeconds = seconds % 60;
+      return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+    }
+
+    // Check Student Eligibility
+    async function checkStudentEligibility(name) {
+      try {
+        const studentRef = ref(db, `quizResults`);
+        const snapshot = await get(studentRef);
+        
+        if (!snapshot.exists()) {
+          return { canTake: true };
+        }
+
+        const allScores = snapshot.val();
+        const studentScores = Object.values(allScores).filter(score => 
+          score.name && score.name.toLowerCase() === name.toLowerCase()
+        );
+
+        if (studentScores.length === 0) {
+          return { canTake: true };
+        }
+
+        // Find most recent submission
+        const lastSubmission = studentScores.sort((a, b) => 
+          new Date(b.date) - new Date(a.date)
+        )[0];
+
+        const lastSubmissionTime = new Date(lastSubmission.date);
+        const now = new Date();
+        const timeDiff = now - lastSubmissionTime;
+        const hoursDiff = timeDiff / (1000 * 60 * 60);
+
+        if (hoursDiff < COOLDOWN_HOURS) {
+          const remainingTime = (COOLDOWN_HOURS * 60 * 60 * 1000) - timeDiff;
+          return { 
+            canTake: false, 
+            remainingTime: remainingTime,
+            lastScore: lastSubmission.total || 0,
+            lastPercentage: Math.round((lastSubmission.total || 0) / TOTAL_QUESTIONS * 100)
+          };
+        }
+
+        return { canTake: true };
+      } catch (error) {
+        console.error("Error checking eligibility:", error);
+        return { canTake: true };
+      }
+    }
+
+    // Event Listeners
+    document.getElementById("proceedBtn").addEventListener("click", async () => {
+      const nameInput = document.getElementById("studentName").value.trim();
+      if (!nameInput) {
+        alert("Please enter your name before proceeding!");
+        return;
+      }
+      
+      studentName = nameInput;
+      const eligibility = await checkStudentEligibility(studentName);
+      
+      if (!eligibility.canTake) {
+        const hours = Math.floor(eligibility.remainingTime / (1000 * 60 * 60));
+        const minutes = Math.floor((eligibility.remainingTime % (1000 * 60 * 60)) / (1000 * 60));
+        
+        lockMessage.classList.remove("hidden");
+        lockMessage.innerHTML = `
+          <p>⏰ You have already completed this quiz recently.</p>
+          <p>Last Score: ${eligibility.lastScore}/${TOTAL_QUESTIONS} (${eligibility.lastPercentage}%)</p>
+          <p>You can try again in: ${hours}h ${minutes}m</p>
+        `;
+        return;
+      }
+
+      namePage.classList.add("hidden");
+      welcomePage.classList.remove("hidden");
+    });
+
+    document.getElementById("startBtn").addEventListener("click", () => {
+      welcomePage.classList.add("hidden");
+      startCountdown();
+    });
+
+    // Countdown Function
+    function startCountdown() {
+      countdownScreen.classList.remove("hidden");
+      let counter = 3;
+      countdownScreen.textContent = `Get Ready... ${counter}`;
+
+      const countdown = setInterval(() => {
+        counter--;
+        if (counter > 0) {
+          countdownScreen.textContent = `${counter}...`;
+        } else {
+          clearInterval(countdown);
+          countdownScreen.textContent = "Begin!";
+          setTimeout(() => {
+            countdownScreen.classList.add("hidden");
+            initializeQuiz();
+          }, 800);
+        }
+      }, 1000);
+    }
+
+    // Initialize Quiz
+    function initializeQuiz() {
+      // Use all 80 questions in order
+      selectedQuestions = [...quizData];
+      userAnswers = new Array(TOTAL_QUESTIONS).fill(null);
+      currentQuestion = 0;
+      quizStarted = true;
+      
+      quizArea.classList.remove("hidden");
+      loadQuestion();
+      startTimer();
+      
+      // Prevent page refresh
+      window.addEventListener('beforeunload', function (e) {
+        if (quizStarted) {
+          e.preventDefault();
+          e.returnValue = '';
+        }
+      });
+    }
+
+    // Load Question
+    function loadQuestion() {
+      const question = selectedQuestions[currentQuestion];
+      
+      // Update counter
+      questionCounter.textContent = `Question ${currentQuestion + 1} of ${TOTAL_QUESTIONS}`;
+      
+      // Update question text
+      questionText.textContent = question.q;
+      
+      // Clear and populate options
+      optionsContainer.innerHTML = "";
+      question.options.forEach((option, index) => {
+        const button = document.createElement("button");
+        button.className = "option-button secondary";
+        button.textContent = option;
+        
+        if (userAnswers[currentQuestion] === option) {
+          button.classList.add("selected");
+        }
+        
+        button.addEventListener("click", () => selectAnswer(option));
+        optionsContainer.appendChild(button);
+      });
+      
+      // Update navigation buttons
+      prevBtn.disabled = currentQuestion === 0;
+      
+      if (currentQuestion === TOTAL_QUESTIONS - 1) {
+        nextBtn.classList.add("hidden");
+        submitBtn.classList.remove("hidden");
+      } else {
+        nextBtn.classList.remove("hidden");
+        submitBtn.classList.add("hidden");
+      }
+    }
+
+    // Select Answer
+    function selectAnswer(answer) {
+      userAnswers[currentQuestion] = answer;
+      loadQuestion(); // Refresh to show selection
+    }
+
+    // Navigation
+    prevBtn.addEventListener("click", () => {
+      if (currentQuestion > 0) {
+        currentQuestion--;
+        loadQuestion();
+      }
+    });
+
+    nextBtn.addEventListener("click", () => {
+      if (currentQuestion < TOTAL_QUESTIONS - 1) {
+        currentQuestion++;
+        loadQuestion();
+      }
+    });
+
+    submitBtn.addEventListener("click", () => {
+      if (confirm("Are you sure you want to submit your quiz? You cannot change answers after submission.")) {
+        finishQuiz();
+      }
+    });
+
+    // Timer Functions
+    function startTimer() {
+      updateTimerDisplay();
+      quizTimer = setInterval(() => {
+        timeRemaining--;
+        updateTimerDisplay();
+        
+        if (timeRemaining <= 0) {
+          clearInterval(quizTimer);
+          autoSubmitQuiz();
+        }
+      }, 1000);
+    }
+
+    function updateTimerDisplay() {
+      timer.textContent = formatTime(timeRemaining);
+      
+      // Add warning class for last 5 minutes
+      if (timeRemaining <= 300) {
+        timer.classList.add("warning");
+      }
+    }
+
+    function stopTimer() {
+      if (quizTimer) {
+        clearInterval(quizTimer);
+      }
+    }
+
+    // Auto Submit
+    function autoSubmitQuiz() {
+      alert("Time's up! Your quiz will be submitted automatically.");
+      finishQuiz(true);
+    }
+
+    // Finish Quiz
+    async function finishQuiz(isAutoSubmit = false) {
+      quizStarted = false;
+      stopTimer();
+      
+      quizArea.classList.add("hidden");
+      resultsArea.classList.remove("hidden");
+      
+      // Calculate score
+      let correctAnswers = 0;
+      const reviewHTML = [];
+      
+      selectedQuestions.forEach((question, index) => {
+        const userAnswer = userAnswers[index] || "(No answer)";
+        const isCorrect = userAnswer === question.answer;
+        
+        if (isCorrect) correctAnswers++;
+        
+        reviewHTML.push(`
+          <div class="question-review ${isCorrect ? 'correct' : 'wrong'}">
+            <p><strong>Q${index + 1}:</strong> ${question.q}</p>
+            <p>Your answer: <span class="${isCorrect ? 'correct' : 'wrong'}">${userAnswer}</span></p>
+            <p>Correct answer: <span class="correct">${question.answer}</span></p>
+          </div>
+        `);
+      });
+      
+      const percentage = Math.round((correctAnswers / TOTAL_QUESTIONS) * 100);
+      const timeUsed = QUIZ_DURATION - timeRemaining;
+      
+      // Display results
+      scoreDisplay.innerHTML = `
+        <h2>📊 Your Results</h2>
+        <p><strong>Student:</strong> ${studentName}</p>
+        <p><strong>Score:</strong> ${correctAnswers} / ${TOTAL_QUESTIONS} (${percentage}%)</p>
+        <p><strong>Time Used:</strong> ${formatTime(timeUsed)}</p>
+        ${isAutoSubmit ? '<p><strong>Status:</strong> Auto-submitted (Time expired)</p>' : ''}
+        <p><strong>Grade:</strong> ${percentage >= 70 ? '🎉 Excellent!' : percentage >= 50 ? '👍 Good!' : '📚 Keep studying!'}</p>
+      `;
+      
+      summaryContainer.innerHTML = `
+        <h3>📋 Detailed Review</h3>
+        ${reviewHTML.join('')}
+      `;
+      
+      // Save to Firebase
+      try {
+        const newRef = push(ref(db, "quizResults"));
+        
+        await set(newRef, {
+          name: studentName,
+          sectionA: correctAnswers,
+          sectionB: 0,
+          total: correctAnswers,
+          percentage: percentage,
+          timeUsed: timeUsed,
+          autoSubmitted: isAutoSubmit,
+          date: new Date().toLocaleString(),
+          timestamp: new Date().toISOString(),
+          subject: "BECE Computing Mock Test - All 80 Questions"
+        });
+        
+        // Show success message
+        const successDiv = document.createElement('div');
+        successDiv.style.cssText = `
+          background: rgba(40, 167, 69, 0.9);
+          color: white;
+          padding: 15px;
+          border-radius: 10px;
+          margin-top: 20px;
+          text-align: center;
+          font-weight: 600;
+        `;
+        successDiv.innerHTML = `✅ Score saved successfully!<br>⏰ You can retake this quiz after ${COOLDOWN_HOURS} hours.`;
+        resultsArea.appendChild(successDiv);
+        
+      } catch (error) {
+        console.error("Error saving results:", error);
+        
+        // Show error message
+        const errorDiv = document.createElement('div');
+        errorDiv.style.cssText = `
+          background: rgba(220, 53, 69, 0.9);
+          color: white;
+          padding: 15px;
+          border-radius: 10px;
+          margin-top: 20px;
+          text-align: center;
+          font-weight: 600;
+        `;
+        errorDiv.innerHTML = '⚠️ Quiz completed but could not save to database. Please contact your Sir Sagoe.';
+        resultsArea.appendChild(errorDiv);
+      }
+    }
+  </script>
+</body>
+</html>
