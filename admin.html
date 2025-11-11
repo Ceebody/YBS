@@ -685,17 +685,21 @@
         }
 
         const studentName = entry.name.trim();
+        const maxScore = entry.maxScore || 20; // <-- Ensure total possible score exists
+
         const result = {
           id: key,
           name: studentName,
           total: entry.total || 0,
-          percentage: entry.percentage || Math.round(((entry.total || 0) / (entry.maxScore || 20)) * 100),
+          maxScore: maxScore,
+          percentage: entry.percentage || Math.round(((entry.total || 0) / maxScore) * 100),
           date: resultDate,
           dateString: resultDate.toLocaleDateString(),
           subject: entry.subject || "Introduction to Computing",
           timeUsed: entry.timeUsed || 0,
           autoSubmitted: entry.autoSubmitted || false
         };
+
 
         allResults.push(result);
 
@@ -936,6 +940,7 @@
   </script>
 </body>
 </html>
+
 
 
 
