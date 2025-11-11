@@ -685,21 +685,19 @@
         }
 
         const studentName = entry.name.trim();
-        const maxScore = entry.maxScore || 20; // <-- Ensure total possible score exists
-
-       const maxScore = entry.maxScore || 20;
-
-       const result = {
-        id: key,
-        name: entry.name.trim(),
-        total: entry.total || 0,
-        maxScore: maxScore,
-        percentage: Math.round((entry.total / maxScore) * 100),
-        date: new Date(entry.date),
-        subject: entry.subject || "Introduction to Computing",
-        timeUsed: entry.timeUsed || 0,
-        autoSubmitted: entry.autoSubmitted || false
-      };
+        const maxScore = entry.maxScore || 20;
+        
+        const result = {
+          id: key,
+          name: entry.name.trim(),
+          total: entry.total || 0,
+          maxScore,
+          percentage: Math.round((entry.total / maxScore) * 100),
+          date: new Date(entry.date),
+          subject: entry.subject || "Introduction to Computing",
+          timeUsed: entry.timeUsed || 0,
+          autoSubmitted: entry.autoSubmitted || false
+        };
 
 
 
@@ -942,6 +940,7 @@
   </script>
 </body>
 </html>
+
 
 
 
