@@ -689,7 +689,7 @@
           id: key,
           name: studentName,
           total: entry.total || 0,
-          percentage: entry.percentage || Math.round(((entry.total || 0) / 20) * 100),
+          percentage: entry.percentage || Math.round(((entry.total || 0) / (entry.maxScore || 20)) * 100),
           date: resultDate,
           dateString: resultDate.toLocaleDateString(),
           subject: entry.subject || "Introduction to Computing",
@@ -936,3 +936,4 @@
   </script>
 </body>
 </html>
+
