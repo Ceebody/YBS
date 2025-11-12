@@ -451,234 +451,235 @@
     // Quiz Configuration
     const QUIZ_DURATION = 30 * 60; // 30 minutes in seconds
     const TOTAL_QUESTIONS = 30; // Show 30 out of 40 questions
+    const MAX_SCORE = TOTAL_QUESTIONS;
     const COOLDOWN_HOURS = 12;
 
     // Quiz Data - All 40 questions
     const quizData = [
       {
-        q: "1. Which device is used to move items on the computer screen?",
-        options: ["Keyboard", "Mouse", "Monitor", "Printer"],
-        answer: "Mouse"
-      },
-      {
-        q: "2. When you right-click on the desktop, what usually appears?",
-        options: ["Recycle Bin", "Shortcut menu", "Toolbar", "File explorer"],
-        answer: "Shortcut menu"
-      },
-      {
-        q: "3. A folder is used to ________ files on the computer.",
-        options: ["Print", "Store and organize", "Delete", "Display"],
-        answer: "Store and organize"
-      },
-      {
-        q: "4. What is data?",
+        q: "1. The main reason for storing data in folders is to ________.",
         options: [
-          "Information collected for a purpose",
-          "A computer program",
-          "A keyboard key",
-          "A software error"
+          "Save time when searching for files",
+          "Decorate the desktop",
+          "Delete all old files",
+          "Change the wallpaper"
         ],
-        answer: "Information collected for a purpose"
+        answer: "Save time when searching for files"
       },
       {
-        q: "5. Which of these is an example of an input device?",
-        options: ["Printer", "Speaker", "Keyboard", "Monitor"],
-        answer: "Keyboard"
+        q: "2. A computer user who wants to hear sound from the system will use a ________.",
+        options: ["Microphone", "Speaker", "Flash drive", "Keyboard"],
+        answer: "Speaker"
       },
       {
-        q: "6. The result produced after data has been processed is called ________.",
-        options: ["Input", "Output", "Storage", "Hardware"],
-        answer: "Output"
-      },
-      {
-        q: "7. The desktop background can be changed by choosing ________.",
-        options: ["Personalize", "Copy", "Paste", "Edit"],
-        answer: "Personalize"
-      },
-      {
-        q: "8. Which of the following is a good reason for using folders?",
+        q: "3. When you double-click a program icon, what happens?",
         options: [
-          "To make the desktop look beautiful",
-          "To organize and find files easily",
-          "To delete all old files",
-          "To hide programs"
+          "The file opens",
+          "The file is deleted",
+          "The desktop closes",
+          "The computer shuts down"
         ],
-        answer: "To organize and find files easily"
+        answer: "The file opens"
       },
       {
-        q: "9. The fifth generation of computers is mainly known for ________.",
+        q: "4. Which part of the computer accepts instructions from the user?",
+        options: ["CPU", "Output device", "Input device", "Hard disk"],
+        answer: "Input device"
+      },
+      {
+        q: "5. The correct order of data processing is ________.",
         options: [
-          "Artificial intelligence",
-          "Vacuum tubes",
-          "Punch cards",
-          "Magnetic drums"
+          "Input → Processing → Output",
+          "Output → Input → Processing",
+          "Processing → Output → Input",
+          "Storage → Input → Output"
         ],
-        answer: "Artificial intelligence"
+        answer: "Input → Processing → Output"
       },
       {
-        q: "10. Which storage device uses laser light to store data?",
-        options: ["Flash drive", "Optical disc", "Floppy disk", "Hard disk"],
-        answer: "Optical disc"
-      },
-      {
-        q: "11. Which device helps a teacher record her lesson as voice data?",
-        options: ["Microphone", "Printer", "Monitor", "Speaker"],
-        answer: "Microphone"
-      },
-      {
-        q: "12. The data 12, 15, 18, 10, 20 — what is the maximum value?",
-        options: ["10", "12", "20", "15"],
-        answer: "20"
-      },
-      {
-        q: "13. To calculate the average of numbers, you ________.",
-        options: [
-          "Add them and divide by how many they are",
-          "Subtract and multiply",
-          "Add and subtract",
-          "Only add the biggest one"
-        ],
-        answer: "Add them and divide by how many they are"
-      },
-      {
-        q: "14. Which part of the computer shows pictures and videos?",
-        options: ["CPU", "Monitor", "Mouse", "Keyboard"],
-        answer: "Monitor"
-      },
-      {
-        q: "15. A device used to print documents on paper is called ________.",
-        options: ["Scanner", "Speaker", "Printer", "Mouse"],
-        answer: "Printer"
-      },
-      {
-        q: "16. What does the term 'generation' of computers refer to?",
-        options: [
-          "The age or technology level of computers",
-          "The brand of the computer",
-          "The color of computers",
-          "The size of the computer screen"
-        ],
-        answer: "The age or technology level of computers"
-      },
-      {
-        q: "17. To open a program quickly using the mouse, you ________.",
-        options: ["Double-click", "Right-click", "Scroll", "Drag"],
-        answer: "Double-click"
-      },
-      {
-        q: "18. Which of these actions will delete a file completely?",
-        options: ["Right-click → Delete", "Copy → Paste", "Rename → Save", "Open → Print"],
-        answer: "Right-click → Delete"
-      },
-      {
-        q: "19. The brain of the computer that processes data is the ________.",
-        options: ["Monitor", "CPU", "Keyboard", "Speaker"],
-        answer: "CPU"
-      },
-      {
-        q: "20. A computer that is very large and used in banks is a ________.",
-        options: ["Laptop", "Desktop", "Mainframe", "Tablet"],
-        answer: "Mainframe"
-      },
-      {
-        q: "21. The mean of 5, 10, 15, 20, 25 is ________.",
-        options: ["10", "15", "20", "25"],
-        answer: "15"
-      },
-      {
-        q: "22. Which tool can record a teacher's voice lesson for later use?",
-        options: ["Camera", "Phone recorder", "Printer", "Monitor"],
-        answer: "Phone recorder"
-      },
-      {
-        q: "23. Which operation will you perform to find the total of numbers?",
-        options: ["Addition", "Division", "Subtraction", "Comparison"],
-        answer: "Addition"
-      },
-      {
-        q: "24. The best way to keep the mouse clean is to ________.",
-        options: ["Cover it and clean it gently", "Put it in water", "Drop it", "Paint it"],
-        answer: "Cover it and clean it gently"
-      },
-      {
-        q: "25. The process of changing raw data into useful information is called ________.",
-        options: ["Processing", "Typing", "Recording", "Saving"],
-        answer: "Processing"
-      },
-      {
-        q: "26. When you move the mouse, the ________ moves on the screen.",
-        options: ["Icon", "Cursor", "Keyboard", "Monitor"],
-        answer: "Cursor"
-      },
-      {
-        q: "27. Which generation of computers introduced the microprocessor?",
-        options: ["Second", "Third", "Fourth", "Fifth"],
-        answer: "Fourth"
-      },
-      {
-        q: "28. A file containing songs is best stored in which folder?",
-        options: ["My Music", "My Pictures", "My Documents", "Recycle Bin"],
-        answer: "My Music"
-      },
-      {
-        q: "29. To see files that were deleted, open the ________.",
-        options: ["Recycle Bin", "Documents folder", "Control Panel", "Settings"],
-        answer: "Recycle Bin"
-      },
-      {
-        q: "30. Data collected from a class test is an example of ________.",
-        options: ["Academic data", "Image data", "Sound data", "Random data"],
-        answer: "Academic data"
-      },
-      {
-        q: "31. Which of the following is NOT an output device?",
-        options: ["Monitor", "Printer", "Speaker", "Keyboard"],
-        answer: "Keyboard"
-      },
-      {
-        q: "32. RAM stands for ________.",
-        options: ["Random Access Memory", "Read Access Memory", "Rapid Access Memory", "Real Access Memory"],
-        answer: "Random Access Memory"
-      },
-      {
-        q: "33. The first generation of computers used ________.",
-        options: ["Transistors", "Vacuum tubes", "Integrated circuits", "Microprocessors"],
-        answer: "Vacuum tubes"
-      },
-      {
-        q: "34. Which key combination is used to copy text?",
-        options: ["Ctrl + C", "Ctrl + V", "Ctrl + X", "Ctrl + Z"],
-        answer: "Ctrl + C"
-      },
-      {
-        q: "35. A byte consists of ________ bits.",
-        options: ["4", "8", "16", "32"],
-        answer: "8"
-      },
-      {
-        q: "36. Which of these is a web browser?",
-        options: ["Microsoft Word", "Google Chrome", "Adobe Photoshop", "Windows Media Player"],
-        answer: "Google Chrome"
-      },
-      {
-        q: "37. The extension .txt indicates a ________ file.",
-        options: ["Image", "Video", "Text", "Audio"],
-        answer: "Text"
-      },
-      {
-        q: "38. Which component stores data permanently?",
-        options: ["RAM", "CPU", "Hard disk", "Cache"],
+        q: "6. An example of a storage device is ________.",
+        options: ["Mouse", "Hard disk", "Keyboard", "Printer"],
         answer: "Hard disk"
       },
       {
-        q: "39. What does WWW stand for?",
-        options: ["World Wide Web", "World Web Wide", "Wide World Web", "Web World Wide"],
-        answer: "World Wide Web"
+        q: "7. The Recycle Bin is mainly used to ________.",
+        options: [
+          "Store deleted files temporarily",
+          "Print deleted files",
+          "Rename folders",
+          "Play music files"
+        ],
+        answer: "Store deleted files temporarily"
       },
       {
-        q: "40. Which of these is an example of system software?",
-        options: ["Microsoft Word", "Windows 10", "Google Chrome", "Adobe Photoshop"],
-        answer: "Windows 10"
+        q: "8. Which key combination is used to copy a file on a computer?",
+        options: ["Ctrl + C", "Ctrl + V", "Ctrl + D", "Ctrl + P"],
+        answer: "Ctrl + C"
+      },
+      {
+        q: "9. A learner wants to record a short video of an experiment. Which tool is best?",
+        options: ["Webcam", "Scanner", "Printer", "Speaker"],
+        answer: "Webcam"
+      },
+      {
+        q: "10. The small arrow that moves on the screen when using a mouse is called ________.",
+        options: ["Pointer", "Window", "Folder", "Menu"],
+        answer: "Pointer"
+      },
+      {
+        q: "11. The main reason for using a mouse pad is to ________.",
+        options: [
+          "Help the mouse move smoothly",
+          "Clean the mouse",
+          "Turn off the computer",
+          "Stop viruses"
+        ],
+        answer: "Help the mouse move smoothly"
+      },
+      {
+        q: "12. A flash drive is used for ________.",
+        options: [
+          "Playing sound",
+          "Storing and transferring data",
+          "Printing files",
+          "Viewing pictures only"
+        ],
+        answer: "Storing and transferring data"
+      },
+      {
+        q: "13. Which of these is NOT a source of data?",
+        options: ["Observation", "Interview", "Guessing", "Experiment"],
+        answer: "Guessing"
+      },
+      {
+        q: "14. When files are well-organized, the computer becomes ________.",
+        options: [
+          "Faster and easier to use",
+          "Slower",
+          "Heavier",
+          "Unable to save data"
+        ],
+        answer: "Faster and easier to use"
+      },
+      {
+        q: "15. The tool used to type words and numbers into the computer is the ________.",
+        options: ["Keyboard", "Mouse", "Monitor", "Flash drive"],
+        answer: "Keyboard"
+      },
+      {
+        q: "16. Which of these devices produces soft copy output?",
+        options: ["Speaker", "Monitor", "Printer", "Projector"],
+        answer: "Monitor"
+      },
+      {
+        q: "17. Which of the following can be used to save voice recordings?",
+        options: ["Microphone", "Scanner", "Keyboard", "Printer"],
+        answer: "Microphone"
+      },
+      {
+        q: "18. A good example of an optical disc is ________.",
+        options: ["CD-ROM", "USB", "Flash card", "Hard disk"],
+        answer: "CD-ROM"
+      },
+      {
+        q: "19. The term “manipulate data” means ________.",
+        options: [
+          "Working on data to get information",
+          "Erasing data permanently",
+          "Printing data only",
+          "Saving data into folders"
+        ],
+        answer: "Working on data to get information"
+      },
+      {
+        q: "20. The main unit that controls all computer activities is the ________.",
+        options: ["CPU", "Keyboard", "Speaker", "Monitor"],
+        answer: "CPU"
+      },
+      {
+        q: "21. The second generation of computers used ________.",
+        options: ["Transistors", "Vacuum tubes", "Integrated circuits", "Microprocessors"],
+        answer: "Transistors"
+      },
+      {
+        q: "22. To rename a folder, you should ________.",
+        options: [
+          "Right-click and select “Rename”",
+          "Delete the folder",
+          "Move it to Recycle Bin",
+          "Double-click the icon"
+        ],
+        answer: "Right-click and select “Rename”"
+      },
+      {
+        q: "23. Which of these can be used to collect data from people?",
+        options: ["Questionnaire", "Monitor", "Printer", "Speaker"],
+        answer: "Questionnaire"
+      },
+      {
+        q: "24. A well-designed desktop should be ________.",
+        options: [
+          "Neat and organized",
+          "Full of icons",
+          "Completely empty",
+          "Hidden from users"
+        ],
+        answer: "Neat and organized"
+      },
+      {
+        q: "25. The part of the CPU that carries out calculations is the ________.",
+        options: [
+          "Arithmetic and Logic Unit",
+          "Control Unit",
+          "Memory Unit",
+          "Input Unit"
+        ],
+        answer: "Arithmetic and Logic Unit"
+      },
+      {
+        q: "26. The third generation of computers used ________.",
+        options: ["Integrated circuits", "Microprocessors", "Vacuum tubes", "Chips"],
+        answer: "Integrated circuits"
+      },
+      {
+        q: "27. What is the best way to find the average of several numbers?",
+        options: [
+          "Add them and divide by their count",
+          "Multiply all together",
+          "Subtract the largest from smallest",
+          "Divide by 100"
+        ],
+        answer: "Add them and divide by their count"
+      },
+      {
+        q: "28. A folder can contain ________.",
+        options: [
+          "Files and other folders",
+          "Only music",
+          "Only pictures",
+          "Only videos"
+        ],
+        answer: "Files and other folders"
+      },
+      {
+        q: "29. When the teacher uses Excel to find totals and averages, she is ________.",
+        options: [
+          "Manipulating data",
+          "Typing a story",
+          "Drawing a chart",
+          "Formatting the desktop"
+        ],
+        answer: "Manipulating data"
+      },
+      {
+        q: "30. The use of microprocessors in computers led to ________.",
+        options: [
+          "Faster and smaller computers",
+          "Bigger and slower computers",
+          "Computers without screens",
+          "Computers that cannot store data"
+        ],
+        answer: "Faster and smaller computers"
       }
     ];
 
@@ -763,7 +764,8 @@
             canTake: false, 
             remainingTime: remainingTime,
             lastScore: lastSubmission.total || 0,
-            lastPercentage: Math.round((lastSubmission.total || 0) / TOTAL_QUESTIONS * 100)
+            maxScore: lastSubmission.maxScore || MAX_SCORE,
+            lastPercentage: Math.round((lastSubmission.total || 0)/(lastSubmission.maxScore || MAX_SCORE)*100)
           };
         }
 
