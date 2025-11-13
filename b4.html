@@ -22,12 +22,12 @@
       width: 90%;
       max-width: 900px;
       margin: 0 auto;
-      background: rgba(255, 255, 255, 0.95);
+      background: rgba(255, 255, 25, 0.95);
       padding: 30px;
       border-radius: 20px;
       box-shadow: 0 20px 40px rgba(0,0,0,0.15);
       backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 25, 0.2);
     }
     
     h1 {
@@ -101,7 +101,7 @@
     }
     
     marquee {
-      background: linear-gradient(135deg, #ff7b00, #ff9500);
+      background: linear-gradient(135deg, #ff7b00, green);
       color: white;
       padding: 10px;
       border-radius: 8px;
@@ -387,8 +387,8 @@
       <div class="quiz-info">
         <p>📚 <strong>Subject:</strong> Introduction to Computing</p>
         <marquee>Just select the correct answer for each question!</marquee>
-        <p>⏱️ <strong>Time Limit:</strong> 30 minutes</p>
-        <p>❓ <strong>Questions:</strong> 30 questions (from 40 available)</p>
+        <p>⏱️ <strong>Time Limit:</strong> 20 minutes</p>
+        <p>❓ <strong>Questions:</strong> 30 questions</p>
         <p>🎯 <strong>Instructions:</strong> Use Next and Previous to navigate, click Submit when done</p>
       </div>
       <button id="startBtn">🎯 Sure, Let's Start Quiz!</button>
@@ -449,7 +449,7 @@
     const db = getDatabase(app);
 
     // Quiz Configuration
-    const QUIZ_DURATION = 30 * 60; // 30 minutes in seconds
+    const QUIZ_DURATION = 20 * 60; // 20 minutes in seconds
     const TOTAL_QUESTIONS = 30; // Show 30 out of 40 questions
     const MAX_SCORE = TOTAL_QUESTIONS;
     const COOLDOWN_HOURS = 12;
@@ -973,4 +973,5 @@
     }
   </script>
 </body>
+
 </html>
