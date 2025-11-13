@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Yeriel Bracha Computing Quiz</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #ff7b00 0%, #ff9500 50%, #ffb347 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+    
+    .container {
+      width: 90%;
+      max-width: 900px;
+      margin: 0 auto;
+      background: rgba(255, 255, 255, 0.95);
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 20px;
+      font-size: 2.2em;
+      font-weight: 700;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    h2 {
+      color: #34495e;
+      margin-bottom: 20px;
+      font-size: 1.3em;
+      text-align: center;
+    }
+    
+    .hidden { 
+      display: none; 
+    }
+    
+    /* Name Input Page */
+    .name-section {
+      text-align: center;
+      padding: 20px;
+    }
+    
+    .name-section p {
+      font-size: 1.1em;
+      color: #555;
+      margin-bottom: 20px;
+    }
+    
+    input[type="text"] {
+      width: 100%;
+      max-width: 400px;
+      padding: 15px;
+      border-radius: 10px;
+      border: 2px solid #bdc3c7;
+      font-size: 1.1em;
+      margin: 15px auto;
+      display: block;
+      transition: border-color 0.3s ease;
+    }
+    
+    input[type="text"]:focus {
+      outline: none;
+      border-color: #ff7b00;
+      box-shadow: 0 0 0 3px rgba(255, 123, 0, 0.1);
+    }
+    
+    /* Welcome Page */
+    .welcome-content {
+      text-align: center;
+      padding: 20px;
+    }
+    
+    .quiz-info {
+      background: rgba(255, 123, 0, 0.1);
+      border: 2px solid #ff7b00;
+      border-radius: 15px;
+      padding: 20px;
+      margin: 20px 0;
+    }
+    
+    .quiz-info p {
+      margin: 10px 0;
+      font-size: 1.1em;
+      color: #2c3e50;
+    }
+    
+    marquee {
+      background: linear-gradient(135deg, #ff7b00, #ff9500);
+      color: white;
+      padding: 10px;
+      border-radius: 8px;
+      margin: 15px 0;
+      font-weight: bold;
+    }
+    
+    /* Buttons */
+    button {
+      background: linear-gradient(135deg, #ff7b00, #ff9500);
+      color: white;
+      border: none;
+      padding: 15px 30px;
+      border-radius: 50px;
+      cursor: pointer;
+      font-size: 1.1em;
+      font-weight: 600;
+      margin: 10px;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    button:hover {
+      background: linear-gradient(135deg, #ff9500, #ff7b00);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(255, 123, 0, 0.4);
+    }
+    
+    button:disabled {
+      background: #95a5a6;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+    
+    button.secondary {
+      background: #ecf0f1;
+      color: #2c3e50;
+      text-transform: none;
+      letter-spacing: normal;
+      padding: 12px 20px;
+      margin: 5px;
+      border-radius: 10px;
+      font-weight: normal;
+    }
+    
+    button.secondary:hover {
+      background: #bdc3c7;
+      transform: translateY(-1px);
+    }
+    
+    button.selected {
+      background: linear-gradient(135deg, #27ae60, #2ecc71) !important;
+      color: white !important;
+    }
+    
+    /* Countdown Screen */
+    .countdown-screen {
+      text-align: center;
+      padding: 60px 20px;
+      font-size: 4em;
+      font-weight: bold;
+      color: #ff7b00;
+      animation: pulse 1s ease-in-out infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 0.8; }
+      50% { transform: scale(1.1); opacity: 1; }
+    }
+    
+    /* Quiz Area */
+    .quiz-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      padding: 15px;
+      background: rgba(255, 123, 0, 0.1);
+      border-radius: 10px;
+    }
+    
+    .question-counter {
+      font-weight: bold;
+      color: #2c3e50;
+      font-size: 1.1em;
+    }
+    
+    .timer {
+      font-weight: bold;
+      color: #e74c3c;
+      font-size: 1.2em;
+      padding: 8px 15px;
+      background: rgba(231, 76, 60, 0.1);
+      border-radius: 20px;
+    }
+    
+    .timer.warning {
+      animation: blink 1s infinite;
+    }
+    
+    @keyframes blink {
+      0%, 50% { opacity: 1; }
+      51%, 100% { opacity: 0.5; }
+    }
+    
+    .question-content {
+      background: rgba(255, 255, 255, 0.8);
+      padding: 25px;
+      border-radius: 15px;
+      margin-bottom: 25px;
+      border-left: 5px solid #ff7b00;
+    }
+    
+    .question-text {
+      font-size: 1.2em;
+      color: #2c3e50;
+      font-weight: 600;
+      line-height: 1.5;
+      margin-bottom: 20px;
+    }
+    
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin-bottom: 25px;
+    }
+    
+    .option-button {
+      text-align: left;
+      padding: 15px 20px;
+      border-radius: 10px;
+      font-size: 1em;
+      line-height: 1.4;
+      word-wrap: break-word;
+    }
+    
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 30px;
+    }
+    
+    .nav-buttons {
+      display: flex;
+      gap: 10px;
+    }
+    
+    /* Results */
+    .results {
+      padding: 20px;
+      text-align: center;
+    }
+    
+    .score-display {
+      background: linear-gradient(135deg, #2ecc71, #27ae60);
+      color: white;
+      padding: 25px;
+      border-radius: 15px;
+      margin: 20px 0;
+      font-size: 1.3em;
+    }
+    
+    .summary {
+      text-align: left;
+      margin-top: 30px;
+      padding: 20px;
+      background: rgba(236, 240, 241, 0.8);
+      border-radius: 15px;
+    }
+    
+    .summary h3 {
+      color: #2c3e50;
+      margin-bottom: 20px;
+      text-align: center;
+      font-size: 1.4em;
+    }
+    
+    .question-review {
+      margin: 15px 0;
+      padding: 15px;
+      background: white;
+      border-radius: 10px;
+      border-left: 4px solid #bdc3c7;
+    }
+    
+    .question-review.correct {
+      border-left-color: #27ae60;
+    }
+    
+    .question-review.wrong {
+      border-left-color: #e74c3c;
+    }
+    
+    .correct { 
+      color: #27ae60; 
+      font-weight: bold; 
+    }
+    
+    .wrong { 
+      color: #e74c3c; 
+      font-weight: bold; 
+    }
+    
+    /* Footer */
+    footer {
+      text-align: center;
+      margin-top: 40px;
+      padding: 20px;
+      background: linear-gradient(135deg, #2c3e50, #34495e);
+      color: white;
+      border-radius: 15px;
+      font-size: 14px;
+    }
+    
+    /* Lock Message */
+    .lock-message {
+      text-align: center;
+      color: #e74c3c;
+      font-weight: bold;
+      background: rgba(231, 76, 60, 0.1);
+      padding: 15px;
+      border-radius: 10px;
+      margin-top: 15px;
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .container {
+        padding: 20px;
+        margin: 10px;
+        width: calc(100% - 20px);
+      }
+      
+      h1 {
+        font-size: 1.8em;
+      }
+      
+      .countdown-screen {
+        font-size: 3em;
+        padding: 40px 20px;
+      }
+      
+      .quiz-header {
+        flex-direction: column;
+        gap: 10px;
+      }
+      
+      .controls {
+        flex-direction: column;
+        gap: 15px;
+      }
+      
+      .nav-buttons {
+        width: 100%;
+        justify-content: space-between;
+      }
+      
+      button {
+        padding: 12px 20px;
+        font-size: 1em;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Name Input Page -->
+    <div id="namePage" class="name-section">
+      <h1>🎓 Yeriel Bracha Computing Quiz</h1>
+      <p>Welcome! Please enter your full name to begin the quiz.</p>
+      <input type="text" id="studentName" placeholder="Enter your full name" />
+      <button id="proceedBtn">Proceed to Quiz</button>
+      <div id="lockMessage" class="lock-message hidden"></div>
+    </div>
+
+    <!-- Welcome Page -->
+    <div id="welcomePage" class="welcome-content hidden">
+      <h1>Welcome to Quizzilla! 🚀</h1>
+      <div class="quiz-info">
+        <p>📚 <strong>Subject:</strong> Introduction to Computing</p>
+        <marquee>Just select the correct answer for each question!</marquee>
+        <p>⏱️ <strong>Time Limit:</strong> 30 minutes</p>
+        <p>❓ <strong>Questions:</strong> 30 questions (from 40 available)</p>
+        <p>🎯 <strong>Instructions:</strong> Use Next and Previous to navigate, click Submit when done</p>
+      </div>
+      <button id="startBtn">🎯 Sure, Let's Start Quiz!</button>
+    </div>
+
+    <!-- Countdown Screen -->
+    <div id="countdownScreen" class="countdown-screen hidden"></div>
+
+    <!-- Quiz Area -->
+    <div id="quizArea" class="hidden">
+      <div class="quiz-header">
+        <div class="question-counter" id="questionCounter">Question 1 of 30</div>
+        <div class="timer" id="timer">30:00</div>
+      </div>
+      
+      <div class="question-content">
+        <div class="question-text" id="questionText"></div>
+        <div class="options-grid" id="optionsContainer"></div>
+      </div>
+      
+      <div class="controls">
+        <div class="nav-buttons">
+          <button type="button" id="prevBtn" class="secondary">← Previous</button>
+          <button type="button" id="nextBtn">Next →</button>
+        </div>
+        <button type="button" id="submitBtn" class="hidden">🎯 Submit Quiz</button>
+      </div>
+    </div>
+
+    <!-- Results Area -->
+    <div id="resultsArea" class="results hidden">
+      <h1>🎉 Quiz Completed!</h1>
+      <div id="scoreDisplay" class="score-display"></div>
+      <div id="summaryContainer" class="summary"></div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+      <p><strong>Yeriel Bracha Coding Club</strong><br>© 2025 - Excellence in Computing Education</p>
+    </footer>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getDatabase, ref, get, set, push } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCY9oturc9bql33PSUkfNUptcHXla2RWN4",
+      authDomain: "tracha-xx.firebaseapp.com",
+      databaseURL: "https://tracha-xx-default-rtdb.firebaseio.com",
+      projectId: "tracha-xx",
+      storageBucket: "tracha-xx.appspot.com",
+      messagingSenderId: "914440906583",
+      appId: "1:914440906583:web:123abc456xyz"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    // Quiz Configuration
+    const QUIZ_DURATION = 30 * 60; // 30 minutes in seconds
+    const TOTAL_QUESTIONS = 30; // Show 30 out of 40 questions
+    const MAX_SCORE = TOTAL_QUESTIONS;
+    const COOLDOWN_HOURS = 12;
+
+    // Quiz Data - All 40 questions
+    const quizData = [
+      {
+        q: "1. The earliest computers were very large and used ________ to store data.",
+        options: ["Transistors", "Vacuum tubes", "Chips", "Microprocessors"],
+        answer: "Vacuum tubes"
+      },
+      {
+        q: "2. The first generation computers produced a lot of ________.",
+        options: ["Smoke", "Heat", "Light", "Sound"],
+        answer: "Heat"
+      },
+      {
+        q: "3. The generation of computers that used microprocessors is the ________.",
+        options: ["Second generation", "Third generation", "Fourth generation", "Fifth generation"],
+        answer: "Fourth generation"
+      },
+      {
+        q: "4. Computers became smaller and faster in which generation?",
+        options: ["First", "Fourth", "Third", "Second"],
+        answer: "Fourth"
+      },
+      {
+        q: "5. An example of a fourth-generation computer is ________.",
+        options: ["Abacus", "ENIAC", "Laptop", "Punch card machine"],
+        answer: "Laptop"
+      },
+      {
+        q: "6. Which device allows you to type letters and numbers into the computer?",
+        options: ["Mouse", "Keyboard", "Printer", "Monitor"],
+        answer: "Keyboard"
+      },
+      {
+        q: "7. Which of these is an example of an input device?",
+        options: ["Projector", "Scanner", "Speaker", "Printer"],
+        answer: "Scanner"
+      },
+      {
+        q: "8. The main use of output devices is to ________.",
+        options: ["Enter data", "Display or produce information", "Store data", "Process information"],
+        answer: "Display or produce information"
+      },
+      {
+        q: "9. The printer produces information on ________.",
+        options: ["Screen", "Paper", "Keyboard", "Mouse"],
+        answer: "Paper"
+      },
+      {
+        q: "10. Which of the following devices shows pictures and videos?",
+        options: ["Speaker", "Monitor", "Mouse", "Scanner"],
+        answer: "Monitor"
+      },
+      {
+        q: "11. The device used to move the pointer on the computer screen is called a ________.",
+        options: ["Mouse", "Keyboard", "Monitor", "Speaker"],
+        answer: "Mouse"
+      },
+      {
+        q: "12. The left mouse button is mostly used for ________.",
+        options: ["Selecting and clicking", "Opening the start menu", "Printing a document", "Typing letters"],
+        answer: "Selecting and clicking"
+      },
+      {
+        q: "13. To open a file or folder using the mouse, you need to ________.",
+        options: ["Right-click once", "Left-click twice", "Scroll", "Move the mouse quickly"],
+        answer: "Left-click twice"
+      },
+      {
+        q: "14. The right mouse button is used to ________.",
+        options: ["Highlight text", "Show a shortcut menu", "Type letters", "Play music"],
+        answer: "Show a shortcut menu"
+      },
+      {
+        q: "15. The scroll wheel on a mouse is used to ________.",
+        options: ["Type words", "Scroll up and down", "Open a folder", "Delete files"],
+        answer: "Scroll up and down"
+      },
+      {
+        q: "16. The home row keys on the keyboard are mainly used for ________.",
+        options: ["Moving the mouse", "Learning to type correctly", "Opening programs", "Drawing shapes"],
+        answer: "Learning to type correctly"
+      },
+      {
+        q: "17. Which of these is a home row key?",
+        options: ["T", "A", "Z", "Q"],
+        answer: "A"
+      },
+      {
+        q: "18. The left index finger rests on which home row key?",
+        options: ["J", "F", "K", "L"],
+        answer: "F"
+      },
+      {
+        q: "19. The right index finger rests on which home row key?",
+        options: ["F", "J", "D", "S"],
+        answer: "J"
+      },
+      {
+        q: "20. The key on which both thumbs rest is the ________ key.",
+        options: ["Enter", "Shift", "Spacebar", "Tab"],
+        answer: "Spacebar"
+      },
+      {
+        q: "21. Typing with the correct fingers helps to ________.",
+        options: ["Make typing faster and neater", "Stop computer viruses", "Draw pictures", "Change desktop color"],
+        answer: "Make typing faster and neater"
+      },
+      {
+        q: "22. The taskbar is usually found at the ________ of the computer screen.",
+        options: ["Top", "Bottom", "Left", "Right"],
+        answer: "Bottom"
+      },
+      {
+        q: "23. The section of the taskbar that shows the time is called the ________.",
+        options: ["Start button", "System tray", "Quick launch", "Desktop"],
+        answer: "System tray"
+      },
+      {
+        q: "24. The Start button helps you to ________.",
+        options: ["Open programs and shut down the computer", "Move icons", "Type faster", "Change wallpaper"],
+        answer: "Open programs and shut down the computer"
+      },
+      {
+        q: "25. The desktop background can also be called ________.",
+        options: ["Taskbar", "Wallpaper", "Folder", "Icon"],
+        answer: "Wallpaper"
+      },
+      {
+        q: "26. To change the desktop background, you must open the ________ menu.",
+        options: ["File", "Right-click", "Start", "Tools"],
+        answer: "Right-click"
+      },
+      {
+        q: "27. A folder is used to ________.",
+        options: ["Store files and documents", "Play music", "Show pictures on screen", "Type letters"],
+        answer: "Store files and documents"
+      },
+      {
+        q: "28. The small pictures that represent files or programs on the desktop are called ________.",
+        options: ["Buttons", "Icons", "Charts", "Drawings"],
+        answer: "Icons"
+      },
+      {
+        q: "29. To create a new folder, you must ________.",
+        options: ["Turn off the computer", "Right-click and choose “New Folder”", "Press Enter key", "Click on Start button"],
+        answer: "Right-click and choose “New Folder”"
+      },
+      {
+        q: "30. Keeping your files in folders helps you to ________.",
+        options: ["Lose them easily", "Keep your computer organized", "Slow down your work", "Delete all files"],
+        answer: "Keep your computer organized"
+      }
+    ];
+
+
+    // Global Variables
+    let studentName = "";
+    let currentQuestion = 0;
+    let selectedQuestions = [];
+    let userAnswers = [];
+    let quizTimer;
+    let timeRemaining = QUIZ_DURATION;
+    let quizStarted = false;
+
+    // DOM Elements
+    const namePage = document.getElementById("namePage");
+    const welcomePage = document.getElementById("welcomePage");
+    const countdownScreen = document.getElementById("countdownScreen");
+    const quizArea = document.getElementById("quizArea");
+    const resultsArea = document.getElementById("resultsArea");
+    const lockMessage = document.getElementById("lockMessage");
+
+    // Quiz Elements
+    const questionCounter = document.getElementById("questionCounter");
+    const timer = document.getElementById("timer");
+    const questionText = document.getElementById("questionText");
+    const optionsContainer = document.getElementById("optionsContainer");
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const submitBtn = document.getElementById("submitBtn");
+
+    // Results Elements
+    const scoreDisplay = document.getElementById("scoreDisplay");
+    const summaryContainer = document.getElementById("summaryContainer");
+
+    // Utility Functions
+    function formatTime(seconds) {
+      const minutes = Math.floor(seconds / 60);
+      const remainingSeconds = seconds % 60;
+      return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+    }
+
+    function shuffleArray(array) {
+      const shuffled = [...array];
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+      return shuffled;
+    }
+
+    // Check Student Eligibility
+    async function checkStudentEligibility(name) {
+      try {
+        const studentRef = ref(db, `quizResults`);
+        const snapshot = await get(studentRef);
+        
+        if (!snapshot.exists()) {
+          return { canTake: true };
+        }
+
+        const allScores = snapshot.val();
+        const studentScores = Object.values(allScores).filter(score => 
+          score.name && score.name.toLowerCase() === name.toLowerCase()
+        );
+
+        if (studentScores.length === 0) {
+          return { canTake: true };
+        }
+
+        // Find most recent submission
+        const lastSubmission = studentScores.sort((a, b) => 
+          new Date(b.date) - new Date(a.date)
+        )[0];
+
+        const lastSubmissionTime = new Date(lastSubmission.date);
+        const now = new Date();
+        const timeDiff = now - lastSubmissionTime;
+        const hoursDiff = timeDiff / (1000 * 60 * 60);
+
+        if (hoursDiff < COOLDOWN_HOURS) {
+          const remainingTime = (COOLDOWN_HOURS * 60 * 60 * 1000) - timeDiff;
+          return { 
+            canTake: false, 
+            remainingTime: remainingTime,
+            lastScore: lastSubmission.total || 0,
+            maxScore: lastSubmission.maxScore || MAX_SCORE,
+            lastPercentage: Math.round((lastSubmission.total || 0)/(lastSubmission.maxScore || MAX_SCORE)*100)
+          };
+        }
+
+        return { canTake: true };
+      } catch (error) {
+        console.error("Error checking eligibility:", error);
+        return { canTake: true };
+      }
+    }
+
+    // Event Listeners
+    document.getElementById("proceedBtn").addEventListener("click", async () => {
+      const nameInput = document.getElementById("studentName").value.trim();
+      if (!nameInput) {
+        alert("Please enter your name before proceeding!");
+        return;
+      }
+      
+      studentName = nameInput;
+      const eligibility = await checkStudentEligibility(studentName);
+      
+      if (!eligibility.canTake) {
+        const hours = Math.floor(eligibility.remainingTime / (1000 * 60 * 60));
+        const minutes = Math.floor((eligibility.remainingTime % (1000 * 60 * 60)) / (1000 * 60));
+        
+        lockMessage.classList.remove("hidden");
+        lockMessage.innerHTML = `
+          <p>⏰ You have already completed this quiz recently.</p>
+          <p>Last Score: ${eligibility.lastScore}/${TOTAL_QUESTIONS} (${eligibility.lastPercentage}%)</p>
+          <p>You can try again in: ${hours}h ${minutes}m</p>
+        `;
+        return;
+      }
+
+      namePage.classList.add("hidden");
+      welcomePage.classList.remove("hidden");
+    });
+
+    document.getElementById("startBtn").addEventListener("click", () => {
+      welcomePage.classList.add("hidden");
+      startCountdown();
+    });
+
+    // Countdown Function
+    function startCountdown() {
+      countdownScreen.classList.remove("hidden");
+      let counter = 3;
+      countdownScreen.textContent = `Get Ready... ${counter}`;
+
+      const countdown = setInterval(() => {
+        counter--;
+        if (counter > 0) {
+          countdownScreen.textContent = `${counter}...`;
+        } else {
+          clearInterval(countdown);
+          countdownScreen.textContent = "Begin!";
+          setTimeout(() => {
+            countdownScreen.classList.add("hidden");
+            initializeQuiz();
+          }, 800);
+        }
+      }, 1000);
+    }
+
+    // Initialize Quiz
+    function initializeQuiz() {
+      // Select 30 random questions from the 40 available
+      const shuffledQuestions = shuffleArray(quizData);
+      selectedQuestions = shuffledQuestions.slice(0, TOTAL_QUESTIONS);
+      userAnswers = new Array(TOTAL_QUESTIONS).fill(null);
+      currentQuestion = 0;
+      quizStarted = true;
+      
+      quizArea.classList.remove("hidden");
+      loadQuestion();
+      startTimer();
+      
+      // Prevent page refresh
+      window.addEventListener('beforeunload', function (e) {
+        if (quizStarted) {
+          e.preventDefault();
+          e.returnValue = '';
+        }
+      });
+    }
+
+    // Load Question
+    function loadQuestion() {
+      const question = selectedQuestions[currentQuestion];
+      
+      // Update counter
+      questionCounter.textContent = `Question ${currentQuestion + 1} of ${TOTAL_QUESTIONS}`;
+      
+      // Update question text
+      questionText.textContent = question.q;
+      
+      // Clear and populate options
+      optionsContainer.innerHTML = "";
+      question.options.forEach((option, index) => {
+        const button = document.createElement("button");
+        button.className = "option-button secondary";
+        button.textContent = option;
+        
+        if (userAnswers[currentQuestion] === option) {
+          button.classList.add("selected");
+        }
+        
+        button.addEventListener("click", () => selectAnswer(option));
+        optionsContainer.appendChild(button);
+      });
+      
+      // Update navigation buttons
+      prevBtn.disabled = currentQuestion === 0;
+      
+      if (currentQuestion === TOTAL_QUESTIONS - 1) {
+        nextBtn.classList.add("hidden");
+        submitBtn.classList.remove("hidden");
+      } else {
+        nextBtn.classList.remove("hidden");
+        submitBtn.classList.add("hidden");
+      }
+    }
+
+    // Select Answer
+    function selectAnswer(answer) {
+      userAnswers[currentQuestion] = answer;
+      loadQuestion(); // Refresh to show selection
+    }
+
+    // Navigation
+    prevBtn.addEventListener("click", () => {
+      if (currentQuestion > 0) {
+        currentQuestion--;
+        loadQuestion();
+      }
+    });
+
+    nextBtn.addEventListener("click", () => {
+      if (currentQuestion < TOTAL_QUESTIONS - 1) {
+        currentQuestion++;
+        loadQuestion();
+      }
+    });
+
+    submitBtn.addEventListener("click", () => {
+      if (confirm("Are you sure you want to submit your quiz? You cannot change answers after submission.")) {
+        finishQuiz();
+      }
+    });
+
+    // Timer Functions
+    function startTimer() {
+      updateTimerDisplay();
+      quizTimer = setInterval(() => {
+        timeRemaining--;
+        updateTimerDisplay();
+        
+        if (timeRemaining <= 0) {
+          clearInterval(quizTimer);
+          autoSubmitQuiz();
+        }
+      }, 1000);
+    }
+
+    function updateTimerDisplay() {
+      timer.textContent = formatTime(timeRemaining);
+      
+      // Add warning class for last 5 minutes
+      if (timeRemaining <= 300) {
+        timer.classList.add("warning");
+      }
+    }
+
+    function stopTimer() {
+      if (quizTimer) {
+        clearInterval(quizTimer);
+      }
+    }
+
+    // Auto Submit
+    function autoSubmitQuiz() {
+      alert("Time's up! Your quiz will be submitted automatically.");
+      finishQuiz(true);
+    }
+
+    // Finish Quiz
+    async function finishQuiz(isAutoSubmit = false) {
+      quizStarted = false;
+      stopTimer();
+      
+      quizArea.classList.add("hidden");
+      resultsArea.classList.remove("hidden");
+      
+      // Calculate score
+      let correctAnswers = 0;
+      const reviewHTML = [];
+      
+      selectedQuestions.forEach((question, index) => {
+        const userAnswer = userAnswers[index] || "(No answer)";
+        const isCorrect = userAnswer === question.answer;
+        
+        if (isCorrect) correctAnswers++;
+        
+        reviewHTML.push(`
+          <div class="question-review ${isCorrect ? 'correct' : 'wrong'}">
+            <p><strong>Q${index + 1}:</strong> ${question.q}</p>
+            <p>Your answer: <span class="${isCorrect ? 'correct' : 'wrong'}">${userAnswer}</span></p>
+            <p>Correct answer: <span class="correct">${question.answer}</span></p>
+          </div>
+        `);
+      });
+      
+      const percentage = Math.round((correctAnswers / TOTAL_QUESTIONS) * 100);
+      const timeUsed = QUIZ_DURATION - timeRemaining;
+      
+      // Display results
+      scoreDisplay.innerHTML = `
+        <h2>📊 Your Results</h2>
+        <p><strong>Student:</strong> ${studentName}</p>
+        <p><strong>Score:</strong> ${correctAnswers} / ${TOTAL_QUESTIONS} (${percentage}%)</p>
+        <p><strong>Time Used:</strong> ${formatTime(timeUsed)}</p>
+        ${isAutoSubmit ? '<p><strong>Status:</strong> Auto-submitted (Time expired)</p>' : ''}
+        <p><strong>Grade:</strong> ${percentage >= 70 ? '🎉 Excellent!' : percentage >= 50 ? '👍 Good!' : '📚 Keep studying!'}</p>
+      `;
+      
+      summaryContainer.innerHTML = `
+        <h3>📋 Detailed Review</h3>
+        ${reviewHTML.join('')}
+      `;
+      
+      // Save to Firebase
+      try {
+        const newRef = push(ref(db, "quizResults"));
+        
+        await set(newRef, {
+          name: studentName,
+          sectionA: correctAnswers,
+          sectionB: 0,
+          total: correctAnswers,
+          percentage: percentage,
+          timeUsed: timeUsed,
+          autoSubmitted: isAutoSubmit,
+          date: new Date().toLocaleString(),
+          timestamp: new Date().toISOString(),
+          subject: "Introduction to Computing"
+        });
+        
+        // Show success message
+        const successDiv = document.createElement('div');
+        successDiv.style.cssText = `
+          background: rgba(40, 167, 69, 0.9);
+          color: white;
+          padding: 15px;
+          border-radius: 10px;
+          margin-top: 20px;
+          text-align: center;
+          font-weight: 600;
+        `;
+        successDiv.innerHTML = `✅ Score saved successfully!<br>⏰ You can retake this quiz after ${COOLDOWN_HOURS} hours.`;
+        resultsArea.appendChild(successDiv);
+        
+      } catch (error) {
+        console.error("Error saving results:", error);
+        
+        // Show error message
+        const errorDiv = document.createElement('div');
+        errorDiv.style.cssText = `
+          background: rgba(220, 53, 69, 0.9);
+          color: white;
+          padding: 15px;
+          border-radius: 10px;
+          margin-top: 20px;
+          text-align: center;
+          font-weight: 600;
+        `;
+        errorDiv.innerHTML = '⚠️ Quiz completed but could not save to database. Please contact your instructor.';
+        resultsArea.appendChild(errorDiv);
+      }
+    }
+  </script>
+</body>
+</html>
