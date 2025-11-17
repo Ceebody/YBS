@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Excel Formula Quiz — Short Answer Quiz</title>
+  <style>
+    :root {
+      --card-bg: #fffaf0;
+      --accent: #0b66c3;
+      --ok: #2d8a3e;
+      --bad: #c82929;
+      --muted: #555;
+      --card-border: #e0e0e0;
+    }
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(180deg,#e6f0ff 0%, #f7fbff 100%);
+      margin: 0;
+      padding: 24px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      color: #222;
+    }
+    .container {
+      width: 100%;
+      max-width: 820px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 6px 30px rgba(0,0,0,0.08);
+      padding: 20px;
+      box-sizing: border-box;
+    }
+    header {
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      margin-bottom:8px;
+    }
+    h1 { font-size:20px; margin:0; color:var(--accent); }
+    .timer {
+      background: #fff;
+      border: 2px solid var(--card-border);
+      padding:8px 12px;
+      border-radius:8px;
+      font-weight:700;
+      color: #d62e2e;
+      min-width:90px;
+      text-align:center;
+    }
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      padding:14px;
+      border-radius:8px;
+      font-family: "Courier New", monospace;
+      font-size:14px;
+      color:#111;
+      margin-bottom:16px;
+      white-space: pre;
+      overflow:auto;
+      max-height:220px;
+    }
+    .question-area {
+      display:block;
+      margin-bottom:12px;
+    }
+    .question {
+      font-size:16px;
+      font-weight:600;
+      margin-bottom:8px;
+    }
+    textarea.answer {
+      width:100%;
+      min-height:80px;
+      resize:vertical;
+      padding:10px;
+      font-size:15px;
+      border-radius:8px;
+      border:1px solid #cfcfcf;
+      font-family: "Segoe UI", Tahoma, Verdana;
+      box-sizing:border-box;
+    }
+    .controls {
+      display:flex;
+      align-items:center;
+      gap:10px;
+      margin-top:10px;
+    }
+    button {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding:8px 14px;
+      border-radius:8px;
+      font-weight:600;
+      cursor:pointer;
+    }
+    button[disabled] {
+      opacity:0.5;
+      cursor:not-allowed;
+    }
+    .feedback {
+      margin-left:8px;
+      font-weight:700;
+    }
+    .feedback.ok { color: var(--ok); }
+    .feedback.bad { color: var(--bad); }
+    .summary {
+      margin-top:18px;
+      padding:12px;
+      border-radius:8px;
+      border:1px dashed var(--card-border);
+      background:#fbfbff;
+    }
+    .answers-list code { background:#f0f0f0; padding:2px 6px; border-radius:4px; display:inline-block; }
+    footer { margin-top:14px; font-size:13px; color:var(--muted); }
+    .meta { font-size:13px; color:var(--muted); margin-bottom:8px; }
+  </style>
+</head>
+<body>
+  <div class="container" role="main" aria-labelledby="title">
+    <header>
+      <h1 id="title">Excel Formula Quiz (Based on Literacy Score Table)</h1>
+      <div class="timer" id="timer">30:00</div>
+    </header>
+
+    <div class="meta">Answer each Excel formula question. Type your answer and press Enter to check.</div>
+
+    <!-- Code card (replaced image with a textual representation) -->
+    <div class="card" id="codeCard">
+				---------------------------------------------------------
+		NAME       T1  GW  T2  PW | SUB |A (50%)|EXAM  |B(50%)|TOTAL| POS
+		-----------------------------------------------------------------------
+		Sheriden   19  10  19  10 |  58 | 48.33 |  76  |  38  | 86.33 |  6
+		Johnson    20  10  19  10 |  59 | 49.17 |  46  |  23  | 72.17 |  8
+		Eunice     19  10  18  10 |  57 | 47.50 |  80  |  40  | 87.50 |  4
+		Olivia     19  10  17  10 |  56 | 46.67 |  80  |  40  | 86.67 |  5
+		Maya       17  10  19  10 |  56 | 46.67 |  78  |  39  | 85.67 |  7
+		Mariama    18  10  18  10 |  56 | 46.67 |  33  | 16.5 | 63.17 | 10
+		Tony       17  10  18  10 |  55 | 45.83 |  87  | 43.5 | 89.33 |  3
+		Kusi       18  10  20  10 |  58 | 48.33 |  90  |  45  | 93.33 |  2
+		Morrison   20  10  19  10 |  59 | 49.17 |   0  |   0  | 49.17 | 11
+		Anthony    18  10  18  10 |  56 | 46.67 |  50  |  25  | 71.67 |  9
+		-----------------------------------------------------------------------
+		TOTALS     185 100 185 100 | 570 | 475 | 620 | 310 | 785.00 |  1
+	</div>
+
+
+    <!-- Question -->
+    <div class="question-area">
+      <div class="question" id="questionText">Question will appear here</div>
+      <textarea id="answerBox" class="answer" placeholder="Type your answer here..."></textarea>
+      <div class="controls">
+        <button id="checkBtn">Check Answer (Enter)</button>
+        <button id="nextBtn" style="display:none">Next</button>
+        <div id="feedback" class="feedback" aria-live="polite"></div>
+      </div>
+    </div>
+
+    <div id="progress" class="meta">Question <span id="qNum">1</span> of <span id="qTotal">15</span></div>
+
+    <div id="resultArea" style="display:none" class="summary" aria-live="polite"></div>
+
+    <footer>
+      Tip: Formulas must start with '=' but capitalization does not matter.
+    </footer>
+  </div>
+
+  <script>
+    // QUIZ QUESTIONS — Excel Formula Version
+    const questions = [
+      { prompt: "Write a formula to calculate the SUB TOTAL by adding TEST 1, GROUP WORK, TEST 2, and PROJECT WORK.", answers: ["=A2+B2+C2+D2"] },
+      { prompt: "Write a formula to calculate Column A (50%) by finding 50% of the SUB TOTAL.", answers: ["=E2*0.5","=E2*50%"] },
+      { prompt: "Write a formula to calculate Column B (50%) by finding 50% of the TERM EXAMS score.", answers: ["=F2*0.5","=F2*50%"] },
+      { prompt: "Write a formula to calculate the OVER TOTAL (A + B).", answers: ["=G2+H2"] },
+      { prompt: "Write a formula to find the highest score in TEST 1.", answers: ["=MAX(A2:A11)"] },
+      { prompt: "Write a formula to find the lowest score in TEST 2.", answers: ["=MIN(C2:C11)"] },
+      { prompt: "Write a formula to calculate the average GROUP WORK score.", answers: ["=AVERAGE(B2:B11)"] },
+      { prompt: "Write a formula to count how many pupils scored more than 80 in OVER TOTAL.", answers: ["=COUNTIF(I2:I11,\">80\")"] },
+      { prompt: "Write a formula to calculate the total SUB TOTAL for all pupils.", answers: ["=SUM(E2:E11)"] },
+      { prompt: "Write a formula to calculate the POSITION of each pupil using rank (highest first).", answers: ["=RANK(I2,I2:I11,0)"] },
+      { prompt: "Write an IF formula: Pass if OVER TOTAL is 50 or above, else Fail.", answers: ["=IF(I2>=50,\"Pass\",\"Fail\")"] },
+      { prompt: "Use VLOOKUP to find Sheriden's OVER TOTAL.", answers: ["=VLOOKUP(\"Sheriden\",A2:I11,9,FALSE)"] },
+      { prompt: "Check if TERM EXAM score is above class average.", answers: ["=IF(F2>AVERAGE(F2:F11),\"Above Avg\",\"Below Avg\")"] },
+      { prompt: "Write a formula to calculate TEST1 + TEST2.", answers: ["=A2+C2"] },
+      { prompt: "Use INDEX + MATCH to find the name of the pupil with the highest OVER TOTAL.", answers: ["=INDEX(A2:A11,MATCH(MAX(I2:I11),I2:I11,0))"] }
+    ];
+
+    const totalQuestions = questions.length;
+
+    const qText = document.getElementById("questionText");
+    const answerBox = document.getElementById("answerBox");
+    const checkBtn = document.getElementById("checkBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const feedback = document.getElementById("feedback");
+    const qNum = document.getElementById("qNum");
+    const qTotal = document.getElementById("qTotal");
+    const timerEl = document.getElementById("timer");
+    const resultArea = document.getElementById("resultArea");
+
+    qTotal.textContent = totalQuestions;
+
+    let current = 0;
+    let score = 0;
+
+    let remaining = 30 * 60;
+    let timerInterval = null;
+
+    function startTimer() {
+      timerInterval = setInterval(() => {
+        remaining--;
+        if (remaining < 0) {
+          clearInterval(timerInterval);
+          endQuiz("Time's up!");
+          return;
+        }
+        const m = Math.floor(remaining / 60);
+        const s = remaining % 60;
+        timerEl.textContent = `${m}:${s < 10 ? '0'+s : s}`;
+      }, 1000);
+    }
+
+    function normalize(s) {
+      return s.toString().trim().toLowerCase();
+    }
+
+    function showQuestion(i) {
+      qText.textContent = questions[i].prompt;
+      qNum.textContent = i + 1;
+      feedback.textContent = "";
+      answerBox.value = "";
+      nextBtn.style.display = "none";
+      checkBtn.disabled = false;
+      answerBox.disabled = false;
+      answerBox.focus();
+    }
+
+    function checkCurrentAnswer() {
+      const expected = questions[current].answers.map(a => normalize(a));
+      const user = normalize(answerBox.value);
+
+      if (expected.includes(user)) {
+        markCorrect();
+      } else {
+        markWrong();
+      }
+    }
+
+    function markCorrect() {
+      feedback.className = "feedback ok";
+      feedback.textContent = "✔ Correct!";
+      checkBtn.disabled = true;
+      answerBox.disabled = true;
+      nextBtn.style.display = "inline-block";
+      score++;
+    }
+
+    function markWrong() {
+      feedback.className = "feedback bad";
+      feedback.textContent = "✘ Try again!";
+    }
+
+    nextBtn.addEventListener("click", () => {
+      current++;
+      if (current >= totalQuestions) {
+        clearInterval(timerInterval);
+        endQuiz("Quiz Complete!");
+        return;
+      }
+      showQuestion(current);
+    });
+
+    checkBtn.addEventListener("click", checkCurrentAnswer);
+    answerBox.addEventListener("keydown", e => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        checkCurrentAnswer();
+      }
+    });
+
+    function endQuiz(msg) {
+      document.querySelector(".question-area").style.display = "none";
+      document.getElementById("progress").style.display = "none";
+
+      resultArea.style.display = "block";
+      resultArea.innerHTML = `<h2>${msg}</h2><p><strong>Your score:</strong> ${score} / ${totalQuestions}</p>`;
+    }
+
+    showQuestion(0);
+    startTimer();
+  </script>
+</body>
+</html>
