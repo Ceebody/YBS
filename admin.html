@@ -667,48 +667,40 @@
 
       Object.entries(data).forEach(([key, entry]) => {
         if (!entry.name || !entry.date) return;
-
-        // Parse the date properly - handle different date formats
-        let resultDate;
-        if (entry.date) {
-          resultDate = new Date(entry.date);
-          if (isNaN(resultDate.getTime())) {
-            // Try parsing as timestamp
-            resultDate = new Date(parseInt(entry.date));
-            if (isNaN(resultDate.getTime())) {
-              console.warn("Invalid date format:", entry.date);
-              return;
-            }
-          }
-        } else {
-          resultDate = new Date();
+      
+        // Parse date safely
+        let resultDate = new Date(entry.date);
+        if (isNaN(resultDate.getTime())) {
+          resultDate = new Date(parseInt(entry.date));
+          if (isNaN(resultDate.getTime())) return;
         }
-
+      
         const studentName = entry.name.trim();
-        const maxScore = entry.maxScore || 20;
-        
+      
+        // FIXED: Always use stored maxScore, fallback only to 30
+        const maxScore = entry.maxScore ?? 30;
+      
         const result = {
           id: key,
-          name: entry.name.trim(),
+          name: studentName,
           total: entry.total || 0,
-          maxScore,
-          percentage: Math.round((entry.total / maxScore) * 100),
-          date: new Date(entry.date),
+          maxScore: maxScore,
+          percentage: Math.round(( (entry.total || 0) / maxScore ) * 100),
+          date: resultDate,
           subject: entry.subject || "Introduction to Computing",
           timeUsed: entry.timeUsed || 0,
           autoSubmitted: entry.autoSubmitted || false
         };
-
-
-
+      
         allResults.push(result);
-
-        // Track student attempts
+      
+        // Track attempts
         if (!studentAttempts[studentName]) {
           studentAttempts[studentName] = [];
         }
         studentAttempts[studentName].push(result);
       });
+
 
       // Sort attempts for each student by date
       Object.keys(studentAttempts).forEach(student => {
@@ -940,6 +932,7 @@
   </script>
 </body>
 </html>
+
 
 
 
