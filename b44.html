@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Yeriel Bracha Computing Quiz</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #ff7b00 0%, #ff9500 50%, #ffb347 100%);
+      min-height: 100vh; padding: 20px;
+    }
+    .container {
+      width: 90%; max-width: 900px; margin: 0 auto;
+      background: rgba(255,255,255,0.95); padding: 30px;
+      border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+      backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2);
+    }
+    h1 { text-align:center; color:#2c3e50; margin-bottom:20px; font-size:2.2em; font-weight:700; text-shadow:2px 2px 4px rgba(0,0,0,0.1); }
+    h2 { color:#34495e; margin-bottom:20px; font-size:1.3em; text-align:center; }
+    .hidden { display:none; }
+    .name-section { text-align:center; padding:20px; }
+    .name-section p { font-size:1.1em; color:#555; margin-bottom:20px; }
+    input[type="text"] {
+      width:100%; max-width:400px; padding:15px; border-radius:10px; border:2px solid #bdc3c7;
+      font-size:1.1em; margin:15px auto; display:block; transition:border-color 0.3s ease;
+    }
+    input[type="text"]:focus { outline:none; border-color:#ff7b00; box-shadow:0 0 0 3px rgba(255,123,0,0.1); }
+    .welcome-content { text-align:center; padding:20px; }
+    .quiz-info {
+      background: rgba(255,123,0,0.1); border:2px solid #ff7b00; border-radius:15px; padding:20px; margin:20px 0;
+    }
+    .quiz-info p { margin:10px 0; font-size:1.1em; color:#2c3e50; }
+    marquee {
+      background: linear-gradient(135deg, #ff7b00, #ff9500); color:white; padding:10px; border-radius:8px; margin:15px 0; font-weight:bold;
+    }
+    button {
+      background: linear-gradient(135deg, #ff7b00, #ff9500); color:white; border:none; padding:15px 30px;
+      border-radius:50px; cursor:pointer; font-size:1.1em; font-weight:600; margin:10px; transition:all 0.3s ease;
+      text-transform:uppercase; letter-spacing:1px;
+    }
+    button:hover { background: linear-gradient(135deg,#ff9500,#ff7b00); transform: translateY(-2px); box-shadow:0 10px 30px rgba(255,123,0,0.4); }
+    button:disabled { background:#95a5a6; cursor:not-allowed; transform:none; box-shadow:none; }
+    button.secondary {
+      background:#ecf0f1; color:#2c3e50; text-transform:none; letter-spacing:normal; padding:12px 20px; margin:5px; border-radius:10px; font-weight:normal;
+    }
+    button.secondary:hover { background:#bdc3c7; transform: translateY(-1px); }
+    button.selected { background: linear-gradient(135deg,#27ae60,#2ecc71) !important; color:white !important; }
+    .countdown-screen { text-align:center; padding:60px 20px; font-size:4em; font-weight:bold; color:#ff7b00; animation:pulse 1s ease-in-out infinite; }
+    @keyframes pulse { 0%,100% { transform:scale(1); opacity:0.8 } 50% { transform:scale(1.1); opacity:1 } }
+    .quiz-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:30px; padding:15px; background: rgba(255,123,0,0.1); border-radius:10px; }
+    .question-counter { font-weight:bold; color:#2c3e50; font-size:1.1em; }
+    .timer { font-weight:bold; color:#e74c3c; font-size:1.2em; padding:8px 15px; background: rgba(231,76,60,0.1); border-radius:20px; }
+    .timer.warning { animation: blink 1s infinite; }
+    @keyframes blink { 0%,50% { opacity:1 } 51%,100% { opacity:0.5 } }
+    .question-content { background: rgba(255,255,255,0.8); padding:25px; border-radius:15px; margin-bottom:25px; border-left:5px solid #ff7b00; }
+    .instruction-text {
+      font-size:1.15em; color:#2c3e50; font-weight:600; line-height:1.6; text-align:center;
+    }
+    .question-text { font-size:1.2em; color:#2c3e50; font-weight:600; line-height:1.5; margin-bottom:20px; }
+    .options-grid { display:grid; grid-template-columns:1fr; gap:10px; margin-bottom:25px; }
+    .option-button { text-align:left; padding:15px 20px; border-radius:10px; font-size:1em; line-height:1.4; word-wrap:break-word; }
+    .controls { display:flex; justify-content:space-between; align-items:center; margin-top:30px; }
+    .nav-buttons { display:flex; gap:10px; }
+    .results { padding:20px; text-align:center; }
+    .score-display { background: linear-gradient(135deg,#2ecc71,#27ae60); color:white; padding:25px; border-radius:15px; margin:20px 0; font-size:1.3em; }
+    .summary { text-align:left; margin-top:30px; padding:20px; background: rgba(236,240,241,0.8); border-radius:15px; }
+    .summary h3 { color:#2c3e50; margin-bottom:20px; text-align:center; font-size:1.4em; }
+    .question-review { margin:15px 0; padding:15px; background:white; border-radius:10px; border-left:4px solid #bdc3c7; }
+    .question-review.correct { border-left-color:#27ae60; }
+    .question-review.wrong { border-left-color:#e74c3c; }
+    .correct { color:#27ae60; font-weight:bold; }
+    .wrong { color:#e74c3c; font-weight:bold; }
+    footer { text-align:center; margin-top:40px; padding:20px; background: linear-gradient(135deg,#2c3e50,#34495e); color:white; border-radius:15px; font-size:14px; }
+    .lock-message { text-align:center; color:#e74c3c; font-weight:bold; background: rgba(231,76,60,0.1); padding:15px; border-radius:10px; margin-top:15px; }
+    @media (max-width:768px) {
+      .container { padding:20px; margin:10px; width:calc(100% - 20px); }
+      h1 { font-size:1.8em; }
+      .countdown-screen { font-size:3em; padding:40px 20px; }
+      .quiz-header { flex-direction:column; gap:10px; }
+      .controls { flex-direction:column; gap:15px; }
+      .nav-buttons { width:100%; justify-content:space-between; }
+      button { padding:12px 20px; font-size:1em; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Name Input Page -->
+    <div id="namePage" class="name-section">
+      <h1>🎓 Yeriel Bracha Computing Quiz</h1>
+      <p>Welcome! Please enter your full name to begin the quiz.</p>
+      <input type="text" id="studentName" placeholder="Enter your full name" />
+      <button id="proceedBtn">Proceed to Quiz</button>
+      <div id="lockMessage" class="lock-message hidden"></div>
+    </div>
+
+    <!-- Welcome Page -->
+    <div id="welcomePage" class="welcome-content hidden">
+      <h1>Welcome to Quizzilla! 🚀</h1>
+      <div class="quiz-info">
+        <p>📚 <strong>Subject:</strong> Introduction to Computing</p>
+        <marquee>Just select the correct answer for each question!</marquee>
+        <p>⏱️ <strong>Time Limit:</strong> 30 minutes</p>
+        <p>❓ <strong>Questions:</strong> 30 questions</p>
+        <p>🎯 <strong>Instructions:</strong> Use Next and Previous to navigate, click Submit when done</p>
+      </div>
+      <button id="startBtn">🎯 Sure, Let's Start Quiz!</button>
+    </div>
+
+    <!-- Countdown Screen -->
+    <div id="countdownScreen" class="countdown-screen hidden"></div>
+
+    <!-- Quiz Area -->
+    <div id="quizArea" class="hidden">
+      <div class="quiz-header">
+        <div class="question-counter" id="questionCounter">Question 1 of 30</div>
+        <div class="timer" id="timer">30:00</div>
+      </div>
+
+      <div class="question-content">
+        <div class="instruction-text hidden" id="instructionText"></div>
+        <div class="question-text" id="questionText"></div>
+        <div class="options-grid" id="optionsContainer"></div>
+      </div>
+
+      <div class="controls">
+        <div class="nav-buttons">
+          <button type="button" id="prevBtn" class="secondary">← Previous</button>
+          <button type="button" id="nextBtn">Next →</button>
+        </div>
+        <button type="button" id="submitBtn" class="hidden">🎯 Submit Quiz</button>
+      </div>
+    </div>
+
+    <!-- Results Area -->
+    <div id="resultsArea" class="results hidden">
+      <h1>🎉 Quiz Completed!</h1>
+      <div id="scoreDisplay" class="score-display"></div>
+      <div id="summaryContainer" class="summary"></div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+      <p><strong>Yeriel Bracha Coding Club</strong><br>© 2025 - Excellence in Computing Education</p>
+    </footer>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getDatabase, ref, get, set, push } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+
+    // Firebase config (preserved as in your file)
+    const firebaseConfig = {
+      apiKey: "AIzaSyCY9oturc9bql33PSUkfNUptcHXla2RWN4",
+      authDomain: "tracha-xx.firebaseapp.com",
+      databaseURL: "https://tracha-xx-default-rtdb.firebaseio.com",
+      projectId: "tracha-xx",
+      storageBucket: "tracha-xx.appspot.com",
+      messagingSenderId: "914440906583",
+      appId: "1:914440906583:web:123abc456xyz"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    // Quiz Configuration
+    const QUIZ_DURATION = 30 * 60; // 30 minutes in seconds
+    const TOTAL_QUESTIONS = 30; // 30 real questions
+    const MAX_SCORE = TOTAL_QUESTIONS;
+    const COOLDOWN_HOURS = 12;
+
+    /**************************************************************************
+     * Data model for Option B1 (fixed order)
+     * items[] contains both instruction blocks and question objects.
+     * instruction objects: { type: 'instruction', text: '...' }
+     * question objects: { type: 'question', q: '1. ...', options: [...], answer: '...' }
+     *
+     * Question numbering is embedded in q text (1., 2., 3., ...).
+     **************************************************************************/
+
+    const items = [
+      // SECTION A instruction
+      { type: 'instruction', text: "SECTION A INSTRUCTIONS: From the alternatives lettered A to D, choose the one which most suitably completes each sentence." },
+
+      // SECTION A questions 1 - 15
+      { type: 'question', q: "1. All work and no play makes Jack a dull boy, ________?", options: ["Shan’t it", "Isn’t it", "Doesn’t it", "Can’t it"], answer: "Doesn’t it" },
+      { type: 'question', q: "2. You cannot swim in the sea, ________ you?", options: ["Couldn’t", "Can", "Don’t", "Did"], answer: "Can" },
+      { type: 'question', q: "3. It is no use ________ over spilt milk.", options: ["Cry", "Of crying", "Crying", "To cry"], answer: "Crying" },
+      { type: 'question', q: "4. Some of the pineapples are ________ sour to be eaten.", options: ["More so", "More too", "Much too", "Much so"], answer: "Much too" },
+      { type: 'question', q: "5. ________, learners must behave well.", options: ["The last but not least", "The last but not the least", "Last but not least", "Last but not the least"], answer: "Last but not least" },
+      { type: 'question', q: "6. Where ________ Asana and Betty spending their next holiday?", options: ["Is", "Are", "Were", "Was"], answer: "Are" },
+      { type: 'question', q: "7. The messenger did not ________ anyone in the house.", options: ["Meet", "Met", "Meets", "Meeting"], answer: "Meet" },
+      { type: 'question', q: "8. She lives in her ________ house.", options: ["Father-in-laws’", "Fathers-in-laws’", "Father’s-in-law’s", "Father-in-law’s"], answer: "Father-in-law’s" },
+      { type: 'question', q: "9. Their sister wore a ________ to the party.", options: ["Beautiful silk pink dress", "Silk pink beautiful dress", "Pink beautiful dress", "Beautiful pink silk dress"], answer: "Beautiful pink silk dress" },
+      { type: 'question', q: "10. It was ________ late to go out alone.", options: ["Too", "Very", "Much", "So"], answer: "Too" },
+      { type: 'question', q: "11. This is the boy ________ rescued us.", options: ["Whose", "Which", "Whom", "Who"], answer: "Who" },
+      { type: 'question', q: "12. The nurse made me ________ a lot of water.", options: ["Drink", "Drank", "Drunk", "To drink"], answer: "Drink" },
+      { type: 'question', q: "13. It is not easy to identify ________ voice it was.", options: ["Who", "Whom", "Who’s", "Whose"], answer: "Whose" },
+      { type: 'question', q: "14. Neither the parents nor the child ________ at home yesterday.", options: ["Are", "Is", "Were", "Was"], answer: "Was" },
+      { type: 'question', q: "15. Her clothes would look better if she ________ them.", options: ["Will wash", "Washes", "Washed", "Would wash"], answer: "Washed" },
+
+      // SECTION B instruction
+      { type: 'instruction', text: "SECTION B INSTRUCTIONS: Choose from the alternatives lettered A to D the one which is nearest in meaning to the underlined word." },
+
+      // SECTION B questions 16 - 20
+      { type: 'question', q: "16. We will not allow him to dampen our spirits.", options: ["Suppress", "Break", "Destroy", "Lower"], answer: "Lower" },
+      { type: 'question', q: "17. The commotion at the stadium was avoidable.", options: ["Trouble", "Confusion", "Issue", "Violence"], answer: "Confusion" },
+      { type: 'question', q: "18. What transpired between them remains a secret.", options: ["Manifested", "Translated", "Existed", "Happened"], answer: "Happened" },
+      { type: 'question', q: "19. Lance only talks about trivial matters.", options: ["Unimportant", "Unpleasant", "Unacceptable", "Unexciting"], answer: "Unimportant" },
+      { type: 'question', q: "20. The robber ransacked the house.", options: ["Torched", "Destroyed", "Invaded", "Looted"], answer: "Looted" },
+
+      // SECTION C instruction
+      { type: 'instruction', text: "SECTION C INSTRUCTIONS: Choose the one that best explains the underlined group of words." },
+
+      // SECTION C questions 21 - 25
+      { type: 'question', q: "21. I was informed at the eleventh hour about his decision to leave town.", options: ["Very late", "At eleven o’clock", "Immediately", "In good time"], answer: "Very late" },
+      { type: 'question', q: "22. We tried all we could to amuse her but she kept a straight face.", options: ["Did not listen to us", "Looked straight ahead", "Refused to laugh", "Cried all the more"], answer: "Refused to laugh" },
+      { type: 'question', q: "23. She had gone away bag and baggage.", options: ["Leaving all her children", "Leaving all her belongings", "Without informing anyone", "With all her belongings"], answer: "With all her belongings" },
+      { type: 'question', q: "24. She can see no further than her nose.", options: ["Lacks foresight", "Is easily deceived", "Has a long nose", "Cannot think"], answer: "Lacks foresight" },
+      { type: 'question', q: "25. Yaro was left to sink or swim.", options: ["Find another job", "Shout for help", "Survive on his own", "Become depressed"], answer: "Survive on his own" },
+
+      // SECTION D instruction
+      { type: 'instruction', text: "SECTION D INSTRUCTIONS: Choose the word that is most nearly opposite in meaning to the underlined word." },
+
+      // SECTION D questions 26 - 30
+      { type: 'question', q: "26. She accidentally tore her dress.", options: ["Intentionally", "Willingly", "Carelessly", "Foolishly"], answer: "Intentionally" },
+      { type: 'question', q: "27. The story was written in simple language.", options: ["Foreign", "Strange", "Local", "Complex"], answer: "Complex" },
+      { type: 'question', q: "28. The arrogant storekeeper lost all his customers.", options: ["Respectful", "Obedient", "Modest", "Sympathetic"], answer: "Modest" },
+      { type: 'question', q: "29. We finished several projects last year.", options: ["Initiated", "Concluded", "Stopped", "Organized"], answer: "Initiated" },
+      { type: 'question', q: "30. The unfavourable weather affected their health.", options: ["Beautiful", "Pleasant", "Cool", "Promising"], answer: "Pleasant" }
+    ];
+
+    // Build a list of item indices that are real questions (used for scoring and userAnswers)
+    const questionPositions = items
+      .map((it, idx) => ({ it, idx }))
+      .filter(x => x.it.type === 'question')
+      .map(x => x.idx);
+
+    // Initialize user answers array mapped to questions only
+    let userAnswers = new Array(questionPositions.length).fill(null);
+
+    // Global state
+    let studentName = "";
+    let currentItemIndex = 0; // index within items[]
+    let quizTimer = null;
+    let timeRemaining = QUIZ_DURATION;
+    let quizStarted = false;
+
+    // DOM refs
+    const namePage = document.getElementById("namePage");
+    const welcomePage = document.getElementById("welcomePage");
+    const countdownScreen = document.getElementById("countdownScreen");
+    const quizArea = document.getElementById("quizArea");
+    const resultsArea = document.getElementById("resultsArea");
+    const lockMessage = document.getElementById("lockMessage");
+
+    const questionCounter = document.getElementById("questionCounter");
+    const timer = document.getElementById("timer");
+    const questionText = document.getElementById("questionText");
+    const instructionText = document.getElementById("instructionText");
+    const optionsContainer = document.getElementById("optionsContainer");
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const submitBtn = document.getElementById("submitBtn");
+
+    const scoreDisplay = document.getElementById("scoreDisplay");
+    const summaryContainer = document.getElementById("summaryContainer");
+
+    // Utility
+    function formatTime(seconds) {
+      const minutes = Math.floor(seconds / 60);
+      const remainingSeconds = seconds % 60;
+      return `${minutes}:${remainingSeconds.toString().padStart(2,'0')}`;
+    }
+
+    // Find the question index (0..TOTAL_QUESTIONS-1) for a given item index
+    function getQuestionIndexByItemIndex(itemIndex) {
+      return questionPositions.indexOf(itemIndex);
+    }
+
+    // Returns current question number (1..TOTAL_QUESTIONS) or null if current item is instruction
+    function getCurrentQuestionNumber() {
+      const qIdx = getQuestionIndexByItemIndex(currentItemIndex);
+      return qIdx === -1 ? null : qIdx + 1;
+    }
+
+    // Eligibility check (same logic as before)
+    async function checkStudentEligibility(name) {
+      try {
+        const studentRef = ref(db, `quizResults`);
+        const snapshot = await get(studentRef);
+
+        if (!snapshot.exists()) return { canTake: true };
+
+        const allScores = snapshot.val();
+        const studentScores = Object.values(allScores).filter(score =>
+          score.name && score.name.toLowerCase() === name.toLowerCase()
+        );
+
+        if (studentScores.length === 0) return { canTake: true };
+
+        const lastSubmission = studentScores.sort((a,b) => new Date(b.date) - new Date(a.date))[0];
+        const lastSubmissionTime = new Date(lastSubmission.date);
+        const now = new Date();
+        const timeDiff = now - lastSubmissionTime;
+        const hoursDiff = timeDiff / (1000 * 60 * 60);
+
+        if (hoursDiff < COOLDOWN_HOURS) {
+          const remainingTime = (COOLDOWN_HOURS * 60 * 60 * 1000) - timeDiff;
+          return {
+            canTake: false,
+            remainingTime: remainingTime,
+            lastScore: lastSubmission.total || 0,
+            maxScore: lastSubmission.maxScore || MAX_SCORE,
+            lastPercentage: Math.round((lastSubmission.total || 0)/(lastSubmission.maxScore || MAX_SCORE)*100)
+          };
+        }
+
+        return { canTake: true };
+      } catch (error) {
+        console.error("Error checking eligibility:", error);
+        return { canTake: true };
+      }
+    }
+
+    // Event listeners
+    document.getElementById("proceedBtn").addEventListener("click", async () => {
+      const nameInput = document.getElementById("studentName").value.trim();
+      if (!nameInput) {
+        alert("Please enter your name before proceeding!");
+        return;
+      }
+
+      studentName = nameInput;
+      const eligibility = await checkStudentEligibility(studentName);
+
+      if (!eligibility.canTake) {
+        const hours = Math.floor(eligibility.remainingTime / (1000 * 60 * 60));
+        const minutes = Math.floor((eligibility.remainingTime % (1000 * 60 * 60)) / (1000 * 60));
+        lockMessage.classList.remove("hidden");
+        lockMessage.innerHTML = `
+          <p>⏰ You have already completed this quiz recently.</p>
+          <p>Last Score: ${eligibility.lastScore}/${TOTAL_QUESTIONS} (${eligibility.lastPercentage}%)</p>
+          <p>You can try again in: ${hours}h ${minutes}m</p>
+        `;
+        return;
+      }
+
+      namePage.classList.add("hidden");
+      welcomePage.classList.remove("hidden");
+    });
+
+    document.getElementById("startBtn").addEventListener("click", () => {
+      welcomePage.classList.add("hidden");
+      startCountdown();
+    });
+
+    function startCountdown() {
+      countdownScreen.classList.remove("hidden");
+      let counter = 3;
+      countdownScreen.textContent = `Get Ready... ${counter}`;
+      const countdown = setInterval(() => {
+        counter--;
+        if (counter > 0) {
+          countdownScreen.textContent = `${counter}...`;
+        } else {
+          clearInterval(countdown);
+          countdownScreen.textContent = "Begin!";
+          setTimeout(() => {
+            countdownScreen.classList.add("hidden");
+            initializeQuiz();
+          }, 800);
+        }
+      }, 1000);
+    }
+
+    // Initialize quiz for Option B1 (fixed order)
+    function initializeQuiz() {
+      // Use the items[] array exactly as defined (instructions + questions in order).
+      // Reset answers array (mapped to questionPositions)
+      userAnswers = new Array(questionPositions.length).fill(null);
+      currentItemIndex = 0;
+      quizStarted = true;
+      timeRemaining = QUIZ_DURATION;
+
+      quizArea.classList.remove("hidden");
+      loadCurrentItem();
+      startTimer();
+
+      // Prevent page refresh
+      window.addEventListener('beforeunload', function (e) {
+        if (quizStarted) {
+          e.preventDefault();
+          e.returnValue = '';
+        }
+      });
+    }
+
+    // Load current item (instruction or question)
+    function loadCurrentItem() {
+      const item = items[currentItemIndex];
+
+      // If instruction type
+      if (item.type === 'instruction') {
+        instructionText.classList.remove('hidden');
+        instructionText.textContent = item.text;
+        questionText.classList.add('hidden');
+        optionsContainer.innerHTML = "";
+      } else {
+        // question type
+        instructionText.classList.add('hidden');
+        questionText.classList.remove('hidden');
+        questionText.textContent = item.q;
+        optionsContainer.innerHTML = "";
+
+        // get related question index
+        const qIndex = getQuestionIndexByItemIndex(currentItemIndex);
+        const selectedAnswer = userAnswers[qIndex];
+
+        item.options.forEach(opt => {
+          const btn = document.createElement('button');
+          btn.className = "option-button secondary";
+          btn.textContent = opt;
+          if (selectedAnswer === opt) btn.classList.add('selected');
+          btn.addEventListener('click', () => {
+            selectAnswerForCurrentQuestion(opt);
+          });
+          optionsContainer.appendChild(btn);
+        });
+      }
+
+      // Update question counter to reflect only questions (not instructions)
+      const qNumber = getCurrentQuestionNumber();
+      if (qNumber === null) {
+        // Show section instruction label
+        questionCounter.textContent = `Instruction`;
+      } else {
+        questionCounter.textContent = `Question ${qNumber} of ${TOTAL_QUESTIONS}`;
+      }
+
+      // Nav buttons
+      prevBtn.disabled = currentItemIndex === 0;
+      // Determine if we are on the last question item
+      const lastQuestionItemIndex = questionPositions[questionPositions.length - 1];
+      const onLastQuestionItem = (currentItemIndex === lastQuestionItemIndex);
+      if (onLastQuestionItem) {
+        nextBtn.classList.add("hidden");
+        submitBtn.classList.remove("hidden");
+      } else {
+        nextBtn.classList.remove("hidden");
+        submitBtn.classList.add("hidden");
+      }
+    }
+
+    // Select answer for a question (stores mapping to questionPositions)
+    function selectAnswerForCurrentQuestion(answer) {
+      const qIdx = getQuestionIndexByItemIndex(currentItemIndex);
+      if (qIdx === -1) return;
+      userAnswers[qIdx] = answer;
+      loadCurrentItem(); // refresh buttons to show selection
+    }
+
+    // Navigation handlers
+    prevBtn.addEventListener('click', () => {
+      if (currentItemIndex > 0) {
+        currentItemIndex--;
+        loadCurrentItem();
+      }
+    });
+
+    nextBtn.addEventListener('click', () => {
+      // move forward one item
+      if (currentItemIndex < items.length - 1) {
+        currentItemIndex++;
+        loadCurrentItem();
+      }
+    });
+
+    submitBtn.addEventListener('click', () => {
+      if (confirm("Are you sure you want to submit your quiz? You cannot change answers after submission.")) {
+        finishQuiz(false);
+      }
+    });
+
+    // Timer logic
+    function startTimer() {
+      updateTimerDisplay();
+      quizTimer = setInterval(() => {
+        timeRemaining--;
+        updateTimerDisplay();
+        if (timeRemaining <= 0) {
+          clearInterval(quizTimer);
+          autoSubmitQuiz();
+        }
+      }, 1000);
+    }
+
+    function updateTimerDisplay() {
+      timer.textContent = formatTime(timeRemaining);
+      if (timeRemaining <= 300) timer.classList.add('warning'); else timer.classList.remove('warning');
+    }
+
+    function stopTimer() {
+      if (quizTimer) clearInterval(quizTimer);
+    }
+
+    function autoSubmitQuiz() {
+      alert("Time's up! Your quiz will be submitted automatically.");
+      finishQuiz(true);
+    }
+
+    // Finish quiz: calculate score using questionPositions
+    async function finishQuiz(isAutoSubmit = false) {
+      quizStarted = false;
+      stopTimer();
+      quizArea.classList.add('hidden');
+      resultsArea.classList.remove('hidden');
+
+      let correctAnswers = 0;
+      const reviewHTML = [];
+
+      // iterate over questionPositions in order (these map to items)
+      questionPositions.forEach((itemIdx, idx) => {
+        const item = items[itemIdx];
+        const userAnswer = userAnswers[idx] || "(No answer)";
+        const isCorrect = userAnswer === item.answer;
+        if (isCorrect) correctAnswers++;
+
+        reviewHTML.push(`
+          <div class="question-review ${isCorrect ? 'correct' : 'wrong'}">
+            <p><strong>Q${idx + 1}:</strong> ${item.q}</p>
+            <p>Your answer: <span class="${isCorrect ? 'correct' : 'wrong'}">${userAnswer}</span></p>
+            <p>Correct answer: <span class="correct">${item.answer}</span></p>
+          </div>
+        `);
+      });
+
+      const percentage = Math.round((correctAnswers / TOTAL_QUESTIONS) * 100);
+      const timeUsed = QUIZ_DURATION - timeRemaining;
+
+      scoreDisplay.innerHTML = `
+        <h2>📊 Your Results</h2>
+        <p><strong>Student:</strong> ${studentName}</p>
+        <p><strong>Score:</strong> ${correctAnswers} / ${TOTAL_QUESTIONS} (${percentage}%)</p>
+        <p><strong>Time Used:</strong> ${formatTime(timeUsed)}</p>
+        ${isAutoSubmit ? '<p><strong>Status:</strong> Auto-submitted (Time expired)</p>' : ''}
+        <p><strong>Grade:</strong> ${percentage >= 70 ? '🎉 Excellent!' : percentage >= 50 ? '👍 Good!' : '📚 Keep studying!'}</p>
+      `;
+
+      summaryContainer.innerHTML = `
+        <h3>📋 Detailed Review</h3>
+        ${reviewHTML.join('')}
+      `;
+
+      // Save to Firebase
+      try {
+        const newRef = push(ref(db, "quizResults"));
+        await set(newRef, {
+          name: studentName,
+          total: correctAnswers,
+          percentage: percentage,
+          timeUsed: timeUsed,
+          autoSubmitted: isAutoSubmit,
+          date: new Date().toLocaleString(),
+          timestamp: new Date().toISOString(),
+          maxScore: MAX_SCORE,
+          subject: "Introduction to Computing"
+        });
+
+        const successDiv = document.createElement('div');
+        successDiv.style.cssText = `
+          background: rgba(40,167,69,0.9); color: brown; padding:15px; border-radius:10px; margin-top:20px; text-align:center; font-weight:600;
+        `;
+        successDiv.innerHTML = `✅ Score saved successfully!<br>⏰ You can retake this quiz after ${COOLDOWN_HOURS} hours.`;
+        resultsArea.appendChild(successDiv);
+      } catch (error) {
+        console.error("Error saving results:", error);
+        const errorDiv = document.createElement('div');
+        errorDiv.style.cssText = `
+          background: rgba(220,53,69,0.9); color:white; padding:15px; border-radius:10px; margin-top:20px; text-align:center; font-weight:600;
+        `;
+        errorDiv.innerHTML = '⚠️ Quiz completed but could not save to database. Please contact your instructor.';
+        resultsArea.appendChild(errorDiv);
+      }
+    }
+  </script>
+</body>
+</html>
