@@ -666,7 +666,7 @@
       studentAttempts = {};
 
       Object.entries(data).forEach(([key, entry]) => {
-        if (!entry.name || !entry.date) return;
+        if (!entry.name || !entry.total || entry.total < 0) return;
       
         // Parse date safely
         let resultDate = new Date(entry.date);
@@ -677,15 +677,34 @@
       
         const studentName = entry.name.trim();
       
-        // FIXED: Always use stored maxScore, fallback only to 30
-        const maxScore = entry.maxScore ?? 30;
+        // --- FIXED MAX SCORE HANDLING ---
+        let maxScore;
+      
+        if (entry.maxScore) {
+          // Use the saved value
+          maxScore = entry.maxScore;
+        } else {
+          // Try to infer maxScore from percentage if available
+          if (entry.percentage) {
+            maxScore = Math.round((entry.total * 100) / entry.percentage);
+          } else {
+            // Absolute fallback: assume the student used all available answers
+            // e.g., if total = 24, assume possible max = next common quiz size
+            if (entry.total <= 30) maxScore = 30;
+            else if (entry.total <= 40) maxScore = 40;
+            else if (entry.total <= 50) maxScore = 50;
+            else maxScore = entry.total; // extreme fallback: avoid division error
+          }
+        }
+      
+        const percentage = Math.round((entry.total / maxScore) * 100);
       
         const result = {
           id: key,
           name: studentName,
-          total: entry.total || 0,
-          maxScore: maxScore,
-          percentage: Math.round(( (entry.total || 0) / maxScore ) * 100),
+          total: entry.total,
+          maxScore,
+          percentage,
           date: resultDate,
           subject: entry.subject || "Introduction to Computing",
           timeUsed: entry.timeUsed || 0,
@@ -700,6 +719,7 @@
         }
         studentAttempts[studentName].push(result);
       });
+
 
 
       // Sort attempts for each student by date
@@ -932,6 +952,7 @@
   </script>
 </body>
 </html>
+
 
 
 
