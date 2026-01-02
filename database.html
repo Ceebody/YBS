@@ -1,0 +1,1713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Database Fundamentals Mastery Quiz</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #3498db 0%, #2c3e50 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+    
+    .container {
+      width: 90%;
+      max-width: 1000px;
+      margin: 0 auto;
+      background: rgba(255, 255, 255, 0.97);
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+    
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 20px;
+      font-size: 2.2em;
+      font-weight: 700;
+    }
+    
+    h2 {
+      color: #34495e;
+      margin-bottom: 15px;
+      font-size: 1.4em;
+      text-align: center;
+    }
+    
+    h3 {
+      color: #2c3e50;
+      margin: 25px 0 15px;
+      font-size: 1.3em;
+      border-left: 4px solid #3498db;
+      padding-left: 10px;
+    }
+    
+    .hidden { 
+      display: none; 
+    }
+    
+    /* Name Input Page */
+    .name-section {
+      text-align: center;
+      padding: 20px;
+    }
+    
+    .name-section p {
+      font-size: 1.1em;
+      color: #555;
+      margin-bottom: 20px;
+    }
+    
+    input[type="text"] {
+      width: 100%;
+      max-width: 400px;
+      padding: 15px;
+      border-radius: 10px;
+      border: 2px solid #bdc3c7;
+      font-size: 1.1em;
+      margin: 15px auto;
+      display: block;
+      transition: border-color 0.3s ease;
+    }
+    
+    input[type="text"]:focus {
+      outline: none;
+      border-color: #3498db;
+      box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+    }
+    
+    /* Feynman Learning Module */
+    .feynman-module {
+      background: #f8f9fa;
+      border-radius: 15px;
+      padding: 25px;
+      margin: 20px 0;
+      border: 2px solid #e3f2fd;
+    }
+    
+    .feynman-step {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      margin: 15px 0;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+      border-left: 5px solid #3498db;
+    }
+    
+    .analogy-box {
+      background: #e3f2fd;
+      border: 2px dashed #3498db;
+      border-radius: 10px;
+      padding: 15px;
+      margin: 15px 0;
+      font-style: italic;
+    }
+    
+    .analogy-box h4 {
+      color: #2c3e50;
+      margin-bottom: 10px;
+      font-size: 1.1em;
+    }
+    
+    .key-term {
+      background: #fff3cd;
+      padding: 3px 8px;
+      border-radius: 5px;
+      font-weight: bold;
+      color: #856404;
+      margin: 0 2px;
+    }
+    
+    /* Welcome Page */
+    .welcome-content {
+      text-align: center;
+      padding: 20px;
+    }
+    
+    .quiz-info {
+      background: rgba(52, 152, 219, 0.1);
+      border: 2px solid #3498db;
+      border-radius: 15px;
+      padding: 20px;
+      margin: 20px 0;
+    }
+    
+    .quiz-info p {
+      margin: 10px 0;
+      font-size: 1.1em;
+      color: #2c3e50;
+    }
+    
+    marquee {
+      background: linear-gradient(135deg, #3498db, #2980b9);
+      color: white;
+      padding: 10px;
+      border-radius: 8px;
+      margin: 15px 0;
+      font-weight: bold;
+    }
+    
+    /* Buttons */
+    button {
+      background: linear-gradient(135deg, #3498db, #2980b9);
+      color: white;
+      border: none;
+      padding: 15px 30px;
+      border-radius: 50px;
+      cursor: pointer;
+      font-size: 1.1em;
+      font-weight: 600;
+      margin: 10px;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    button:hover {
+      background: linear-gradient(135deg, #2980b9, #3498db);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(52, 152, 219, 0.4);
+    }
+    
+    button:disabled {
+      background: #95a5a6;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+    
+    button.secondary {
+      background: #ecf0f1;
+      color: #2c3e50;
+      text-transform: none;
+      letter-spacing: normal;
+      padding: 12px 20px;
+      margin: 5px;
+      border-radius: 10px;
+      font-weight: normal;
+    }
+    
+    button.secondary:hover {
+      background: #bdc3c7;
+      transform: translateY(-1px);
+    }
+    
+    button.selected {
+      background: linear-gradient(135deg, #27ae60, #2ecc71) !important;
+      color: white !important;
+    }
+    
+    button.learning {
+      background: linear-gradient(135deg, #9b59b6, #8e44ad);
+    }
+    
+    button.learning:hover {
+      background: linear-gradient(135deg, #8e44ad, #9b59b6);
+      box-shadow: 0 10px 30px rgba(155, 89, 182, 0.4);
+    }
+    
+    /* Countdown Screen */
+    .countdown-screen {
+      text-align: center;
+      padding: 60px 20px;
+      font-size: 4em;
+      font-weight: bold;
+      color: #3498db;
+      animation: pulse 1s ease-in-out infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 0.8; }
+      50% { transform: scale(1.1); opacity: 1; }
+    }
+    
+    /* Quiz Area */
+    .quiz-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      padding: 15px;
+      background: rgba(52, 152, 219, 0.1);
+      border-radius: 10px;
+    }
+    
+    .question-counter {
+      font-weight: bold;
+      color: #2c3e50;
+      font-size: 1.1em;
+    }
+    
+    .timer {
+      font-weight: bold;
+      color: #e74c3c;
+      font-size: 1.2em;
+      padding: 8px 15px;
+      background: rgba(231, 76, 60, 0.1);
+      border-radius: 20px;
+    }
+    
+    .timer.warning {
+      animation: blink 1s infinite;
+    }
+    
+    @keyframes blink {
+      0%, 50% { opacity: 1; }
+      51%, 100% { opacity: 0.5; }
+    }
+    
+    .question-content {
+      background: rgba(255, 255, 255, 0.9);
+      padding: 25px;
+      border-radius: 15px;
+      margin-bottom: 25px;
+      border-left: 5px solid #3498db;
+    }
+    
+    .question-text {
+      font-size: 1.2em;
+      color: #2c3e50;
+      font-weight: 600;
+      line-height: 1.5;
+      margin-bottom: 20px;
+    }
+    
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin-bottom: 25px;
+    }
+    
+    .option-button {
+      text-align: left;
+      padding: 15px 20px;
+      border-radius: 10px;
+      font-size: 1em;
+      line-height: 1.4;
+      word-wrap: break-word;
+    }
+    
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 30px;
+    }
+    
+    .nav-buttons {
+      display: flex;
+      gap: 10px;
+    }
+    
+    /* Results */
+    .results {
+      padding: 20px;
+      text-align: center;
+    }
+    
+    .score-display {
+      background: linear-gradient(135deg, #2ecc71, #27ae60);
+      color: white;
+      padding: 25px;
+      border-radius: 15px;
+      margin: 20px 0;
+      font-size: 1.3em;
+    }
+    
+    .summary {
+      text-align: left;
+      margin-top: 30px;
+      padding: 20px;
+      background: rgba(236, 240, 241, 0.8);
+      border-radius: 15px;
+    }
+    
+    .summary h3 {
+      color: #2c3e50;
+      margin-bottom: 20px;
+      text-align: center;
+      font-size: 1.4em;
+    }
+    
+    .question-review {
+      margin: 15px 0;
+      padding: 15px;
+      background: white;
+      border-radius: 10px;
+      border-left: 4px solid #bdc3c7;
+    }
+    
+    .question-review.correct {
+      border-left-color: #27ae60;
+    }
+    
+    .question-review.wrong {
+      border-left-color: #e74c3c;
+    }
+    
+    .correct { 
+      color: #27ae60; 
+      font-weight: bold; 
+    }
+    
+    .wrong { 
+      color: #e74c3c; 
+      font-weight: bold; 
+    }
+    
+    /* Progress Bar */
+    .progress-container {
+      margin: 20px 0;
+    }
+    
+    .progress-bar {
+      height: 10px;
+      background: #ecf0f1;
+      border-radius: 5px;
+      overflow: hidden;
+    }
+    
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(135deg, #3498db, #2980b9);
+      width: 0%;
+      transition: width 0.5s ease;
+    }
+    
+    /* Footer */
+    footer {
+      text-align: center;
+      margin-top: 40px;
+      padding: 20px;
+      background: linear-gradient(135deg, #2c3e50, #34495e);
+      color: white;
+      border-radius: 15px;
+      font-size: 14px;
+    }
+    
+    /* Lock Message */
+    .lock-message {
+      text-align: center;
+      color: #e74c3c;
+      font-weight: bold;
+      background: rgba(231, 76, 60, 0.1);
+      padding: 15px;
+      border-radius: 10px;
+      margin-top: 15px;
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .container {
+        padding: 20px;
+        margin: 10px;
+        width: calc(100% - 20px);
+      }
+      
+      h1 {
+        font-size: 1.8em;
+      }
+      
+      .countdown-screen {
+        font-size: 3em;
+        padding: 40px 20px;
+      }
+      
+      .quiz-header {
+        flex-direction: column;
+        gap: 10px;
+      }
+      
+      .controls {
+        flex-direction: column;
+        gap: 15px;
+      }
+      
+      .nav-buttons {
+        width: 100%;
+        justify-content: space-between;
+      }
+      
+      button {
+        padding: 12px 20px;
+        font-size: 1em;
+      }
+      
+      .feynman-step {
+        padding: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Name Input Page -->
+    <div id="namePage" class="name-section">
+      <h1>📊 Database Fundamentals Mastery Quiz</h1>
+      <p>Welcome! Please enter your full name to begin your database learning journey.</p>
+      <input type="text" id="studentName" placeholder="Enter your full name" />
+      <button id="proceedBtn">Proceed to Learning Module</button>
+      <div id="lockMessage" class="lock-message hidden"></div>
+    </div>
+
+    <!-- Feynman Learning Module -->
+        <!-- PASTE THIS ENTIRE SECTION REPLACING THE CURRENT learningModule div -->
+        <div id="learningModule" class="hidden">
+          <div class="feynman-module">
+            <h2>🎯 Database Fundamentals Explained Simply</h2>
+            <p style="text-align: center; margin-bottom: 20px; color: #555;">
+              Using Feynman Technique: Learn complex database concepts by explaining them in simple terms.
+            </p>
+            
+            <div class="feynman-step">
+              <h3>📚 Part 1: What is a Database System?</h3>
+              
+              <div style="background: #e3f2fd; padding: 15px; border-radius: 8px; margin: 15px 0;">
+                <h4 style="color: #1565c0; margin-bottom: 10px;">📖 Official Definition:</h4>
+                <p><strong>Database:</strong> An organized collection of logically related data designed to meet the information needs of an organization.</p>
+                <p><strong>DBMS (Database Management System):</strong> A software system that enables users to define, create, maintain, and control access to the database.</p>
+              </div>
+              
+              <p><strong>🧠 Simple Explanation:</strong> Think of a database as a <span class="key-term">super-organized digital filing cabinet</span> where:</p>
+              <ul style="margin-left: 20px; margin-top: 10px;">
+                <li>Each drawer = Table (Students, Teachers, Courses)</li>
+                <li>Each folder = Record (John's student file)</li>
+                <li>Each paper in folder = Field (John's age, grade, etc.)</li>
+              </ul>
+              
+              <div style="background: #f3e5f5; padding: 15px; border-radius: 8px; margin: 15px 0;">
+                <h4 style="color: #7b1fa2;">🎯 Real Example: School Database</h4>
+                <p><strong>Traditional Files:</strong> 3,000 student records × 10 copies each = 30,000 papers!</p>
+                <p><strong>Database:</strong> 3,000 student records × 1 copy each = 3,000 records + smart links</p>
+              </div>
+            </div>
+            
+            <div class="analogy-box">
+              <h4>🏛️ Library Analogy</h4>
+              <p><strong>Traditional File System</strong> = Each book has the author's full biography copied inside every single copy</p>
+              <p><strong>Database System</strong> = One "Author Card" in a catalog that connects to ALL books by that author</p>
+              <p style="margin-top: 10px; font-weight: bold;">🎯 Key Insight: Databases ELIMINATE unnecessary repetition!</p>
+            </div>
+            
+            <div class="feynman-step">
+              <h3>⚡ Part 2: The 3 Database "Glitches" (Anomalies)</h3>
+              
+              <div style="background: #ffebee; padding: 15px; border-radius: 8px; margin: 10px 0;">
+                <h4 style="color: #c62828;">🔴 1. Insertion Anomaly</h4>
+                <p><strong>Definition:</strong> Cannot add new data unless other unrelated data exists.</p>
+                <p><strong>Example:</strong> Can't add a new "Computer Science Department" unless you already have a student enrolled in it.</p>
+                <p><strong>Why it's bad:</strong> New departments can't exist without students!</p>
+              </div>
+              
+              <div style="background: #fff8e1; padding: 15px; border-radius: 8px; margin: 10px 0;">
+                <h4 style="color: #f57c00;">🟡 2. Update Anomaly</h4>
+                <p><strong>Definition:</strong> Same data appears in multiple places; updating one place but not others causes inconsistency.</p>
+                <p><strong>Example:</strong> Student "Kofi" changes phone number. If his number is stored in 5 different places and you update only 3 → Now you have 2 different phone numbers for Kofi!</p>
+                <p><strong>Why it's bad:</strong> Which phone number is correct? Nobody knows!</p>
+              </div>
+              
+              <div style="background: #e8f5e9; padding: 15px; border-radius: 8px; margin: 10px 0;">
+                <h4 style="color: #388e3c;">🟢 3. Deletion Anomaly</h4>
+                <p><strong>Definition:</strong> Deleting one piece of data accidentally removes other important data.</p>
+                <p><strong>Example:</strong> Delete student "Ama" who is the only student in "Robotics Club" → The entire Robotics Club information disappears!</p>
+                <p><strong>Why it's bad:</strong> Losing important information unintentionally.</p>
+              </div>
+            </div>
+            
+            <div class="feynman-step">
+              <h3>🔧 Part 3: Key Database Components</h3>
+              
+              <table style="width: 100%; border-collapse: collapse; margin-top: 15px; border: 1px solid #ddd;">
+                <thead style="background: #3498db; color: white;">
+                  <tr>
+                    <th style="padding: 12px; text-align: left;">Component</th>
+                    <th style="padding: 12px; text-align: left;">Simple Definition</th>
+                    <th style="padding: 12px; text-align: left;">Example</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr style="background: #f9f9f9;">
+                    <td style="padding: 10px; border: 1px solid #ddd;"><strong>Entity</strong></td>
+                    <td style="padding: 10px; border: 1px solid #ddd;">A "thing" you store data about</td>
+                    <td style="padding: 10px; border: 1px solid #ddd;">Student, Teacher, Course, Book</td>
+                  </tr>
+                  <tr style="background: #ffffff;">
+                    <td style="padding: 10px; border: 1px solid #ddd;"><strong>Attribute</strong></td>
+                    <td style="padding: 10px; border: 1px solid #ddd;">A characteristic of an entity</td>
+                    <td style="padding: 10px; border: 1px solid #ddd;">Student's Name, Age, Grade, Phone</td>
+                  </tr>
+                  <tr style="background: #f9f9f9;">
+                    <td style="padding: 10px; border: 1px solid #ddd;"><strong>Primary Key</strong></td>
+                    <td style="padding: 10px; border: 1px solid #ddd;">Unique identifier (like fingerprint)</td>
+                    <td style="padding: 10px; border: 1px solid #ddd;">Student ID: STU001, STU002...</td>
+                  </tr>
+                  <tr style="background: #ffffff;">
+                    <td style="padding: 10px; border: 1px solid #ddd;"><strong>Foreign Key</strong></td>
+                    <td style="padding: 10px; border: 1px solid #ddd;">Points to primary key in another table</td>
+                    <td style="padding: 10px; border: 1px solid #ddd;">CourseID in Student table links to Course table</td>
+                  </tr>
+                  <tr style="background: #f9f9f9;">
+                    <td style="padding: 10px; border: 1px solid #ddd;"><strong>Relationship</strong></td>
+                    <td style="padding: 10px; border: 1px solid #ddd;">How entities are connected</td>
+                    <td style="padding: 10px; border: 1px solid #ddd;">"Student TAKES Course", "Teacher TEACHES Class"</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            
+            <div class="feynman-step">
+              <h3>🔗 Part 4: Types of Relationships (Cardinality)</h3>
+              
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px; margin-top: 15px;">
+                <div style="background: #e8f5e9; padding: 15px; border-radius: 8px;">
+                  <h4 style="color: #2e7d32;">1️⃣ One-to-One (1:1)</h4>
+                  <p><strong>Each A links to ONE B, each B links to ONE A</strong></p>
+                  <p>👨‍💼 Employee → 👰 Spouse (One employee has one spouse)</p>
+                  <p>📱 Student → 🎓 Student ID Card (One student, one ID card)</p>
+                </div>
+                
+                <div style="background: #fff3e0; padding: 15px; border-radius: 8px;">
+                  <h4 style="color: #ef6c00;">1️⃣➡️ Many (1:M)</h4>
+                  <p><strong>One A links to MANY Bs, each B links to ONE A</strong></p>
+                  <p>👨‍🏫 Teacher → 👨‍🎓 Students (One teacher teaches many students)</p>
+                  <p>🏢 Department → 👨‍💼 Employees (One department has many employees)</p>
+                </div>
+                
+                <div style="background: #f3e5f5; padding: 15px; border-radius: 8px;">
+                  <h4 style="color: #7b1fa2;">Many-to-Many (M:N)</h4>
+                  <p><strong>Many As link to MANY Bs, Many Bs link to MANY As</strong></p>
+                  <p>👨‍🎓 Students ↔ 📚 Courses (Students take many courses, courses have many students)</p>
+                  <p>👨‍⚕️ Doctors ↔ 🏥 Patients (Doctors treat many patients, patients see many doctors)</p>
+                </div>
+              </div>
+            </div>
+            
+            <div class="feynman-step">
+              <h3>📊 Part 5: SQL Basics - The Database Language</h3>
+              
+              <div style="background: #e3f2fd; padding: 15px; border-radius: 8px; margin: 15px 0;">
+                <h4 style="color: #1565c0;">SQL = Structured Query Language</h4>
+                <p>The language we use to "talk" to databases</p>
+              </div>
+              
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 10px; margin-top: 15px;">
+                <div style="background: white; border: 1px solid #3498db; border-radius: 8px; padding: 15px;">
+                  <h5 style="color: #2c3e50; margin-bottom: 10px;">🔍 SELECT (Read)</h5>
+                  <p><code>SELECT * FROM Students</code></p>
+                  <p>"Show me all students"</p>
+                </div>
+                
+                <div style="background: white; border: 1px solid #2ecc71; border-radius: 8px; padding: 15px;">
+                  <h5 style="color: #2c3e50; margin-bottom: 10px;">➕ INSERT (Create)</h5>
+                  <p><code>INSERT INTO Students VALUES ('STU101', 'Kofi')</code></p>
+                  <p>"Add new student Kofi"</p>
+                </div>
+                
+                <div style="background: white; border: 1px solid #f39c12; border-radius: 8px; padding: 15px;">
+                  <h5 style="color: #2c3e50; margin-bottom: 10px;">✏️ UPDATE (Modify)</h5>
+                  <p><code>UPDATE Students SET Grade='A' WHERE ID='STU101'</code></p>
+                  <p>"Change Kofi's grade to A"</p>
+                </div>
+                
+                <div style="background: white; border: 1px solid #e74c3c; border-radius: 8px; padding: 15px;">
+                  <h5 style="color: #2c3e50; margin-bottom: 10px;">🗑️ DELETE (Remove)</h5>
+                  <p><code>DELETE FROM Students WHERE ID='STU101'</code></p>
+                  <p>"Remove Kofi's record"</p>
+                </div>
+              </div>
+            </div>
+            
+            <div class="feynman-step">
+              <h3>🎯 Part 6: Database vs Traditional Files - Quick Comparison</h3>
+              
+              <table style="width: 100%; border-collapse: collapse; margin-top: 15px; border: 2px solid #3498db;">
+                <thead style="background: #3498db; color: white;">
+                  <tr>
+                    <th style="padding: 12px; text-align: left;">Aspect</th>
+                    <th style="padding: 12px; text-align: left;">Traditional Files</th>
+                    <th style="padding: 12px; text-align: left;">Database System</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr style="background: #f0f8ff;">
+                    <td style="padding: 10px; border: 1px solid #ddd;"><strong>Data Redundancy</strong></td>
+                    <td style="padding: 10px; border: 1px solid #ddd; color: #e74c3c;">High (Same data repeated)</td>
+                    <td style="padding: 10px; border: 1px solid #ddd; color: #27ae60;">Low (Minimal repetition)</td>
+                  </tr>
+                  <tr style="background: #ffffff;">
+                    <td style="padding: 10px; border: 1px solid #ddd;"><strong>Data Consistency</strong></td>
+                    <td style="padding: 10px; border: 1px solid #ddd; color: #e74c3c;">Poor (Different versions)</td>
+                    <td style="padding: 10px; border: 1px solid #ddd; color: #27ae60;">Excellent (One truth)</td>
+                  </tr>
+                  <tr style="background: #f0f8ff;">
+                    <td style="padding: 10px; border: 1px solid #ddd;"><strong>Data Sharing</strong></td>
+                    <td style="padding: 10px; border: 1px solid #ddd; color: #e74c3c;">Difficult (File locks)</td>
+                    <td style="padding: 10px; border: 1px solid #ddd; color: #27ae60;">Easy (Concurrent access)</td>
+                  </tr>
+                  <tr style="background: #ffffff;">
+                    <td style="padding: 10px; border: 1px solid #ddd;"><strong>Security</strong></td>
+                    <td style="padding: 10px; border: 1px solid #ddd; color: #e74c3c;">Limited (File permissions)</td>
+                    <td style="padding: 10px; border: 1px solid #ddd; color: #27ae60;">Granular (User-level control)</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            
+            <div class="analogy-box">
+              <h4>🏥 Hospital Database Example</h4>
+              <p><strong>Patient Record</strong> → One entry with: Name, Age, Blood Type (Stored once)</p>
+              <p><strong>Doctors</strong> → Can access patient information instantly</p>
+              <p><strong>Pharmacy</strong> → Automatically sees patient's allergies</p>
+              <p><strong>Billing</strong> → Knows which tests were done</p>
+              <p style="margin-top: 10px; font-style: italic;">🎯 All connected, no repetition, everyone sees the same updated information!</p>
+            </div>
+            
+            <div style="text-align: center; margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #3498db, #2980b9); border-radius: 15px; color: white;">
+              <h3 style="margin-bottom: 15px;">🎯 Ready for the Quiz!</h3>
+              <p style="margin-bottom: 20px;">You've learned the fundamentals. The quiz will test these concepts with real database questions.</p>
+              <button id="startLearningQuiz" class="learning" style="background: white; color: #3498db; font-weight: bold; padding: 15px 40px;">
+                ✅ I Understand! Start Database Quiz Now
+              </button>
+              <p style="margin-top: 15px; font-size: 0.9em;">50 questions • 45 minutes • Topics: DBMS, SQL, Relationships, Normalization</p>
+            </div>
+            
+            <div style="margin-top: 20px; text-align: center; color: #7f8c8d; font-size: 0.9em;">
+              <p>💡 <strong>Quiz Tip:</strong> Remember the Feynman technique - if you get stuck, try to explain the concept in simple words!</p>
+            </div>
+          </div>
+        </div>
+        
+        <div style="text-align: center; margin-top: 30px;">
+          <p><strong>🎯 Now you're ready! The quiz will test these simple concepts.</strong></p>
+          <button id="startLearningQuiz" class="learning">✅ I Understand! Start Quiz Now</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Welcome Page -->
+    <div id="welcomePage" class="welcome-content hidden">
+      <h1>Welcome to Database Mastery Quiz! 🚀</h1>
+      <div class="quiz-info">
+        <p>📚 <strong>Subject:</strong> Database Management Systems (DBMS)</p>
+        <marquee>Test your understanding of database fundamentals!</marquee>
+        <p>⏱️ <strong>Time Limit:</strong> 45 minutes</p>
+        <p>❓ <strong>Questions:</strong> 50 questions (Database Fundamentals)</p>
+        <p>🎯 <strong>Instructions:</strong> Read each question carefully, select ONE best answer</p>
+        <p>📈 <strong>Passing Score:</strong> 60% (30/50 correct)</p>
+      </div>
+      <button id="startBtn">🎯 Start Database Quiz</button>
+    </div>
+
+    <!-- Countdown Screen -->
+    <div id="countdownScreen" class="countdown-screen hidden"></div>
+
+    <!-- Quiz Area -->
+    <div id="quizArea" class="hidden">
+      <div class="quiz-header">
+        <div class="question-counter" id="questionCounter">Question 1 of 50</div>
+        <div class="timer" id="timer">45:00</div>
+      </div>
+      
+      <div class="progress-container">
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div style="text-align: center; margin-top: 5px; font-size: 0.9em; color: #555;">
+          Progress: <span id="progressText">0%</span>
+        </div>
+      </div>
+      
+      <div class="question-content">
+        <div class="question-text" id="questionText"></div>
+        <div class="options-grid" id="optionsContainer"></div>
+      </div>
+      
+      <div class="controls">
+        <div class="nav-buttons">
+          <button type="button" id="prevBtn" class="secondary">← Previous</button>
+          <button type="button" id="nextBtn">Next →</button>
+        </div>
+        <button type="button" id="submitBtn" class="hidden">📊 Submit Quiz</button>
+      </div>
+    </div>
+
+    <!-- Results Area -->
+    <div id="resultsArea" class="results hidden">
+      <h1>🎉 Database Quiz Completed!</h1>
+      <div id="scoreDisplay" class="score-display"></div>
+      <div id="summaryContainer" class="summary"></div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+      <p><strong>Database Fundamentals Mastery Program</strong><br>© 2025 - Excellence in Database Education</p>
+    </footer>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getDatabase, ref, get, set, push } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCY9oturc9bql33PSUkfNUptcHXla2RWN4",
+      authDomain: "tracha-xx.firebaseapp.com",
+      databaseURL: "https://tracha-xx-default-rtdb.firebaseio.com",
+      projectId: "tracha-xx",
+      storageBucket: "tracha-xx.appspot.com",
+      messagingSenderId: "914440906583",
+      appId: "1:914440906583:web:123abc456xyz"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    // Quiz Configuration
+    const QUIZ_DURATION = 45 * 60; // 45 minutes in seconds
+    const TOTAL_QUESTIONS = 50;
+    const MAX_SCORE = TOTAL_QUESTIONS;
+    const COOLDOWN_HOURS = 24;
+    const PASSING_SCORE = 30; // 60%
+
+    // 50 Database Fundamentals Questions
+    const quizData = [
+      {
+        q: "1. What is the primary purpose of a Database Management System (DBMS)?",
+        options: [
+          "To eliminate data redundancy and ensure data integrity",
+          "To create fancy graphical interfaces",
+          "To replace all file systems",
+          "To make computers faster"
+        ],
+        answer: "To eliminate data redundancy and ensure data integrity"
+      },
+      {
+        q: "2. In database terminology, what is an 'entity'?",
+        options: [
+          "A person, place, thing, or concept about which data is stored",
+          "A database table",
+          "A computer program",
+          "A type of database relationship"
+        ],
+        answer: "A person, place, thing, or concept about which data is stored"
+      },
+      {
+        q: "3. What is the main advantage of the database approach over traditional file systems?",
+        options: [
+          "Data sharing and reduced redundancy",
+          "Faster processing speed",
+          "Smaller storage requirements",
+          "Simpler programming"
+        ],
+        answer: "Data sharing and reduced redundancy"
+      },
+      {
+        q: "4. Which of the following is NOT a type of database relationship?",
+        options: [
+          "Linear",
+          "One-to-One",
+          "One-to-Many",
+          "Many-to-Many"
+        ],
+        answer: "Linear"
+      },
+      {
+        q: "5. What does SQL stand for?",
+        options: [
+          "Structured Query Language",
+          "Standard Query Language",
+          "System Query Language",
+          "Sequential Query Language"
+        ],
+        answer: "Structured Query Language"
+      },
+      {
+        q: "6. In a relational database, what is a 'primary key'?",
+        options: [
+          "A unique identifier for each record in a table",
+          "The first column in a table",
+          "A key that opens the database",
+          "The password for database access"
+        ],
+        answer: "A unique identifier for each record in a table"
+      },
+      {
+        q: "7. What is normalization in database design?",
+        options: [
+          "The process of organizing data to reduce redundancy",
+          "Making all data uppercase",
+          "Converting data to normal form",
+          "Backing up database files"
+        ],
+        answer: "The process of organizing data to reduce redundancy"
+      },
+      {
+        q: "8. Which normal form eliminates repeating groups?",
+        options: [
+          "First Normal Form (1NF)",
+          "Second Normal Form (2NF)",
+          "Third Normal Form (3NF)",
+          "Boyce-Codd Normal Form (BCNF)"
+        ],
+        answer: "First Normal Form (1NF)"
+      },
+      {
+        q: "9. What is a 'foreign key'?",
+        options: [
+          "A field that links to the primary key in another table",
+          "A key from a different country",
+          "The main password for a database",
+          "An alternative primary key"
+        ],
+        answer: "A field that links to the primary key in another table"
+      },
+      {
+        q: "10. Which of the following is an example of a DBMS?",
+        options: [
+          "MySQL",
+          "Microsoft Word",
+          "Adobe Photoshop",
+          "Windows Explorer"
+        ],
+        answer: "MySQL"
+      },
+      {
+        q: "11. What does DML stand for in database systems?",
+        options: [
+          "Data Manipulation Language",
+          "Data Management Language",
+          "Database Manipulation Logic",
+          "Digital Management Language"
+        ],
+        answer: "Data Manipulation Language"
+      },
+      {
+        q: "12. Which SQL command is used to retrieve data from a database?",
+        options: [
+          "SELECT",
+          "GET",
+          "RETRIEVE",
+          "FIND"
+        ],
+        answer: "SELECT"
+      },
+      {
+        q: "13. What is an 'attribute' in database terminology?",
+        options: [
+          "A characteristic or property of an entity",
+          "A database table",
+          "A type of relationship",
+          "A database user"
+        ],
+        answer: "A characteristic or property of an entity"
+      },
+      {
+        q: "14. Which of the following is NOT a database model?",
+        options: [
+          "Circular model",
+          "Hierarchical model",
+          "Network model",
+          "Relational model"
+        ],
+        answer: "Circular model"
+      },
+      {
+        q: "15. What does DDL stand for?",
+        options: [
+          "Data Definition Language",
+          "Database Design Language",
+          "Data Description Logic",
+          "Digital Definition Language"
+        ],
+        answer: "Data Definition Language"
+      },
+      {
+        q: "16. Which SQL command is used to create a new table?",
+        options: [
+          "CREATE TABLE",
+          "MAKE TABLE",
+          "NEW TABLE",
+          "BUILD TABLE"
+        ],
+        answer: "CREATE TABLE"
+      },
+      {
+        q: "17. What is 'data redundancy'?",
+        options: [
+          "Unnecessary duplication of data",
+          "Backup of data",
+          "Encryption of data",
+          "Compression of data"
+        ],
+        answer: "Unnecessary duplication of data"
+      },
+      {
+        q: "18. Which of the following is a database constraint?",
+        options: [
+          "NOT NULL",
+          "ALWAYS TRUE",
+          "MUST EXIST",
+          "REQUIRED FIELD"
+        ],
+        answer: "NOT NULL"
+      },
+      {
+        q: "19. What does ACID stand for in database transactions?",
+        options: [
+          "Atomicity, Consistency, Isolation, Durability",
+          "Accuracy, Consistency, Integrity, Durability",
+          "Atomicity, Completeness, Isolation, Durability",
+          "Accuracy, Completeness, Integrity, Durability"
+        ],
+        answer: "Atomicity, Consistency, Isolation, Durability"
+      },
+      {
+        q: "20. Which symbol represents a relationship in an ER diagram?",
+        options: [
+          "Diamond",
+          "Rectangle",
+          "Circle",
+          "Triangle"
+        ],
+        answer: "Diamond"
+      },
+      {
+        q: "21. What is a 'tuple' in relational databases?",
+        options: [
+          "A row in a table",
+          "A column in a table",
+          "A database table",
+          "A relationship between tables"
+        ],
+        answer: "A row in a table"
+      },
+      {
+        q: "22. Which SQL clause is used to filter results?",
+        options: [
+          "WHERE",
+          "FILTER",
+          "SEARCH",
+          "CONDITION"
+        ],
+        answer: "WHERE"
+      },
+      {
+        q: "23. What is the purpose of an index in a database?",
+        options: [
+          "To speed up data retrieval",
+          "To store backup data",
+          "To encrypt sensitive data",
+          "To compress large data"
+        ],
+        answer: "To speed up data retrieval"
+      },
+      {
+        q: "24. Which normal form deals with transitive dependencies?",
+        options: [
+          "Third Normal Form (3NF)",
+          "First Normal Form (1NF)",
+          "Second Normal Form (2NF)",
+          "Fourth Normal Form (4NF)"
+        ],
+        answer: "Third Normal Form (3NF)"
+      },
+      {
+        q: "25. What does 'data integrity' mean?",
+        options: [
+          "Accuracy and consistency of data over its lifecycle",
+          "Size of the database",
+          "Speed of data retrieval",
+          "Security of data"
+        ],
+        answer: "Accuracy and consistency of data over its lifecycle"
+      },
+      {
+        q: "26. Which SQL command is used to modify existing data?",
+        options: [
+          "UPDATE",
+          "MODIFY",
+          "CHANGE",
+          "ALTER"
+        ],
+        answer: "UPDATE"
+      },
+      {
+        q: "27. What is a 'view' in a database?",
+        options: [
+          "A virtual table based on a SELECT query",
+          "A graphical user interface",
+          "A type of database index",
+          "A backup of a table"
+        ],
+        answer: "A virtual table based on a SELECT query"
+      },
+      {
+        q: "28. Which of the following is NOT a valid SQL data type?",
+        options: [
+          "DECIMAL(10,2)",
+          "VARCHAR(50)",
+          "INTEGER",
+          "STRING(100)"
+        ],
+        answer: "STRING(100)"
+      },
+      {
+        q: "29. What is 'referential integrity'?",
+        options: [
+          "Ensuring foreign key values match primary key values",
+          "Making sure data is accurate",
+          "Checking database backups",
+          "Validating user inputs"
+        ],
+        answer: "Ensuring foreign key values match primary key values"
+      },
+      {
+        q: "30. Which SQL command is used to remove a table?",
+        options: [
+          "DROP TABLE",
+          "DELETE TABLE",
+          "REMOVE TABLE",
+          "ERASE TABLE"
+        ],
+        answer: "DROP TABLE"
+      },
+      {
+        q: "31. What is 'data independence'?",
+        options: [
+          "Applications are independent of how data is stored",
+          "Data can exist without a database",
+          "Each table operates independently",
+          "Users can access data independently"
+        ],
+        answer: "Applications are independent of how data is stored"
+      },
+      {
+        q: "32. Which symbol represents an entity in an ER diagram?",
+        options: [
+          "Rectangle",
+          "Diamond",
+          "Circle",
+          "Oval"
+        ],
+        answer: "Rectangle"
+      },
+      {
+        q: "33. What does 'NULL' represent in a database?",
+        options: [
+          "Unknown or missing value",
+          "Zero value",
+          "Empty string",
+          "False value"
+        ],
+        answer: "Unknown or missing value"
+      },
+      {
+        q: "34. Which SQL clause is used to sort results?",
+        options: [
+          "ORDER BY",
+          "SORT BY",
+          "ARRANGE BY",
+          "GROUP BY"
+        ],
+        answer: "ORDER BY"
+      },
+      {
+        q: "35. What is a 'composite key'?",
+        options: [
+          "A primary key made of multiple columns",
+          "A backup encryption key",
+          "A key that opens multiple databases",
+          "An alternative foreign key"
+        ],
+        answer: "A primary key made of multiple columns"
+      },
+      {
+        q: "36. Which normal form requires elimination of partial dependencies?",
+        options: [
+          "Second Normal Form (2NF)",
+          "First Normal Form (1NF)",
+          "Third Normal Form (3NF)",
+          "Boyce-Codd Normal Form (BCNF)"
+        ],
+        answer: "Second Normal Form (2NF)"
+      },
+      {
+        q: "37. What does 'data dictionary' contain?",
+        options: [
+          "Metadata about the database",
+          "Actual database records",
+          "User passwords",
+          "Backup files"
+        ],
+        answer: "Metadata about the database"
+      },
+      {
+        q: "38. Which SQL command is used to add new records?",
+        options: [
+          "INSERT INTO",
+          "ADD RECORD",
+          "CREATE RECORD",
+          "NEW RECORD"
+        ],
+        answer: "INSERT INTO"
+      },
+      {
+        q: "39. What is 'cardinality' in database relationships?",
+        options: [
+          "The number of instances of one entity related to another",
+          "The size of the database",
+          "The number of tables in a database",
+          "The number of attributes in a table"
+        ],
+        answer: "The number of instances of one entity related to another"
+      },
+      {
+        q: "40. Which of the following is a type of join in SQL?",
+        options: [
+          "INNER JOIN",
+          "COMBINE JOIN",
+          "MERGE JOIN",
+          "CONNECT JOIN"
+        ],
+        answer: "INNER JOIN"
+      },
+      {
+        q: "41. What is 'denormalization'?",
+        options: [
+          "Intentionally adding redundancy to improve performance",
+          "Removing all normalization",
+          "Creating backup copies",
+          "Encrypting database files"
+        ],
+        answer: "Intentionally adding redundancy to improve performance"
+      },
+      {
+        q: "42. Which SQL command is used to change table structure?",
+        options: [
+          "ALTER TABLE",
+          "MODIFY TABLE",
+          "CHANGE TABLE",
+          "UPDATE TABLE"
+        ],
+        answer: "ALTER TABLE"
+      },
+      {
+        q: "43. What is a 'stored procedure'?",
+        options: [
+          "A precompiled collection of SQL statements",
+          "A backup procedure",
+          "A data storage method",
+          "A type of database index"
+        ],
+        answer: "A precompiled collection of SQL statements"
+      },
+      {
+        q: "44. Which of the following is a NoSQL database?",
+        options: [
+          "MongoDB",
+          "MySQL",
+          "PostgreSQL",
+          "Oracle"
+        ],
+        answer: "MongoDB"
+      },
+      {
+        q: "45. What is 'data warehousing'?",
+        options: [
+          "Storing historical data for analysis",
+          "Backing up current data",
+          "Encrypting sensitive data",
+          "Compressing large databases"
+        ],
+        answer: "Storing historical data for analysis"
+      },
+      {
+        q: "46. Which SQL clause is used to group rows?",
+        options: [
+          "GROUP BY",
+          "COLLECT BY",
+          "CLUSTER BY",
+          "CATEGORIZE BY"
+        ],
+        answer: "GROUP BY"
+      },
+      {
+        q: "47. What is 'data mining'?",
+        options: [
+          "Discovering patterns in large datasets",
+          "Extracting backup data",
+          "Deleting old data",
+          "Compressing database files"
+        ],
+        answer: "Discovering patterns in large datasets"
+      },
+      {
+        q: "48. Which of the following is a database transaction property?",
+        options: [
+          "Atomicity",
+          "Velocity",
+          "Volume",
+          "Variety"
+        ],
+        answer: "Atomicity"
+      },
+      {
+        q: "49. What is 'concurrency control'?",
+        options: [
+          "Managing simultaneous database operations",
+          "Controlling database size",
+          "Managing user access",
+          "Controlling data backup"
+        ],
+        answer: "Managing simultaneous database operations"
+      },
+      {
+        q: "50. Which SQL function counts the number of rows?",
+        options: [
+          "COUNT()",
+          "TOTAL()",
+          "SUM()",
+          "NUMBER()"
+        ],
+        answer: "COUNT()"
+      }
+    ];
+
+    // Global Variables
+    let studentName = "";
+    let currentQuestion = 0;
+    let selectedQuestions = [];
+    let userAnswers = [];
+    let quizTimer;
+    let timeRemaining = QUIZ_DURATION;
+    let quizStarted = false;
+
+    // DOM Elements
+    const namePage = document.getElementById("namePage");
+    const learningModule = document.getElementById("learningModule");
+    const welcomePage = document.getElementById("welcomePage");
+    const countdownScreen = document.getElementById("countdownScreen");
+    const quizArea = document.getElementById("quizArea");
+    const resultsArea = document.getElementById("resultsArea");
+    const lockMessage = document.getElementById("lockMessage");
+
+    // Quiz Elements
+    const questionCounter = document.getElementById("questionCounter");
+    const timer = document.getElementById("timer");
+    const questionText = document.getElementById("questionText");
+    const optionsContainer = document.getElementById("optionsContainer");
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const submitBtn = document.getElementById("submitBtn");
+    const progressFill = document.getElementById("progressFill");
+    const progressText = document.getElementById("progressText");
+
+    // Utility Functions
+    function formatTime(seconds) {
+      const minutes = Math.floor(seconds / 60);
+      const remainingSeconds = seconds % 60;
+      return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+    }
+
+    function shuffleArray(array) {
+      const shuffled = [...array];
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+      return shuffled;
+    }
+
+    function updateProgress() {
+      const answered = userAnswers.filter(answer => answer !== null).length;
+      const progress = (answered / TOTAL_QUESTIONS) * 100;
+      progressFill.style.width = `${progress}%`;
+      progressText.textContent = `${Math.round(progress)}% (${answered}/${TOTAL_QUESTIONS})`;
+    }
+
+    // Check Student Eligibility
+    async function checkStudentEligibility(name) {
+      try {
+        const studentRef = ref(db, `databaseQuizResults`);
+        const snapshot = await get(studentRef);
+        
+        if (!snapshot.exists()) {
+          return { canTake: true };
+        }
+
+        const allScores = snapshot.val();
+        const studentScores = Object.values(allScores).filter(score => 
+          score.name && score.name.toLowerCase() === name.toLowerCase()
+        );
+
+        if (studentScores.length === 0) {
+          return { canTake: true };
+        }
+
+        // Find most recent submission
+        const lastSubmission = studentScores.sort((a, b) => 
+          new Date(b.timestamp) - new Date(a.timestamp)
+        )[0];
+
+        const lastSubmissionTime = new Date(lastSubmission.timestamp);
+        const now = new Date();
+        const timeDiff = now - lastSubmissionTime;
+        const hoursDiff = timeDiff / (1000 * 60 * 60);
+
+        if (hoursDiff < COOLDOWN_HOURS) {
+          const remainingTime = (COOLDOWN_HOURS * 60 * 1 * 1) - timeDiff;
+          return { 
+            canTake: false, 
+            remainingTime: remainingTime,
+            lastScore: lastSubmission.total || 0,
+            maxScore: lastSubmission.maxScore || MAX_SCORE,
+            lastPercentage: Math.round((lastSubmission.total || 0)/(lastSubmission.maxScore || MAX_SCORE)*100)
+          };
+        }
+
+        return { canTake: true };
+      } catch (error) {
+        console.error("Error checking eligibility:", error);
+        return { canTake: true };
+      }
+    }
+
+    // Event Listeners
+    document.getElementById("proceedBtn").addEventListener("click", async () => {
+      const nameInput = document.getElementById("studentName").value.trim();
+      if (!nameInput) {
+        alert("Please enter your name before proceeding!");
+        return;
+      }
+      
+      studentName = nameInput;
+      const eligibility = await checkStudentEligibility(studentName);
+      
+      if (!eligibility.canTake) {
+        const hours = Math.floor(eligibility.remainingTime / (1000 * 60 * 60));
+        const minutes = Math.floor((eligibility.remainingTime % (1000 * 60 * 60)) / (1000 * 60));
+        
+        lockMessage.classList.remove("hidden");
+        lockMessage.innerHTML = `
+          <p>⏰ You have already completed this quiz recently.</p>
+          <p>Last Score: ${eligibility.lastScore}/${TOTAL_QUESTIONS} (${eligibility.lastPercentage}%)</p>
+          <p>You can try again in: ${hours}h ${minutes}m</p>
+          <p style="margin-top: 10px; font-size: 0.9em;">Use this time to review the Feynman learning module!</p>
+        `;
+        return;
+      }
+
+      namePage.classList.add("hidden");
+      learningModule.classList.remove("hidden");
+    });
+
+    document.getElementById("startLearningQuiz").addEventListener("click", () => {
+      learningModule.classList.add("hidden");
+      welcomePage.classList.remove("hidden");
+    });
+
+    document.getElementById("startBtn").addEventListener("click", () => {
+      welcomePage.classList.add("hidden");
+      startCountdown();
+    });
+
+    // Countdown Function
+    function startCountdown() {
+      countdownScreen.classList.remove("hidden");
+      let counter = 3;
+      countdownScreen.textContent = `Get Ready... ${counter}`;
+
+      const countdown = setInterval(() => {
+        counter--;
+        if (counter > 0) {
+          countdownScreen.textContent = `${counter}...`;
+        } else {
+          clearInterval(countdown);
+          countdownScreen.textContent = "Begin!";
+          setTimeout(() => {
+            countdownScreen.classList.add("hidden");
+            initializeQuiz();
+          }, 800);
+        }
+      }, 1000);
+    }
+
+    // Initialize Quiz
+    function initializeQuiz() {
+      // Select all 50 questions (or random selection)
+      selectedQuestions = shuffleArray(quizData).slice(0, TOTAL_QUESTIONS);
+      userAnswers = new Array(TOTAL_QUESTIONS).fill(null);
+      currentQuestion = 0;
+      quizStarted = true;
+      timeRemaining = QUIZ_DURATION;
+      
+      quizArea.classList.remove("hidden");
+      loadQuestion();
+      startTimer();
+      updateProgress();
+      
+      // Prevent page refresh
+      window.addEventListener('beforeunload', function (e) {
+        if (quizStarted) {
+          e.preventDefault();
+          e.returnValue = '';
+        }
+      });
+    }
+
+    // Load Question
+    function loadQuestion() {
+      const question = selectedQuestions[currentQuestion];
+      
+      // Update counter
+      questionCounter.textContent = `Question ${currentQuestion + 1} of ${TOTAL_QUESTIONS}`;
+      
+      // Update question text
+      questionText.textContent = question.q;
+      
+      // Clear and populate options
+      optionsContainer.innerHTML = "";
+      question.options.forEach((option, index) => {
+        const button = document.createElement("button");
+        button.className = "option-button secondary";
+        button.textContent = option;
+        
+        if (userAnswers[currentQuestion] === option) {
+          button.classList.add("selected");
+        }
+        
+        button.addEventListener("click", () => selectAnswer(option));
+        optionsContainer.appendChild(button);
+      });
+      
+      // Update navigation buttons
+      prevBtn.disabled = currentQuestion === 0;
+      
+      if (currentQuestion === TOTAL_QUESTIONS - 1) {
+        nextBtn.classList.add("hidden");
+        submitBtn.classList.remove("hidden");
+      } else {
+        nextBtn.classList.remove("hidden");
+        submitBtn.classList.add("hidden");
+      }
+      
+      updateProgress();
+    }
+
+    // Select Answer
+    function selectAnswer(answer) {
+      userAnswers[currentQuestion] = answer;
+      loadQuestion(); // Refresh to show selection
+    }
+
+    // Navigation
+    prevBtn.addEventListener("click", () => {
+      if (currentQuestion > 0) {
+        currentQuestion--;
+        loadQuestion();
+      }
+    });
+
+    nextBtn.addEventListener("click", () => {
+      if (currentQuestion < TOTAL_QUESTIONS - 1) {
+        currentQuestion++;
+        loadQuestion();
+      }
+    });
+
+    submitBtn.addEventListener("click", () => {
+      const unanswered = userAnswers.filter(answer => answer === null).length;
+      if (unanswered > 0) {
+        if (!confirm(`You have ${unanswered} unanswered questions. Are you sure you want to submit?`)) {
+          return;
+        }
+      }
+      
+      if (confirm("Submit your Database Fundamentals quiz now? You cannot change answers after submission.")) {
+        finishQuiz();
+      }
+    });
+
+    // Timer Functions
+    function startTimer() {
+      updateTimerDisplay();
+      quizTimer = setInterval(() => {
+        timeRemaining--;
+        updateTimerDisplay();
+        
+        if (timeRemaining <= 0) {
+          clearInterval(quizTimer);
+          autoSubmitQuiz();
+        }
+      }, 1000);
+    }
+
+    function updateTimerDisplay() {
+      timer.textContent = formatTime(timeRemaining);
+      
+      // Add warning class for last 10 minutes
+      if (timeRemaining <= 600) {
+        timer.classList.add("warning");
+      }
+    }
+
+    function stopTimer() {
+      if (quizTimer) {
+        clearInterval(quizTimer);
+      }
+    }
+
+    // Auto Submit
+    function autoSubmitQuiz() {
+      alert("⏰ Time's up! Your quiz will be submitted automatically.");
+      finishQuiz(true);
+    }
+
+    // Finish Quiz
+    async function finishQuiz(isAutoSubmit = false) {
+      quizStarted = false;
+      stopTimer();
+      
+      quizArea.classList.add("hidden");
+      resultsArea.classList.remove("hidden");
+      
+      // Calculate score
+      let correctAnswers = 0;
+      const reviewHTML = [];
+      const topics = {
+        "DBMS Basics": 0,
+        "SQL Fundamentals": 0,
+        "Database Design": 0,
+        "Normalization": 0,
+        "Data Integrity": 0
+      };
+      
+      selectedQuestions.forEach((question, index) => {
+        const userAnswer = userAnswers[index] || "(No answer)";
+        const isCorrect = userAnswer === question.answer;
+        
+        if (isCorrect) {
+          correctAnswers++;
+          // Categorize by topic (simplified based on question index)
+          if (index < 10) topics["DBMS Basics"]++;
+          else if (index < 20) topics["SQL Fundamentals"]++;
+          else if (index < 30) topics["Database Design"]++;
+          else if (index < 40) topics["Normalization"]++;
+          else topics["Data Integrity"]++;
+        }
+        
+        reviewHTML.push(`
+          <div class="question-review ${isCorrect ? 'correct' : 'wrong'}">
+            <p><strong>Q${index + 1}:</strong> ${question.q}</p>
+            <p>Your answer: <span class="${isCorrect ? 'correct' : 'wrong'}">${userAnswer}</span></p>
+            <p>Correct answer: <span class="correct">${question.answer}</span></p>
+          </div>
+        `);
+      });
+      
+      const percentage = Math.round((correctAnswers / TOTAL_QUESTIONS) * 100);
+      const timeUsed = QUIZ_DURATION - timeRemaining;
+      const passed = correctAnswers >= PASSING_SCORE;
+      
+      // Display results
+      scoreDisplay.innerHTML = `
+        <h2>📊 Your Database Quiz Results</h2>
+        <p><strong>Student:</strong> ${studentName}</p>
+        <p><strong>Score:</strong> ${correctAnswers} / ${TOTAL_QUESTIONS} (${percentage}%)</p>
+        <p><strong>Passing Score:</strong> ${PASSING_SCORE}/${TOTAL_QUESTIONS} (60%)</p>
+        <p><strong>Status:</strong> ${passed ? '✅ PASSED' : '❌ FAILED - Review and try again!'}</p>
+        <p><strong>Time Used:</strong> ${formatTime(timeUsed)}</p>
+        ${isAutoSubmit ? '<p><strong>Note:</strong> Auto-submitted (Time expired)</p>' : ''}
+        
+        <div style="margin-top: 15px; background: rgba(255,255,255,0.2); padding: 10px; border-radius: 8px;">
+          <h4 style="margin: 10px 0;">Topic Performance</h4>
+          ${Object.entries(topics).map(([topic, score]) => `
+            <div style="display: flex; justify-content: space-between; margin: 5px 0;">
+              <span>${topic}:</span>
+              <span><strong>${score}/10</strong></span>
+            </div>
+          `).join('')}
+        </div>
+      `;
+      
+      summaryContainer.innerHTML = `
+        <h3>📋 Detailed Question Review</h3>
+        <p style="margin-bottom: 15px; color: #555;">Review your answers below. Green = Correct, Red = Incorrect</p>
+        ${reviewHTML.join('')}
+      `;
+      
+      // Save to Firebase
+      try {
+        const newRef = push(ref(db, "databaseQuizResults"));
+        
+        await set(newRef, {
+          name: studentName,
+          score: correctAnswers,
+          totalQuestions: TOTAL_QUESTIONS,
+          percentage: percentage,
+          passed: passed,
+          timeUsed: timeUsed,
+          autoSubmitted: isAutoSubmit,
+          date: new Date().toLocaleString(),
+          timestamp: new Date().toISOString(),
+          topicScores: topics,
+          subject: "Database Fundamentals"
+        });
+        
+        // Show success message
+        const successDiv = document.createElement('div');
+        successDiv.style.cssText = `
+          background: ${passed ? 'rgba(40, 167, 69, 0.9)' : 'rgba(255, 193, 7, 0.9)'};
+          color: white;
+          padding: 15px;
+          border-radius: 10px;
+          margin-top: 20px;
+          text-align: center;
+          font-weight: 600;
+        `;
+        successDiv.innerHTML = passed ? 
+          `✅ Database Fundamentals mastered!<br>⏰ You can retake for higher score after ${COOLDOWN_HOURS} hours.` :
+          `📚 Keep studying! Review the Feynman module and try again after ${COOLDOWN_HOURS} hours.`;
+        resultsArea.appendChild(successDiv);
+        
+      } catch (error) {
+        console.error("Error saving results:", error);
+        
+        // Show error message
+        const errorDiv = document.createElement('div');
+        errorDiv.style.cssText = `
+          background: rgba(220, 53, 69, 0.9);
+          color: white;
+          padding: 15px;
+          border-radius: 10px;
+          margin-top: 20px;
+          text-align: center;
+          font-weight: 600;
+        `;
+        errorDiv.innerHTML = '⚠️ Quiz completed but could not save to database. Please contact your instructor.';
+        resultsArea.appendChild(errorDiv);
+      }
+      
+      // Scroll to top of results
+      resultsArea.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      console.log("Database Fundamentals Quiz Loaded!");
+      console.log("Total Questions: ", quizData.length);
+    });
+  </script>
+</body>
+</html>
