@@ -688,11 +688,6 @@
             </div>
           </div>
         </div>
-        
-        <div style="text-align: center; margin-top: 30px;">
-          <p><strong>🎯 Now you're ready! The quiz will test these simple concepts.</strong></p>
-          <button id="startLearningQuiz" class="learning">✅ I Understand! Start Quiz Now</button>
-        </div>
       </div>
     </div>
 
@@ -1446,7 +1441,7 @@
     // Initialize Quiz
     function initializeQuiz() {
       // Select all 50 questions (or random selection)
-      selectedQuestions = shuffleArray(quizData).slice(0, TOTAL_QUESTIONS);
+      selectedQuestions = quizData.slice(0, TOTAL_QUESTIONS);
       userAnswers = new Array(TOTAL_QUESTIONS).fill(null);
       currentQuestion = 0;
       quizStarted = true;
@@ -1710,4 +1705,5 @@
     });
   </script>
 </body>
+
 </html>
