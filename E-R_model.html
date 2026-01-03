@@ -1,0 +1,1263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🎮 E-R Model Adventure: Database Design Made Fun!</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Comic Sans MS', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+    
+    .container {
+      width: 90%;
+      max-width: 1200px;
+      margin: 0 auto;
+      background: rgba(255, 255, 255, 0.97);
+      padding: 30px;
+      border-radius: 25px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+    
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 20px;
+      font-size: 2.5em;
+      font-weight: 700;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    h2 {
+      color: #34495e;
+      margin-bottom: 20px;
+      font-size: 1.8em;
+      text-align: center;
+    }
+    
+    h3 {
+      color: #2c3e50;
+      margin: 25px 0 15px;
+      font-size: 1.5em;
+      border-left: 6px solid #6a11cb;
+      padding-left: 15px;
+    }
+    
+    h4 {
+      color: #2575fc;
+      margin: 15px 0 10px;
+      font-size: 1.2em;
+    }
+    
+    .hidden { 
+      display: none; 
+    }
+    
+    /* Navigation Panel */
+    .nav-panel {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin: 30px 0;
+    }
+    
+    .nav-btn {
+      background: linear-gradient(135deg, #6a11cb, #2575fc);
+      color: white;
+      border: none;
+      padding: 20px;
+      border-radius: 15px;
+      cursor: pointer;
+      font-size: 1.1em;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      text-align: center;
+      box-shadow: 0 5px 15px rgba(106, 17, 203, 0.3);
+    }
+    
+    .nav-btn:hover {
+      transform: translateY(-5px) scale(1.05);
+      box-shadow: 0 10px 25px rgba(106, 17, 203, 0.5);
+    }
+    
+    .nav-btn.active {
+      background: linear-gradient(135deg, #ff7b00, #ff9500);
+      transform: scale(1.05);
+    }
+    
+    /* Content Sections */
+    .content-section {
+      background: #f8f9fa;
+      border-radius: 20px;
+      padding: 30px;
+      margin: 20px 0;
+      border: 3px solid #e3f2fd;
+      display: none;
+      animation: fadeIn 0.5s ease;
+    }
+    
+    .content-section.active {
+      display: block;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    /* Story Boxes */
+    .story-box {
+      background: #fff;
+      border-radius: 15px;
+      padding: 25px;
+      margin: 20px 0;
+      border: 2px dashed #6a11cb;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    }
+    
+    .story-box h4 {
+      color: #6a11cb;
+      margin-bottom: 15px;
+      font-size: 1.3em;
+    }
+    
+    /* Analogy Box */
+    .analogy-box {
+      background: linear-gradient(135deg, #e3f2fd, #f3e5f5);
+      border: 3px solid #2575fc;
+      border-radius: 15px;
+      padding: 20px;
+      margin: 25px 0;
+      position: relative;
+    }
+    
+    .analogy-box::before {
+      content: "💡";
+      position: absolute;
+      top: -15px;
+      left: -15px;
+      background: #ff7b00;
+      color: white;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5em;
+    }
+    
+    /* Visual Diagram */
+    .visual-diagram {
+      background: white;
+      border: 3px solid #6a11cb;
+      border-radius: 15px;
+      padding: 20px;
+      margin: 25px 0;
+      text-align: center;
+    }
+    
+    .diagram-item {
+      display: inline-block;
+      margin: 15px;
+      padding: 15px;
+      border-radius: 10px;
+      font-weight: bold;
+    }
+    
+    .entity { background: #ffcc80; border: 2px solid #ff9800; }
+    .attribute { background: #c8e6c9; border: 2px solid #4caf50; }
+    .relationship { background: #bbdefb; border: 2px solid #2196f3; }
+    .key { background: #ffcdd2; border: 2px solid #f44336; }
+    
+    /* SQL Connection */
+    .sql-box {
+      background: #2c3e50;
+      color: white;
+      border-radius: 15px;
+      padding: 20px;
+      margin: 25px 0;
+      font-family: 'Courier New', monospace;
+    }
+    
+    .sql-keyword {
+      color: #ff7b00;
+      font-weight: bold;
+    }
+    
+    .sql-table {
+      color: #3498db;
+    }
+    
+    .sql-column {
+      color: #2ecc71;
+    }
+    
+    /* Interactive Example */
+    .interactive-example {
+      background: #fffde7;
+      border: 2px solid #ffd54f;
+      border-radius: 15px;
+      padding: 25px;
+      margin: 25px 0;
+    }
+    
+    .example-controls {
+      display: flex;
+      gap: 10px;
+      margin: 15px 0;
+      flex-wrap: wrap;
+    }
+    
+    .example-btn {
+      background: #6a11cb;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .example-btn:hover {
+      background: #2575fc;
+      transform: scale(1.05);
+    }
+    
+    /* Key Terms */
+    .key-term {
+      background: #fff3cd;
+      padding: 4px 10px;
+      border-radius: 5px;
+      font-weight: bold;
+      color: #856404;
+      margin: 0 3px;
+      border: 1px solid #ffeaa7;
+    }
+    
+    /* Comparison Table */
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 25px 0;
+      border: 2px solid #6a11cb;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    
+    .comparison-table th {
+      background: linear-gradient(135deg, #6a11cb, #2575fc);
+      color: white;
+      padding: 15px;
+      text-align: left;
+      font-size: 1.1em;
+    }
+    
+    .comparison-table td {
+      padding: 12px 15px;
+      border-bottom: 1px solid #ddd;
+    }
+    
+    .comparison-table tr:nth-child(even) {
+      background: #f8f9fa;
+    }
+    
+    /* Progress Tracker */
+    .progress-tracker {
+      display: flex;
+      justify-content: space-between;
+      margin: 30px 0;
+      padding: 15px;
+      background: #f0f8ff;
+      border-radius: 15px;
+    }
+    
+    .progress-step {
+      text-align: center;
+      flex: 1;
+    }
+    
+    .step-number {
+      background: #6a11cb;
+      color: white;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 10px;
+      font-weight: bold;
+      font-size: 1.2em;
+    }
+    
+    .step-number.completed {
+      background: #2ecc71;
+    }
+    
+    .step-number.current {
+      background: #ff7b00;
+      transform: scale(1.2);
+    }
+    
+    /* Footer */
+    footer {
+      text-align: center;
+      margin-top: 40px;
+      padding: 25px;
+      background: linear-gradient(135deg, #2c3e50, #34495e);
+      color: white;
+      border-radius: 20px;
+      font-size: 14px;
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .container {
+        padding: 20px;
+        margin: 10px;
+        width: calc(100% - 20px);
+      }
+      
+      h1 {
+        font-size: 2em;
+      }
+      
+      h2 {
+        font-size: 1.5em;
+      }
+      
+      .nav-panel {
+        grid-template-columns: 1fr;
+      }
+      
+      .nav-btn {
+        padding: 15px;
+        font-size: 1em;
+      }
+      
+      .content-section {
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎮 Entity-Relationship Model Adventure!</h1>
+    <h2>📚 Database Design Made Super Simple for Everyone</h2>
+    
+    <div class="progress-tracker">
+      <div class="progress-step">
+        <div class="step-number completed">1</div>
+        <div>Basics</div>
+      </div>
+      <div class="progress-step">
+        <div class="step-number current">2</div>
+        <div>Entities & Attributes</div>
+      </div>
+      <div class="progress-step">
+        <div class="step-number">3</div>
+        <div>Relationships</div>
+      </div>
+      <div class="progress-step">
+        <div class="step-number">4</div>
+        <div>ER to SQL</div>
+      </div>
+      <div class="progress-step">
+        <div class="step-number">5</div>
+        <div>Practice</div>
+      </div>
+    </div>
+    
+    <!-- Navigation Panel -->
+    <div class="nav-panel">
+      <button class="nav-btn active" data-section="basics">🎯 Lesson 1: The BIG Picture</button>
+      <button class="nav-btn" data-section="entities">🏷️ Lesson 2: Meet the "Things"</button>
+      <button class="nav-btn" data-section="relationships">🔗 Lesson 3: Making Friends</button>
+      <button class="nav-btn" data-section="sql">💻 Lesson 4: Talking to Computers</button>
+      <button class="nav-btn" data-section="practice">🎮 Lesson 5: Let's Play!</button>
+    </div>
+    
+    <!-- Section 1: Basics -->
+    <div id="basics" class="content-section active">
+      <div class="story-box">
+        <h4>📖 The Story of Messy Rooms vs Organized Libraries</h4>
+        <p>Imagine your bedroom is SUPER messy. You have:</p>
+        <ul style="margin-left: 20px; margin-top: 10px;">
+          <li>Books mixed with toys</li>
+          <li>Clothes everywhere</li>
+          <li>School papers in 5 different places</li>
+          <li>Toys scattered all over</li>
+        </ul>
+        <p><strong>Problem:</strong> Finding your favorite toy takes FOREVER!</p>
+        <p>Now imagine a library where:</p>
+        <ul style="margin-left: 20px; margin-top: 10px;">
+          <li>All storybooks are together</li>
+          <li>Science books have their own section</li>
+          <li>Each book has its special spot</li>
+          <li>A catalog tells you exactly where everything is</li>
+        </ul>
+        <p><strong>🎯 E-R Model = The Library Blueprint!</strong></p>
+      </div>
+      
+      <div class="analogy-box">
+        <h4>🏗️ What IS an Entity-Relationship Model?</h4>
+        <p>Think of it as <span class="key-term">drawing instructions</span> for organizing information:</p>
+        <p><strong>Before E-R Model:</strong> "Put all your stuff somewhere" 😵</p>
+        <p><strong>After E-R Model:</strong> "Toys go in the green box, books on shelf A, clothes in the closet" 🎯</p>
+      </div>
+      
+      <div class="visual-diagram">
+        <h4>🎨 The 3 Magic Tools of E-R Model</h4>
+        <div class="diagram-item entity">📦 ENTITY<br>(A "Thing")</div>
+        <div style="display: inline-block; font-size: 2em; margin: 0 10px;">+</div>
+        <div class="diagram-item attribute">🏷️ ATTRIBUTE<br>(Its "Details")</div>
+        <div style="display: inline-block; font-size: 2em; margin: 0 10px;">+</div>
+        <div class="diagram-item relationship">🔗 RELATIONSHIP<br>(How they "Connect")</div>
+        <p style="margin-top: 15px; font-size: 1.2em;">🎯 <strong>ENTITY + ATTRIBUTES + RELATIONSHIPS = Complete Picture!</strong></p>
+      </div>
+      
+      <div class="sql-box">
+        <h4>💻 Why Should YOU Care?</h4>
+        <p>Because EVERY computer game, every app, every website uses this!</p>
+        <p><strong>Facebook:</strong> Users (Entities) + Friends (Relationships) + Posts (More Entities)</p>
+        <p><strong>Minecraft:</strong> Players + Inventory + Worlds + Mobs</p>
+        <p><strong>YouTube:</strong> Videos + Channels + Comments + Likes</p>
+      </div>
+    </div>
+    
+    <!-- Section 2: Entities & Attributes -->
+    <div id="entities" class="content-section">
+      <div class="story-box">
+        <h4>🏷️ Entities: The "Characters" in Your Story</h4>
+        <p>An <span class="key-term">Entity</span> is any "thing" you want to remember information about:</p>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-top: 20px;">
+          <div style="background: #ffecb3; padding: 15px; border-radius: 10px;">
+            <h5>🎮 In Video Games:</h5>
+            <ul style="margin-left: 15px;">
+              <li>Player Character</li>
+              <li>Enemy Monster</li>
+              <li>Weapon</li>
+              <li>Power-up</li>
+            </ul>
+          </div>
+          
+          <div style="background: #c8e6c9; padding: 15px; border-radius: 10px;">
+            <h5>🏫 In School:</h5>
+            <ul style="margin-left: 15px;">
+              <li>Student</li>
+              <li>Teacher</li>
+              <li>Classroom</li>
+              <li>Textbook</li>
+            </ul>
+          </div>
+          
+          <div style="background: #bbdefb; padding: 15px; border-radius: 10px;">
+            <h5>🛒 In Shopping:</h5>
+            <ul style="margin-left: 15px;">
+              <li>Customer</li>
+              <li>Product</li>
+              <li>Cart</li>
+              <li>Order</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      
+      <div class="analogy-box">
+        <h4>🔍 Attributes: The "Superpower Details"</h4>
+        <p>If an Entity is a superhero, Attributes are their superpowers and costume details!</p>
+        
+        <div style="background: white; padding: 15px; border-radius: 10px; margin-top: 15px;">
+          <h5 style="color: #ff9800;">🦸‍♂️ SUPERHERO "SPIDER-MAN" Entity:</h5>
+          <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px;">
+            <span class="key-term">Hero Name: Spider-Man</span>
+            <span class="key-term">Real Name: Peter Parker</span>
+            <span class="key-term">Power: Web-slinging</span>
+            <span class="key-term">Age: 16 years</span>
+            <span class="key-term">Catchphrase: "With great power..."</span>
+            <span class="key-term">Weakness: Responsibility</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="interactive-example">
+        <h4>🎯 Types of Attributes (The SPECIAL Ones!)</h4>
+        
+        <div class="example-controls">
+          <button class="example-btn" onclick="showAttributeType('simple')">Simple Attribute</button>
+          <button class="example-btn" onclick="showAttributeType('composite')">Composite Attribute</button>
+          <button class="example-btn" onclick="showAttributeType('multivalued')">Multi-valued</button>
+          <button class="example-btn" onclick="showAttributeType('derived')">Derived Attribute</button>
+          <button class="example-btn" onclick="showAttributeType('key')">Key Attribute</button>
+        </div>
+        
+        <div id="attributeDisplay" style="margin-top: 20px; padding: 15px; background: white; border-radius: 10px; border: 2px solid #6a11cb;">
+          <p>Click the buttons above to learn about different attribute types!</p>
+        </div>
+      </div>
+      
+      <div class="visual-diagram">
+        <h4>🔑 The MOST Important Attribute: PRIMARY KEY!</h4>
+        <p>This is like each entity's <span class="key-term">SUPER SECRET ID NUMBER</span> that NOBODY else has!</p>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 20px;">
+          <div style="background: #ffcdd2; padding: 15px; border-radius: 10px; text-align: center;">
+            <div style="font-size: 2em;">👨‍🎓</div>
+            <h5>STUDENT</h5>
+            <p><strong>StudentID:</strong> STU001</p>
+            <p style="font-size: 0.9em; color: #666;">(Like a fingerprint!)</p>
+          </div>
+          
+          <div style="background: #c8e6c9; padding: 15px; border-radius: 10px; text-align: center;">
+            <div style="font-size: 2em;">📚</div>
+            <h5>BOOK</h5>
+            <p><strong>ISBN:</strong> 978-3-16-148410-0</p>
+            <p style="font-size: 0.9em; color: #666;">(Worldwide unique!)</p>
+          </div>
+          
+          <div style="background: #bbdefb; padding: 15px; border-radius: 10px; text-align: center;">
+            <div style="font-size: 2em;">🏢</div>
+            <h5>PRODUCT</h5>
+            <p><strong>SKU:</strong> PROD-2024-XYZ</p>
+            <p style="font-size: 0.9em; color: #666;">(Store's secret code!)</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Section 3: Relationships -->
+    <div id="relationships" class="content-section">
+      <div class="story-box">
+        <h4>🔗 Relationships: How "Things" Talk to Each Other</h4>
+        <p>A <span class="key-term">Relationship</span> is a CONNECTION between entities, like friendship between people!</p>
+        
+        <div style="text-align: center; margin: 20px 0;">
+          <div style="display: inline-block; padding: 15px; background: #ffcc80; border-radius: 10px; margin: 0 10px;">
+            <div style="font-size: 2em;">👨‍🎓</div>
+            <h5>STUDENT</h5>
+          </div>
+          
+          <div style="display: inline-block; padding: 15px; font-size: 2em; color: #6a11cb;">
+            🔗 ENROLLS_IN
+          </div>
+          
+          <div style="display: inline-block; padding: 15px; background: #c8e6c9; border-radius: 10px; margin: 0 10px;">
+            <div style="font-size: 2em;">📚</div>
+            <h5>COURSE</h5>
+          </div>
+        </div>
+        
+        <p><strong>Translation:</strong> A Student ENROLLS_IN a Course</p>
+        <p><strong>Real Meaning:</strong> Students and Courses are FRIENDS through enrollment!</p>
+      </div>
+      
+      <div class="analogy-box">
+        <h4>🤝 The 3 Types of Friendships (Cardinality)</h4>
+        <p>Relationships have RULES about how many friends can connect:</p>
+      </div>
+      
+      <table class="comparison-table">
+        <thead>
+          <tr>
+            <th>Type</th>
+            <th>What it Means</th>
+            <th>Real Example</th>
+            <th>Emoji Story</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>1️⃣ ➡️ 1️⃣<br>One-to-One</strong></td>
+            <td>Each A has exactly ONE B, each B has exactly ONE A</td>
+            <td>Person ↔ Passport<br>Student ↔ Locker</td>
+            <td>👨 ↔ 🔐 (One person, one locker)</td>
+          </tr>
+          <tr>
+            <td><strong>1️⃣ ➡️ Many<br>One-to-Many</strong></td>
+            <td>One A can have MANY Bs, but each B has only ONE A</td>
+            <td>Mother ↔ Children<br>Author ↔ Books</td>
+            <td>👩 ↔ 👧👦👶 (One mom, many kids)</td>
+          </tr>
+          <tr>
+            <td><strong>Many ➡️ Many<br>Many-to-Many</strong></td>
+            <td>Many As can have MANY Bs, Many Bs can have MANY As</td>
+            <td>Students ↔ Courses<br>Doctors ↔ Patients</td>
+            <td>👨‍🎓👩‍🎓 ↔ 📚📖 (Many students, many books)</td>
+          </tr>
+        </tbody>
+      </table>
+      
+      <div class="interactive-example">
+        <h4>🎮 Relationship Practice: Hospital System</h4>
+        <p>Let's design relationships for a hospital:</p>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin: 20px 0;">
+          <div style="background: #ffcdd2; padding: 15px; border-radius: 10px; text-align: center;">
+            <div style="font-size: 2em;">👨‍⚕️</div>
+            <h5>DOCTOR</h5>
+          </div>
+          
+          <div style="background: #c8e6c9; padding: 15px; border-radius: 10px; text-align: center;">
+            <div style="font-size: 2em;">😷</div>
+            <h5>PATIENT</h5>
+          </div>
+          
+          <div style="background: #bbdefb; padding: 15px; border-radius: 10px; text-align: center;">
+            <div style="font-size: 2em;">💊</div>
+            <h5>MEDICINE</h5>
+          </div>
+          
+          <div style="background: #e1bee7; padding: 15px; border-radius: 10px; text-align: center;">
+            <div style="font-size: 2em;">🛏️</div>
+            <h5>WARD</h5>
+          </div>
+        </div>
+        
+        <div class="example-controls">
+          <button class="example-btn" onclick="showRelationship('treats')">DOCTOR → PATIENT</button>
+          <button class="example-btn" onclick="showRelationship('prescribes')">DOCTOR → MEDICINE</button>
+          <button class="example-btn" onclick="showRelationship('takes')">PATIENT → MEDICINE</button>
+          <button class="example-btn" onclick="showRelationship('assigned')">PATIENT → WARD</button>
+        </div>
+        
+        <div id="relationshipDisplay" style="margin-top: 20px; padding: 15px; background: white; border-radius: 10px; border: 2px solid #2575fc; min-height: 100px;">
+          <p>Click buttons to see hospital relationships!</p>
+        </div>
+      </div>
+      
+      <div class="story-box">
+        <h4>🔄 Special Relationship: Recursive (Talking to Yourself!)</h4>
+        <p>Sometimes an entity can be related to ITSELF!</p>
+        <div style="text-align: center; margin: 20px 0;">
+          <div style="display: inline-block; padding: 20px; background: linear-gradient(135deg, #ff7b00, #ff9500); color: white; border-radius: 50%; font-size: 2em;">
+            👨‍💼
+          </div>
+          <div style="display: inline-block; margin: 0 20px; font-size: 2em;">🔄</div>
+          <div style="display: inline-block;">
+            <p><strong>EMPLOYEE</strong></p>
+            <p>👨‍💼 Manages → 👨‍💼 Is Managed By</p>
+            <p>Same entity type, different roles!</p>
+          </div>
+        </div>
+        <p><strong>Example:</strong> A manager (Employee) manages other employees</p>
+      </div>
+    </div>
+    
+    <!-- Section 4: E-R to SQL Connection -->
+    <div id="sql" class="content-section">
+      <div class="story-box">
+        <h4>💻 From Pictures to Code: E-R Model → SQL</h4>
+        <p>Think of E-R Model as your <span class="key-term">drawing</span> and SQL as the <span class="key-term">building instructions</span>!</p>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 20px;">
+          <div style="background: #ffecb3; padding: 20px; border-radius: 10px;">
+            <h5>🎨 E-R DIAGRAM (The Drawing)</h5>
+            <div style="text-align: center; margin: 15px 0;">
+              <div style="display: inline-block; padding: 10px; background: #ffcc80; border-radius: 5px;">👨‍🎓 STUDENT</div>
+              <div style="display: inline-block; margin: 0 10px;">🔗</div>
+              <div style="display: inline-block; padding: 10px; background: #c8e6c9; border-radius: 5px;">📚 COURSE</div>
+            </div>
+            <p>Visual picture of relationships</p>
+          </div>
+          
+          <div style="background: #c8e6c9; padding: 20px; border-radius: 10px;">
+            <h5>💻 SQL CODE (The Instructions)</h5>
+            <div class="sql-box" style="margin: 15px 0; padding: 15px;">
+              <span class="sql-keyword">CREATE TABLE</span> Students (<br>
+              &nbsp;&nbsp;StudentID <span class="sql-keyword">INT PRIMARY KEY</span>,<br>
+              &nbsp;&nbsp;Name <span class="sql-keyword">VARCHAR</span>(50)<br>
+              );
+            </div>
+            <p>Computer instructions to build it</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="analogy-box">
+        <h4>🔧 The Translation Dictionary</h4>
+        <p>How E-R concepts become SQL code:</p>
+      </div>
+      
+      <table class="comparison-table">
+        <thead>
+          <tr>
+            <th>E-R Concept</th>
+            <th>What it Means</th>
+            <th>SQL Translation</th>
+            <th>Example</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Entity</strong></td>
+            <td>A "thing" to store data about</td>
+            <td><span class="sql-keyword">CREATE TABLE</span></td>
+            <td>Student, Product, Order</td>
+          </tr>
+          <tr>
+            <td><strong>Attribute</strong></td>
+            <td>Characteristic of entity</td>
+            <td><span class="sql-keyword">COLUMN</span></td>
+            <td>Name, Age, Price</td>
+          </tr>
+          <tr>
+            <td><strong>Primary Key</strong></td>
+            <td>Unique identifier</td>
+            <td><span class="sql-keyword">PRIMARY KEY</span></td>
+            <td>StudentID, ProductCode</td>
+          </tr>
+          <tr>
+            <td><strong>Foreign Key</strong></td>
+            <td>Points to another table</td>
+            <td><span class="sql-keyword">FOREIGN KEY</span></td>
+            <td>CourseID in Student table</td>
+          </tr>
+          <tr>
+            <td><strong>Relationship</strong></td>
+            <td>Connection between entities</td>
+            <td><span class="sql-keyword">JOIN</span> operations</td>
+            <td>Student ENROLLS_IN Course</td>
+          </tr>
+        </tbody>
+      </table>
+      
+      <div class="sql-box">
+        <h4>🏗️ Building a Complete Database: Step by Step</h4>
+        
+        <h5 style="color: #ff7b00; margin-top: 20px;">Step 1: Create the Student Table</h5>
+        <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; margin: 10px 0;">
+          <span class="sql-keyword">CREATE TABLE</span> <span class="sql-table">Students</span> (<br>
+          &nbsp;&nbsp;<span class="sql-column">StudentID</span> <span class="sql-keyword">INT PRIMARY KEY</span>,<br>
+          &nbsp;&nbsp;<span class="sql-column">Name</span> <span class="sql-keyword">VARCHAR</span>(100) <span class="sql-keyword">NOT NULL</span>,<br>
+          &nbsp;&nbsp;<span class="sql-column">Age</span> <span class="sql-keyword">INT</span>,<br>
+          &nbsp;&nbsp;<span class="sql-column">Email</span> <span class="sql-keyword">VARCHAR</span>(150)<br>
+          );
+        </div>
+        
+        <h5 style="color: #ff7b00; margin-top: 20px;">Step 2: Create the Course Table</h5>
+        <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; margin: 10px 0;">
+          <span class="sql-keyword">CREATE TABLE</span> <span class="sql-table">Courses</span> (<br>
+          &nbsp;&nbsp;<span class="sql-column">CourseID</span> <span class="sql-keyword">INT PRIMARY KEY</span>,<br>
+          &nbsp;&nbsp;<span class="sql-column">CourseName</span> <span class="sql-keyword">VARCHAR</span>(100),<br>
+          &nbsp;&nbsp;<span class="sql-column">Teacher</span> <span class="sql-keyword">VARCHAR</span>(100)<br>
+          );
+        </div>
+        
+        <h5 style="color: #ff7b00; margin-top: 20px;">Step 3: Create the Enrollment Table (MANY-TO-MANY)</h5>
+        <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; margin: 10px 0;">
+          <span class="sql-keyword">CREATE TABLE</span> <span class="sql-table">Enrollments</span> (<br>
+          &nbsp;&nbsp;<span class="sql-column">EnrollmentID</span> <span class="sql-keyword">INT PRIMARY KEY</span>,<br>
+          &nbsp;&nbsp;<span class="sql-column">StudentID</span> <span class="sql-keyword">INT</span>,<br>
+          &nbsp;&nbsp;<span class="sql-column">CourseID</span> <span class="sql-keyword">INT</span>,<br>
+          &nbsp;&nbsp;<span class="sql-column">Grade</span> <span class="sql-keyword">CHAR</span>(1),<br>
+          &nbsp;&nbsp;<span class="sql-keyword">FOREIGN KEY</span> (StudentID) <span class="sql-keyword">REFERENCES</span> <span class="sql-table">Students</span>(StudentID),<br>
+          &nbsp;&nbsp;<span class="sql-keyword">FOREIGN KEY</span> (CourseID) <span class="sql-keyword">REFERENCES</span> <span class="sql-table">Courses</span>(CourseID)<br>
+          );
+        </div>
+        
+        <p style="margin-top: 15px; color: #ffcc80;">🎯 <strong>Enrollments table = The BRIDGE between Students and Courses!</strong></p>
+      </div>
+      
+      <div class="interactive-example">
+        <h4>🔍 SQL Queries: Asking Questions to Your Database</h4>
+        <p>Once you build tables, you can ASK questions using SQL:</p>
+        
+        <div class="example-controls">
+          <button class="example-btn" onclick="showQuery('all')">Show All Students</button>
+          <button class="example-btn" onclick="showQuery('filter')">Students in Math</button>
+          <button class="example-btn" onclick="showQuery('join')">Students + Courses</button>
+          <button class="example-btn" onclick="showQuery('count')">Count Students</button>
+        </div>
+        
+        <div id="queryDisplay" style="margin-top: 20px; padding: 15px; background: #2c3e50; color: white; border-radius: 10px; font-family: 'Courier New', monospace; min-height: 100px;">
+          <p>Click buttons to see SQL queries!</p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Section 5: Practice Zone -->
+    <div id="practice" class="content-section">
+      <div class="story-box">
+        <h4>🎮 Practice Zone: Design Your OWN Database!</h4>
+        <p>Let's design a database for a <strong>VIDEO GAME STORE</strong> together!</p>
+      </div>
+      
+      <div class="interactive-example">
+        <h4>Step 1: Identify the ENTITIES (What "things" exist?)</h4>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin: 20px 0;">
+          <div style="background: #ffcc80; padding: 15px; border-radius: 10px; text-align: center; cursor: pointer;" onclick="addEntity('Game')">
+            <div style="font-size: 2em;">🎮</div>
+            <h5>GAME</h5>
+          </div>
+          <div style="background: #c8e6c9; padding: 15px; border-radius: 10px; text-align: center; cursor: pointer;" onclick="addEntity('Customer')">
+            <div style="font-size: 2em;">👤</div>
+            <h5>CUSTOMER</h5>
+          </div>
+          <div style="background: #bbdefb; padding: 15px; border-radius: 10px; text-align: center; cursor: pointer;" onclick="addEntity('Order')">
+            <div style="font-size: 2em;">🛒</div>
+            <h5>ORDER</h5>
+          </div>
+          <div style="background: #e1bee7; padding: 15px; border-radius: 10px; text-align: center; cursor: pointer;" onclick="addEntity('Console')">
+            <div style="font-size: 2em;">🖥️</div>
+            <h5>CONSOLE</h5>
+          </div>
+        </div>
+        
+        <h5>Your Entities:</h5>
+        <div id="entityList" style="min-height: 50px; padding: 10px; background: #f0f8ff; border-radius: 8px; margin: 10px 0;">
+          Click entities above to add them!
+        </div>
+      </div>
+      
+      <div class="interactive-example">
+        <h4>Step 2: Add ATTRIBUTES to Each Entity</h4>
+        <div id="attributeControls" style="margin: 15px 0;">
+          <p>Select an entity to add attributes:</p>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px;">
+            <input type="text" id="attrName" placeholder="Attribute name (e.g., Price)" style="padding: 8px; border-radius: 5px; border: 2px solid #6a11cb;">
+            <input type="text" id="attrType" placeholder="Type (e.g., DECIMAL)" style="padding: 8px; border-radius: 5px; border: 2px solid #2575fc;">
+            <button class="example-btn" onclick="addAttribute()">Add Attribute</button>
+          </div>
+        </div>
+        
+        <div id="attributesDisplay" style="min-height: 100px; padding: 15px; background: white; border-radius: 10px; border: 2px solid #ff7b00; margin-top: 15px;">
+          <p>Attributes will appear here...</p>
+        </div>
+      </div>
+      
+      <div class="interactive-example">
+        <h4>Step 3: Design RELATIONSHIPS</h4>
+        <p>Connect your entities together:</p>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 20px 0;">
+          <div style="background: #ffecb3; padding: 15px; border-radius: 10px; text-align: center;">
+            <h5>CUSTOMER</h5>
+            <div style="margin: 10px 0;">⬇️</div>
+            <p><strong>PLACES</strong></p>
+            <div style="margin: 10px 0;">⬇️</div>
+            <h5>ORDER</h5>
+            <p style="font-size: 0.9em; color: #666;">(1 Customer → Many Orders)</p>
+          </div>
+          
+          <div style="background: #c8e6c9; padding: 15px; border-radius: 10px; text-align: center;">
+            <h5>ORDER</h5>
+            <div style="margin: 10px 0;">⬇️</div>
+            <p><strong>CONTAINS</strong></p>
+            <div style="margin: 10px 0;">⬇️</div>
+            <h5>GAME</h5>
+            <p style="font-size: 0.9em; color: #666;">(1 Order → Many Games)</p>
+          </div>
+          
+          <div style="background: #bbdefb; padding: 15px; border-radius: 10px; text-align: center;">
+            <h5>GAME</h5>
+            <div style="margin: 10px 0;">⬇️</div>
+            <p><strong>RUNS_ON</strong></p>
+            <div style="margin: 10px 0;">⬇️</div>
+            <h5>CONSOLE</h5>
+            <p style="font-size: 0.9em; color: #666;">(1 Game → Many Consoles)</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="sql-box">
+        <h4>Step 4: Generate SQL Code!</h4>
+        <button class="example-btn" onclick="generateSQL()" style="background: #2ecc71; margin-bottom: 15px;">🎯 Generate My Database SQL!</button>
+        
+        <div id="sqlOutput" style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; margin-top: 15px; min-height: 100px; font-family: 'Courier New', monospace;">
+          <p>Your SQL code will appear here...</p>
+        </div>
+      </div>
+      
+      <div class="story-box">
+        <h4>🎉 Congratulations! You're Now a Database Designer!</h4>
+        <p>You've learned how to:</p>
+        <ul style="margin-left: 20px; margin-top: 10px;">
+          <li>🎯 Identify Entities (the "things")</li>
+          <li>🏷️ Add Attributes (their "details")</li>
+          <li>🔗 Design Relationships (their "friendships")</li>
+          <li>💻 Translate to SQL (the "computer language")</li>
+        </ul>
+        <p style="margin-top: 15px; font-size: 1.1em; color: #6a11cb; font-weight: bold;">
+          Next time you play a video game or use an app, remember: YOU know how their data is organized! 🚀
+        </p>
+      </div>
+    </div>
+    
+    <footer>
+      <p><strong>🎮 Entity-Relationship Model Adventure</strong><br>Designed for curious minds of all ages! © 2025</p>
+      <p style="margin-top: 10px; font-size: 0.9em; color: #bdc3c7;">
+        Remember: Every great database started with a simple E-R diagram!
+      </p>
+    </footer>
+  </div>
+
+  <script>
+    // Navigation between sections
+    document.querySelectorAll('.nav-btn').forEach(button => {
+      button.addEventListener('click', function() {
+        // Remove active class from all buttons and sections
+        document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.content-section').forEach(section => section.classList.remove('active'));
+        
+        // Add active class to clicked button
+        this.classList.add('active');
+        
+        // Show corresponding section
+        const sectionId = this.getAttribute('data-section');
+        document.getElementById(sectionId).classList.add('active');
+        
+        // Update progress tracker
+        updateProgressTracker(sectionId);
+      });
+    });
+    
+    function updateProgressTracker(sectionId) {
+      const sections = ['basics', 'entities', 'relationships', 'sql', 'practice'];
+      const currentIndex = sections.indexOf(sectionId);
+      
+      document.querySelectorAll('.progress-step').forEach((step, index) => {
+        const stepNumber = step.querySelector('.step-number');
+        stepNumber.classList.remove('completed', 'current');
+        
+        if (index < currentIndex) {
+          stepNumber.classList.add('completed');
+        } else if (index === currentIndex) {
+          stepNumber.classList.add('current');
+        }
+      });
+    }
+    
+    // Attribute Types Display
+    const attributeExamples = {
+      'simple': {
+        title: "Simple Attribute",
+        description: "A basic, single piece of information that CANNOT be broken down further.",
+        example: "Student's Age = 15 (just a number)",
+        emoji: "🔢",
+        sql: "Age INT"
+      },
+      'composite': {
+        title: "Composite Attribute",
+        description: "Made of MULTIPLE smaller parts that make sense together.",
+        example: "Address = House# + Street + City + Country",
+        emoji: "🏠",
+        sql: "Address VARCHAR(200)"
+      },
+      'multivalued': {
+        title: "Multi-valued Attribute",
+        description: "Can have MORE THAN ONE value for the same entity.",
+        example: "Phone Numbers = 024-1234567, 050-9876543",
+        emoji: "📱📱",
+        sql: "PhoneNumbers VARCHAR(100)[]"
+      },
+      'derived': {
+        title: "Derived Attribute",
+        description: "Calculated FROM other attributes (not stored directly).",
+        example: "Age = Current Year - Birth Year",
+        emoji: "🧮",
+        sql: "Age AS (YEAR(CURDATE()) - YEAR(BirthDate))"
+      },
+      'key': {
+        title: "Key Attribute",
+        description: "UNIQUE identifier that NOBODY else can have.",
+        example: "Student ID = STU2024001",
+        emoji: "🔑",
+        sql: "StudentID INT PRIMARY KEY"
+      }
+    };
+    
+    function showAttributeType(type) {
+      const attr = attributeExamples[type];
+      const display = document.getElementById('attributeDisplay');
+      
+      display.innerHTML = `
+        <div style="display: flex; align-items: center; margin-bottom: 15px;">
+          <div style="font-size: 3em; margin-right: 15px;">${attr.emoji}</div>
+          <div>
+            <h4 style="color: #6a11cb; margin: 0;">${attr.title}</h4>
+            <p style="color: #666; margin: 5px 0;">${attr.description}</p>
+          </div>
+        </div>
+        <div style="background: #f8f9fa; padding: 10px; border-radius: 8px; margin: 10px 0;">
+          <strong>Example:</strong> ${attr.example}
+        </div>
+        <div style="background: #2c3e50; color: white; padding: 10px; border-radius: 8px; font-family: 'Courier New', monospace;">
+          <strong>SQL:</strong> ${attr.sql}
+        </div>
+      `;
+    }
+    
+    // Relationship Examples
+    const relationshipExamples = {
+      'treats': {
+        entities: "👨‍⚕️ DOCTOR → 😷 PATIENT",
+        type: "Many-to-Many",
+        description: "A doctor can treat MANY patients, and a patient can see MANY doctors",
+        example: "Dr. Smith treats 50 patients, Patient John sees 3 doctors",
+        sql: "CREATE TABLE Treatments (DoctorID INT, PatientID INT, Date DATE)"
+      },
+      'prescribes': {
+        entities: "👨‍⚕️ DOCTOR → 💊 MEDICINE",
+        type: "One-to-Many",
+        description: "One doctor can prescribe MANY medicines, but each prescription has ONE doctor",
+        example: "Dr. Jones prescribes Aspirin, Paracetamol, and Vitamins",
+        sql: "CREATE TABLE Prescriptions (PrescriptionID INT, DoctorID INT, MedicineID INT)"
+      },
+      'takes': {
+        entities: "😷 PATIENT → 💊 MEDICINE",
+        type: "Many-to-Many",
+        description: "A patient can take MANY medicines, and a medicine can be taken by MANY patients",
+        example: "John takes Aspirin and Vitamins, Aspirin is taken by 100 patients",
+        sql: "CREATE TABLE PatientMeds (PatientID INT, MedicineID INT, Dosage VARCHAR(50))"
+      },
+      'assigned': {
+        entities: "😷 PATIENT → 🛏️ WARD",
+        type: "One-to-Many",
+        description: "One ward can have MANY patients, but each patient is in ONE ward",
+        example: "Ward 5A has 20 patients, each patient is assigned to one ward",
+        sql: "ALTER TABLE Patients ADD WardID INT FOREIGN KEY REFERENCES Wards(WardID)"
+      }
+    };
+    
+    function showRelationship(type) {
+      const rel = relationshipExamples[type];
+      const display = document.getElementById('relationshipDisplay');
+      
+      display.innerHTML = `
+        <div style="text-align: center; margin-bottom: 15px;">
+          <h4 style="color: #2575fc; margin: 0;">${rel.entities}</h4>
+          <div style="background: ${rel.type.includes('Many-to-Many') ? '#f3e5f5' : '#e8f5e9'}; 
+                     padding: 8px; border-radius: 5px; display: inline-block; margin: 10px 0;">
+            <strong>${rel.type} Relationship</strong>
+          </div>
+        </div>
+        <p><strong>What it means:</strong> ${rel.description}</p>
+        <div style="background: #f8f9fa; padding: 10px; border-radius: 8px; margin: 10px 0;">
+          <strong>Real Example:</strong> ${rel.example}
+        </div>
+        <div style="background: #2c3e50; color: white; padding: 10px; border-radius: 8px; font-family: 'Courier New', monospace; margin-top: 10px;">
+          <strong>SQL Implementation:</strong><br>${rel.sql}
+        </div>
+      `;
+    }
+    
+    // SQL Query Examples
+    const queryExamples = {
+      'all': {
+        title: "Show ALL Students",
+        sql: `SELECT * FROM Students;`,
+        description: "The * means 'show me EVERYTHING' about all students",
+        result: "Displays: ID, Name, Age, Email for every student"
+      },
+      'filter': {
+        title: "Students taking MATH courses",
+        sql: `SELECT s.Name, s.Age 
+              FROM Students s
+              JOIN Enrollments e ON s.StudentID = e.StudentID
+              JOIN Courses c ON e.CourseID = c.CourseID
+              WHERE c.CourseName = 'Mathematics';`,
+        description: "JOIN connects tables, WHERE filters results",
+        result: "Shows only students enrolled in Math"
+      },
+      'join': {
+        title: "Students with their Courses",
+        sql: `SELECT s.Name AS StudentName, 
+                     c.CourseName, 
+                     e.Grade
+              FROM Students s
+              JOIN Enrollments e ON s.StudentID = e.StudentID
+              JOIN Courses c ON e.CourseID = c.CourseID
+              ORDER BY s.Name;`,
+        description: "JOINs 3 tables together, ORDER BY sorts alphabetically",
+        result: "Student names with their courses and grades"
+      },
+      'count': {
+        title: "Count how many Students",
+        sql: `SELECT COUNT(*) AS TotalStudents 
+              FROM Students;`,
+        description: "COUNT(*) counts ALL rows in the table",
+        result: "Displays: TotalStudents = 50 (or whatever number)"
+      }
+    };
+    
+    function showQuery(type) {
+      const query = queryExamples[type];
+      const display = document.getElementById('queryDisplay');
+      
+      display.innerHTML = `
+        <div style="color: #ffcc80; margin-bottom: 10px;">
+          <strong>${query.title}</strong>
+        </div>
+        <div style="background: rgba(255,255,255,0.1); padding: 10px; border-radius: 5px; margin: 10px 0;">
+          <span style="color: #ff7b00;">SQL:</span><br>
+          ${query.sql}
+        </div>
+        <div style="color: #bdc3c7; font-size: 0.9em;">
+          <strong>How it works:</strong> ${query.description}<br>
+          <strong>Result:</strong> ${query.result}
+        </div>
+      `;
+    }
+    
+    // Practice Zone Functions
+    let selectedEntities = [];
+    let entityAttributes = {};
+    
+    function addEntity(entityName) {
+      if (!selectedEntities.includes(entityName)) {
+        selectedEntities.push(entityName);
+        entityAttributes[entityName] = [];
+        updateEntityList();
+        updateAttributeControls();
+      }
+    }
+    
+    function updateEntityList() {
+      const list = document.getElementById('entityList');
+      if (selectedEntities.length === 0) {
+        list.innerHTML = 'Click entities above to add them!';
+      } else {
+        list.innerHTML = selectedEntities.map(entity => 
+          `<span style="display: inline-block; background: #6a11cb; color: white; padding: 5px 10px; border-radius: 5px; margin: 2px;">${entity}</span>`
+        ).join(' ');
+      }
+    }
+    
+    function updateAttributeControls() {
+      const controls = document.getElementById('attributeControls');
+      if (selectedEntities.length > 0) {
+        controls.innerHTML = `
+          <p>Add attributes for: 
+          <select id="selectedEntity" style="padding: 5px; border-radius: 5px; border: 2px solid #6a11cb;">
+            ${selectedEntities.map(entity => `<option value="${entity}">${entity}</option>`).join('')}
+          </select>
+          </p>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px;">
+            <input type="text" id="attrName" placeholder="Attribute name (e.g., Price)" style="padding: 8px; border-radius: 5px; border: 2px solid #6a11cb;">
+            <input type="text" id="attrType" placeholder="Type (e.g., DECIMAL)" style="padding: 8px; border-radius: 5px; border: 2px solid #2575fc;">
+            <button class="example-btn" onclick="addAttribute()">Add Attribute</button>
+          </div>
+        `;
+      }
+    }
+    
+    function addAttribute() {
+      const entity = document.getElementById('selectedEntity').value;
+      const name = document.getElementById('attrName').value;
+      const type = document.getElementById('attrType').value;
+      
+      if (name && type) {
+        entityAttributes[entity].push({ name, type });
+        displayAttributes();
+        
+        // Clear inputs
+        document.getElementById('attrName').value = '';
+        document.getElementById('attrType').value = '';
+      }
+    }
+    
+    function displayAttributes() {
+      const display = document.getElementById('attributesDisplay');
+      let html = '<h5>Entity Attributes:</h5>';
+      
+      for (const [entity, attrs] of Object.entries(entityAttributes)) {
+        if (attrs.length > 0) {
+          html += `<div style="margin-bottom: 15px;">
+            <strong>${entity}:</strong>
+            <div style="margin-left: 20px;">`;
+          
+          attrs.forEach(attr => {
+            html += `<div style="background: #e8f5e9; padding: 5px 10px; border-radius: 5px; margin: 3px; display: inline-block;">
+              ${attr.name} <span style="color: #666;">(${attr.type})</span>
+            </div>`;
+          });
+          
+          html += `</div></div>`;
+        }
+      }
+      
+      display.innerHTML = html;
+    }
+    
+    function generateSQL() {
+      const output = document.getElementById('sqlOutput');
+      let sql = '-- 🎮 VIDEO GAME STORE DATABASE SQL\n';
+      sql += '-- Generated from your E-R Design!\n\n';
+      
+      // Generate CREATE TABLE statements
+      selectedEntities.forEach(entity => {
+        sql += `CREATE TABLE ${entity} (\n`;
+        sql += `  ${entity}ID INT PRIMARY KEY,\n`;
+        
+        if (entityAttributes[entity]) {
+          entityAttributes[entity].forEach(attr => {
+            sql += `  ${attr.name} ${attr.type.toUpperCase()},\n`;
+          });
+        }
+        
+        // Remove last comma and add closing
+        sql = sql.slice(0, -2) + '\n);\n\n';
+      });
+      
+      // Add foreign key relationships
+      sql += '-- RELATIONSHIPS (Foreign Keys)\n';
+      sql += 'ALTER TABLE Orders ADD FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID);\n';
+      sql += 'ALTER TABLE OrderItems ADD FOREIGN KEY (OrderID) REFERENCES Orders(OrderID);\n';
+      sql += 'ALTER TABLE OrderItems ADD FOREIGN KEY (GameID) REFERENCES Games(GameID);\n';
+      sql += 'ALTER TABLE GameConsoles ADD FOREIGN KEY (GameID) REFERENCES Games(GameID);\n';
+      sql += 'ALTER TABLE GameConsoles ADD FOREIGN KEY (ConsoleID) REFERENCES Consoles(ConsoleID);\n\n';
+      
+      sql += '-- 🎉 DATABASE READY! You can now INSERT data and RUN queries!';
+      
+      output.innerHTML = `<pre style="white-space: pre-wrap; color: #2ecc71;">${sql}</pre>`;
+    }
+    
+    // Initialize with some examples
+    window.addEventListener('DOMContentLoaded', () => {
+      // Add some default entities for practice
+      setTimeout(() => {
+        addEntity('Game');
+        addEntity('Customer');
+        addEntity('Order');
+        
+        // Add some default attributes
+        entityAttributes['Game'] = [
+          { name: 'Title', type: 'VARCHAR(100)' },
+          { name: 'Price', type: 'DECIMAL(10,2)' },
+          { name: 'ReleaseDate', type: 'DATE' }
+        ];
+        
+        entityAttributes['Customer'] = [
+          { name: 'Name', type: 'VARCHAR(100)' },
+          { name: 'Email', type: 'VARCHAR(150)' },
+          { name: 'JoinDate', type: 'DATE' }
+        ];
+        
+        entityAttributes['Order'] = [
+          { name: 'OrderDate', type: 'DATE' },
+          { name: 'TotalAmount', type: 'DECIMAL(10,2)' },
+          { name: 'Status', type: 'VARCHAR(20)' }
+        ];
+        
+        updateEntityList();
+        updateAttributeControls();
+        displayAttributes();
+      }, 1000);
+    });
+  </script>
+</body>
+</html>
