@@ -480,81 +480,177 @@
                 </div>
             `
             },
-            // LESSON 1
+            // LESSON 1: Intro
             {
                 type: 'content',
                 title: "Introduction",
                 lessonTitle: "1. Intro",
                 html: `
                 <h2>Meet Python 🐍</h2>
-                <p>Python is reliable, simple, and powerful. Created by <strong>Guido van Rossum</strong>.</p>
+                <p>Python is reliable, simple, and powerful. Created by <strong>Guido van Rossum</strong> in 1991.</p>
                 <h3>Why learn it?</h3>
                 <ul>
                     <li><strong>Readable:</strong> Like English.</li>
                     <li><strong>Versatile:</strong> Web, Data, AI.</li>
+                    <li><strong>Popular:</strong> Used by Google, NASA, Netflix.</li>
                 </ul>
             `
             },
             {
                 type: 'content',
-                title: "Syntax",
+                title: "Syntax & Scope",
                 lessonTitle: "1. Intro",
                 html: `
-                <h2>Indentation</h2>
-                <p>Python uses <strong>whitespace</strong> instead of <code>{}</code>.</p>
+                <h2>Indentation Matters</h2>
+                <p>Python uses <strong>whitespace</strong> (indentation) to define blocks of code, instead of curly braces <code>{}</code>.</p>
                 <div class="code-block">
-                    <span class="keyword">if</span> True:<br>
-                    &nbsp;&nbsp;<span class="keyword">print</span>(<span class="string">"Inside!"</span>)
+                    <span class="keyword">if</span> 5 > 2:<br>
+                    &nbsp;&nbsp;<span class="keyword">print</span>(<span class="string">"This is inside the block!"</span>)<br>
+                    <span class="keyword">print</span>(<span class="string">"This is outside."</span>)
+                </div>
+                <p>If you skip indentation, Python will give you an <code>IndentationError</code>.</p>
+            `
+            },
+            {
+                type: 'quiz',
+                title: "Quiz 1: Basics",
+                lessonTitle: "1. Quiz",
+                questions: [
+                    { q: "Who created Python?", options: ["Elon Musk", "Guido van Rossum", "Bill Gates", "Mark Zuckerberg"], a: 1 },
+                    { q: "What defines a block of code in Python?", options: ["Curly Braces {}", "Indentation", "Parentheses ()", "Semicolons ;"], a: 1 },
+                    { q: "Python is known for being:", options: ["Hard to read", "Readable & Simple", "Only for web", "Slow to write"], a: 1 },
+                    { q: "Which symbol is used for comments?", options: ["//", "#", "<!--", "/*"], a: 1 },
+                    { q: "What happens if you skip indentation in a block?", options: ["It works fine", "Syntax/Indentation Error", "It runs slower", "Nothing"], a: 1 }
+                ]
+            },
+
+            // LESSON 2: Output
+            {
+                type: 'content',
+                title: "Output & Text",
+                lessonTitle: "2. Output",
+                html: `
+                <h2>Print Text</h2>
+                <p>Use the <code>print()</code> function to display text:</p>
+                <div class="code-block"><span class="keyword">print</span>(<span class="string">"Hello Alby!"</span>)</div>
+                <p>Each call prints on a new line by default.</p>
+                
+                <h3>Double vs Single Quotes</h3>
+                <p>You can use either:</p>
+                <div class="code-block">
+                    <span class="keyword">print</span>(<span class="string">"Double Quotes"</span>)<br>
+                    <span class="keyword">print</span>(<span class="string">'Single Quotes'</span>)
+                </div>
+                <p><strong>Note:</strong> Text MUST be inside quotes, or you'll get a <code>SyntaxError</code>.</p>
+            `
+            },
+            {
+                type: 'content',
+                title: "Advanced Printing",
+                lessonTitle: "2. Output",
+                html: `
+                <h2>Print Without New Line</h2>
+                <p>Use the <code>end</code> parameter to print on the same line:</p>
+                <div class="code-block">
+                    <span class="keyword">print</span>(<span class="string">"Hello"</span>, end=<span class="string">" "</span>)<br>
+                    <span class="keyword">print</span>(<span class="string">"World!"</span>)
+                </div>
+                <p>Output: <code>Hello World!</code> (all on one line)</p>
+
+                <h3>Print Numbers</h3>
+                <p>Numbers don't need quotes. You can even do math:</p>
+                <div class="code-block">
+                    <span class="keyword">print</span>(<span class="number">358</span>)<br>
+                    <span class="keyword">print</span>(<span class="number">3</span> + <span class="number">3</span>) <span class="comment"># Outputs 6</span>
                 </div>
             `
             },
             {
-                type: 'quiz',
-                title: "Quiz 1",
-                lessonTitle: "1. Quiz",
-                questions: [
-                    { q: "Creator of Python?", options: ["Elon Musk", "Guido van Rossum", "Bill Gates"], a: 1 },
-                    { q: "Block defined by?", options: ["Curly braces", "Indentation", "Square brackets"], a: 1 }
-                ]
-            },
-            // LESSON 2
-            {
                 type: 'content',
-                title: "Output",
+                title: "Mixing Data",
                 lessonTitle: "2. Output",
                 html: `
-                <h2>print()</h2>
-                <div class="code-block"><span class="keyword">print</span>(<span class="string">"Hello!"</span>)</div>
-                <p>Strings need quotes. Numbers don't.</p>
+                <h2>Mix Text and Numbers</h2>
+                <p>Combine them using a <strong>comma</strong>:</p>
+                <div class="code-block">
+                    <span class="keyword">print</span>(<span class="string">"I am"</span>, <span class="number">35</span>, <span class="string">"years old."</span>)
+                </div>
+                <p>Python automatically adds a space between items when using a comma.</p>
             `
             },
             {
                 type: 'quiz',
-                title: "Quiz 2",
+                title: "Quiz 2: Printing",
                 lessonTitle: "2. Quiz",
                 questions: [
-                    { q: "Output function?", options: ["log()", "print()", "show()"], a: 1 },
-                    { q: "print(10+10)", options: ["1010", "20", "Error"], a: 1 }
+                    { q: "Which function displays output?", options: ["echo()", "print()", "show()", "out()"], a: 1 },
+                    { q: "How do you check for no new line?", options: ["no_line=True", "end=' '", "sep=' '", "stop=' '"], a: 1 },
+                    { q: "What produces an error?", options: ['print("Hi")', "print(5)", 'print(Hi)', 'print("5")'], a: 2 },
+                    { q: "Result of print(2 * 3)?", options: ["23", "6", "2*3", "Error"], a: 1 },
+                    { q: "How to correct: print('I am' 30)", options: ["Add a plus +", "Add a comma ,", "Add quotes", "Nothing"], a: 1 }
                 ]
             },
-            // LESSON 3
+
+            // LESSON 3: Input
             {
                 type: 'content',
-                title: "Input",
+                title: "Input Basics",
                 lessonTitle: "3. Input",
                 html: `
-                <h2>input()</h2>
-                <div class="code-block">name = <span class="keyword">input</span>(<span class="string">"Name?"</span>)</div>
-                <p>Always returns a string.</p>
+                <h2>The input() Function</h2>
+                <p>Pauses the program to get data from the user:</p>
+                <div class="code-block">
+                    name = <span class="keyword">input</span>(<span class="string">"What is your name? "</span>)<br>
+                    <span class="keyword">print</span>(<span class="string">"Hello"</span>, name)
+                </div>
+                <p>The text inside <code>input()</code> is called the <strong>prompt</strong>.</p>
+            `
+            },
+            {
+                type: 'content',
+                title: "Input Types",
+                lessonTitle: "3. Input",
+                html: `
+                <h2>Input is a String</h2>
+                <p><code>input()</code> <strong>ALWAYS</strong> returns a string (text), even if you type a number.</p>
+                <div class="code-block">
+                    age = <span class="keyword">input</span>(<span class="string">"Age: "</span>) <span class="comment"># "25"</span><br>
+                    <span class="comment"># math fails: age + 1 => Error!</span>
+                </div>
+                <h3>Casting</h3>
+                <p>To do math, convert (cast) the input:</p>
+                <div class="code-block">
+                    age = <span class="keyword">int</span>(<span class="keyword">input</span>(<span class="string">"Age: "</span>))<br>
+                    <span class="keyword">print</span>(age + <span class="number">1</span>) <span class="comment"># Works!</span>
+                </div>
+            `
+            },
+            {
+                type: 'content',
+                title: "Putting it Together",
+                lessonTitle: "3. Input",
+                html: `
+                <h2>Full Code Example</h2>
+                <p>Let's combine everything we know:</p>
+                <div class="code-block">
+                    name = <span class="keyword">input</span>(<span class="string">"What is your name? "</span>)<br>
+                    age = <span class="keyword">int</span>(<span class="keyword">input</span>(<span class="string">"How old are you? "</span>))<br><br>
+                    <span class="keyword">print</span>(<span class="string">"Welcome,"</span>, name)<br>
+                    <span class="keyword">print</span>(<span class="string">"Next year you'll be"</span>, age + <span class="number">1</span>)
+                </div>
+                <p>This program takes a string and a number (converted) and uses both!</p>
             `
             },
             {
                 type: 'quiz',
-                title: "Quiz 3",
+                title: "Quiz 3: Input",
                 lessonTitle: "3. Quiz",
                 questions: [
-                    { q: "Get user data?", options: ["get()", "input()"], a: 1 },
-                    { q: "Return type?", options: ["Int", "String"], a: 1 }
+                    { q: "Function to get user data?", options: ["get()", "input()", "read()", "scan()"], a: 1 },
+                    { q: "input() always returns output of type:", options: ["Integer", "String", "Float", "Boolean"], a: 1 },
+                    { q: "Function to convert string to integer?", options: ["str()", "float()", "int()", "num()"], a: 2 },
+                    { q: "What is the text inside input() called?", options: ["The value", "The variable", "The prompt", "The answer"], a: 2 },
+                    { q: "If user types 5 into input(), what is it?", options: ["integer 5", "string '5'", "float 5.0", "boolean True"], a: 1 }
                 ]
             },
             {
@@ -565,7 +661,7 @@
                 <div class="welcome-slide">
                     <div style="font-size: 4rem;">🎉</div>
                     <h1 class="welcome-title">Completed!</h1>
-                    <p>You are a Python Beginner Master.</p>
+                    <p>You refer Python Beginner Master.</p>
                 </div>
             `
             }
