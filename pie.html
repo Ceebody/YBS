@@ -5,7 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Python Mastery - Interactive Course</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Dancing+Script:wght@600&display=swap"
+        rel="stylesheet">
     <style>
         :root {
             --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -19,7 +21,6 @@
             --error: #F56565;
         }
 
-        /* Animated Background */
         body {
             font-family: 'Poppins', sans-serif;
             margin: 0;
@@ -32,7 +33,6 @@
             background-size: 400% 400%;
             animation: gradientBG 15s ease infinite;
             overflow: hidden;
-            /* Prevent scroll on body */
         }
 
         @keyframes gradientBG {
@@ -49,18 +49,14 @@
             }
         }
 
-        /* Glassmorphism Container */
         #app-container {
             width: 100%;
             max-width: 900px;
             height: 100vh;
             height: 100dvh;
-            /* Mobile viewport fix */
             background: var(--glass-bg);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            border-radius: 0;
-            /* Full screen on mobile */
             box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
             border: 1px solid var(--glass-border);
             display: flex;
@@ -110,6 +106,19 @@
             filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.2));
         }
 
+        .score-pill {
+            background: #fff;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #d69e2e;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
         .lesson-badge {
             background: linear-gradient(90deg, #667eea, #764ba2);
             color: white;
@@ -117,7 +126,6 @@
             border-radius: 15px;
             font-size: 0.75rem;
             font-weight: 600;
-            box-shadow: 0 4px 6px rgba(118, 75, 162, 0.3);
         }
 
         .progress-container {
@@ -165,7 +173,7 @@
             }
         }
 
-        /* Welcome Page Styles */
+        /* Welcome & Typography */
         .welcome-slide {
             height: 100%;
             display: flex;
@@ -195,27 +203,20 @@
         .dedication {
             margin-top: auto;
             font-family: 'Dancing Script', cursive;
-            /* Fallback to cursive if not loaded */
-            font-style: italic;
+            font-size: 1.2rem;
             color: #d69e2e;
-            font-weight: 600;
-            border-top: 1px solid rgba(0, 0, 0, 0.1);
-            padding-top: 20px;
-            width: 100%;
+            opacity: 0.9;
         }
 
-        /* Typography */
         h2 {
             color: var(--text-main);
             font-size: 1.8rem;
-            margin-bottom: 15px;
-            margin-top: 0;
+            margin: 0 0 15px 0;
         }
 
         h3 {
             color: var(--accent-purple);
-            margin-top: 25px;
-            margin-bottom: 15px;
+            margin: 25px 0 15px 0;
             display: flex;
             align-items: center;
             gap: 10px;
@@ -237,29 +238,16 @@
             color: var(--text-secondary);
         }
 
-        /* Stylish Code Blocks */
         .code-block {
             background: #2d3748;
             color: #e2e8f0;
-            padding: 20px;
+            padding: 15px;
             border-radius: 12px;
             font-family: 'Consolas', monospace;
             overflow-x: auto;
             margin: 20px 0;
             border: 2px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
             position: relative;
-        }
-
-        .code-block::after {
-            content: 'PYTHON';
-            position: absolute;
-            top: 5px;
-            right: 10px;
-            font-size: 0.6rem;
-            color: rgba(255, 255, 255, 0.3);
-            font-weight: bold;
-            letter-spacing: 1px;
         }
 
         .keyword {
@@ -280,7 +268,7 @@
             font-style: italic;
         }
 
-        /* Quiz Cards */
+        /* Quiz */
         .question-card {
             background: white;
             border-radius: 16px;
@@ -288,12 +276,6 @@
             margin-bottom: 20px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
             transition: transform 0.2s;
-            border: 2px solid transparent;
-        }
-
-        .question-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
         }
 
         .option-label {
@@ -305,7 +287,6 @@
             margin-top: 10px;
             cursor: pointer;
             transition: all 0.2s;
-            font-weight: 500;
         }
 
         .option-label:hover {
@@ -346,15 +327,14 @@
 
         .footer-brand {
             position: absolute;
-            bottom: 15px;
+            bottom: 18px;
             left: 50%;
             transform: translateX(-50%);
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             color: #a0aec0;
             text-transform: uppercase;
             letter-spacing: 1.5px;
             font-weight: 700;
-            pointer-events: none;
         }
 
         .btn {
@@ -363,7 +343,7 @@
             border-radius: 50px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.2s;
             font-size: 0.95rem;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
@@ -376,34 +356,74 @@
         .btn-next {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            box-shadow: 0 10px 15px -3px rgba(118, 75, 162, 0.4);
         }
 
         .btn-next:hover {
             transform: translateY(-2px);
-            filter: brightness(1.1);
         }
 
         .btn:disabled {
             opacity: 0.4;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
+            pointer-events: none;
         }
 
-        @media (min-width: 768px) {
-            header {
-                flex-direction: row;
-                gap: 20px;
+        /* --- Gamification Animations --- */
+        #points-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            background: radial-gradient(circle, #FFD700 0%, #F57F17 100%);
+            color: white;
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            font-weight: 800;
+            z-index: 1000;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.6);
+            border: 4px solid #fff;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        @keyframes popupAnim {
+            0% {
+                transform: translate(-50%, -50%) scale(0) rotate(-45deg);
+                opacity: 0;
             }
 
-            .progress-container {
-                flex-grow: 1;
+            50% {
+                transform: translate(-50%, -50%) scale(1.2) rotate(0deg);
+                opacity: 1;
             }
 
-            .header-top {
-                width: auto;
-                gap: 15px;
+            70% {
+                transform: translate(-50%, -50%) scale(1) rotate(0deg);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translate(-50%, -150%) scale(1.5);
+                opacity: 0;
+            }
+        }
+
+        .confetti-piece {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            top: -20px;
+            z-index: 999;
+            animation: fall linear forwards;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(110vh) rotate(720deg);
             }
         }
     </style>
@@ -411,11 +431,19 @@
 
 <body>
 
+    <div id="points-popup">
+        <div style="font-size:3rem;">🏆</div>
+        <div>+100</div>
+    </div>
+
     <div id="app-container">
-        <header id="app-header" style="opacity: 0;"> <!-- Hidden on welcome screen -->
+        <header id="app-header" style="opacity: 0;">
             <div class="header-top">
                 <h1><span class="logo-icon">🐍</span> Python</h1>
-                <div class="lesson-badge" id="lesson-badge">Start</div>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <div class="score-pill">⭐ <span id="score-val">0</span></div>
+                    <div class="lesson-badge" id="lesson-badge">Start</div>
+                </div>
             </div>
             <div class="progress-container">
                 <div class="progress-bar" id="progress-bar"></div>
@@ -423,19 +451,18 @@
         </header>
 
         <main id="main-content">
-            <!-- Content injected via JS -->
+            <!-- JS Injected -->
         </main>
 
         <footer>
             <button class="btn btn-prev" id="btn-prev" onclick="app.prevSlide()">← Back</button>
-            <span class="footer-brand">Ceebody Edtech</span>
+            <div class="footer-brand">Ceebody Edtech</div>
             <button class="btn btn-next" id="btn-next" onclick="app.nextSlide()">Next →</button>
         </footer>
     </div>
 
     <script>
         const curriculum = [
-            // WELCOME PAGE
             {
                 type: 'welcome',
                 title: "Welcome",
@@ -444,126 +471,101 @@
                 <div class="welcome-slide">
                     <div style="font-size: 4rem; margin-bottom: 20px;">🚀</div>
                     <h1 class="welcome-title">Master Python</h1>
-                    <p class="intro-text">Embark on an interactive journey to learn the language of the future. Simple, powerful, and fun.</p>
-                    <div style="background: rgba(255,215,0,0.1); padding: 15px 30px; border-radius: 50px; border: 1px solid rgba(255,215,0,0.3);">
-                        <span style="color: #d69e2e; font-weight: bold;">Click 'Start Journey' to begin</span>
+                    <p class="intro-text">Start your coding journey today.</p>
+                    <div style="background: rgba(255,215,0,0.1); padding: 10px 20px; border-radius: 50px; border: 1px solid rgba(255,215,0,0.3); margin-bottom: 20px;">
+                        <span style="color: #d69e2e; font-weight: bold;">Earn Points & Badges!</span>
                     </div>
-                    <div class="dedication">
-                        "This Piece is dedicated to ALBY"
-                    </div>
+                    <button class="btn btn-next" onclick="app.nextSlide()" style="padding: 15px 40px; font-size: 1.1rem; margin-bottom: 30px;">Start Journey →</button>
+                    <div class="dedication">"This Piece is dedicated to ALBY"</div>
                 </div>
             `
             },
-            // LESSON 1: INTRODUCTION
+            // LESSON 1
             {
                 type: 'content',
                 title: "Introduction",
                 lessonTitle: "1. Intro",
                 html: `
                 <h2>Meet Python 🐍</h2>
-                <p>Python is reliable, simple, and incredibly powerful. Created by <strong>Guido van Rossum</strong> in 1991, it powers everything from Instagram to NASA.</p>
-                <h3>Why it rules:</h3>
+                <p>Python is reliable, simple, and powerful. Created by <strong>Guido van Rossum</strong>.</p>
+                <h3>Why learn it?</h3>
                 <ul>
-                    <li><strong>Readability:</strong> Code looks like English.</li>
-                    <li><strong>Versatility:</strong> Web, AI, Data - it does it all.</li>
-                    <li><strong>Community:</strong> Massive support network.</li>
+                    <li><strong>Readable:</strong> Like English.</li>
+                    <li><strong>Versatile:</strong> Web, Data, AI.</li>
                 </ul>
             `
             },
             {
                 type: 'content',
-                title: "Syntax Rules",
+                title: "Syntax",
                 lessonTitle: "1. Intro",
                 html: `
-                <h2>Invisible Structure</h2>
-                <p>In Python, <strong>whitespace matters</strong>. We don't use <code>{}</code> to group code; we use indentation.</p>
-                
+                <h2>Indentation</h2>
+                <p>Python uses <strong>whitespace</strong> instead of <code>{}</code>.</p>
                 <div class="code-block">
                     <span class="keyword">if</span> True:<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">print</span>(<span class="string">"This is inside the if"</span>)<br>
-                    <span class="keyword">print</span>(<span class="string">"This is outside"</span>)
+                    &nbsp;&nbsp;<span class="keyword">print</span>(<span class="string">"Inside!"</span>)
                 </div>
-                <p>Think of indentation as the grammar of Python. Without it, the code falls apart!</p>
             `
             },
             {
                 type: 'quiz',
-                title: "Checkpoint 1",
+                title: "Quiz 1",
                 lessonTitle: "1. Quiz",
                 questions: [
-                    { q: "Who created Python?", options: ["Elon Musk", "Guido van Rossum", "Ada Lovelace"], a: 1 },
-                    { q: "What defines a block of code?", options: ["Curly Braces", "Indentation", "Keywords"], a: 1 },
-                    { q: "Python is focused on...", options: ["Speed", "Readability", "Complexity"], a: 1 }
+                    { q: "Creator of Python?", options: ["Elon Musk", "Guido van Rossum", "Bill Gates"], a: 1 },
+                    { q: "Block defined by?", options: ["Curly braces", "Indentation", "Square brackets"], a: 1 }
                 ]
             },
-            // LESSON 2: OUTPUT
+            // LESSON 2
             {
                 type: 'content',
-                title: "Speaking Out",
+                title: "Output",
                 lessonTitle: "2. Output",
                 html: `
-                <h2>The print() Function</h2>
-                <p>The simplest way to talk to the world is <code>print()</code>.</p>
-                <div class="code-block">
-                    <span class="keyword">print</span>(<span class="string">"Hello, Alby!"</span>)
-                </div>
-                <h3>Superpowers:</h3>
-                <p>You can do math directly inside it!</p>
-                <div class="code-block">
-                    <span class="keyword">print</span>(<span class="number">5</span> * <span class="number">10</span>) <span class="comment"># Outputs 50</span>
-                </div>
+                <h2>print()</h2>
+                <div class="code-block"><span class="keyword">print</span>(<span class="string">"Hello!"</span>)</div>
+                <p>Strings need quotes. Numbers don't.</p>
             `
             },
             {
                 type: 'quiz',
-                title: "Checkpoint 2",
+                title: "Quiz 2",
                 lessonTitle: "2. Quiz",
                 questions: [
-                    { q: "Function to display text?", options: ["show()", "print()", "out()"], a: 1 },
-                    { q: "print(10 + 5) outputs?", options: ["105", "15", "Error"], a: 1 },
-                    { q: "Strings need...", options: ["Quotes", "Brackets", "Nothing"], a: 0 }
+                    { q: "Output function?", options: ["log()", "print()", "show()"], a: 1 },
+                    { q: "print(10+10)", options: ["1010", "20", "Error"], a: 1 }
                 ]
             },
-            // LESSON 3: INPUT
+            // LESSON 3
             {
                 type: 'content',
-                title: "Listening In",
+                title: "Input",
                 lessonTitle: "3. Input",
                 html: `
-                <h2>The input() Function</h2>
-                <p>Make your program interactive. <code>input()</code> pauses and waits for the user.</p>
-                <div class="code-block">
-                    user = <span class="keyword">input</span>(<span class="string">"Who are you? "</span>)
-                </div>
-                <h3>The Catch</h3>
-                <p>Input always comes in as text. To do math, you must <strong>cast</strong> it.</p>
-                <div class="code-block">
-                    age = <span class="keyword">int</span>(<span class="keyword">input</span>(<span class="string">"Age? "</span>))
-                </div>
+                <h2>input()</h2>
+                <div class="code-block">name = <span class="keyword">input</span>(<span class="string">"Name?"</span>)</div>
+                <p>Always returns a string.</p>
             `
             },
             {
                 type: 'quiz',
-                title: "Checkpoint 3",
+                title: "Quiz 3",
                 lessonTitle: "3. Quiz",
                 questions: [
-                    { q: "Get user data with...", options: ["input()", "get()", "scan()"], a: 0 },
-                    { q: "input() returns...", options: ["Integer", "String", "Float"], a: 1 },
-                    { q: "Convert string to number?", options: ["str()", "int()", "num()"], a: 1 }
+                    { q: "Get user data?", options: ["get()", "input()"], a: 1 },
+                    { q: "Return type?", options: ["Int", "String"], a: 1 }
                 ]
             },
             {
                 type: 'finish',
-                title: "Complete",
+                title: "Done",
                 lessonTitle: "Finish",
                 html: `
                 <div class="welcome-slide">
-                    <div style="font-size: 4rem; margin-bottom: 20px;">🎉</div>
-                    <h1 class="welcome-title">Mission Accomplished!</h1>
-                    <p class="intro-text">You've mastered the basics. The journey has just begun.</p>
-                    <div style="margin-top: 30px; opacity: 0.8; font-size: 0.9rem;">
-                        Course by <strong>Ceebody Edtech</strong>
-                    </div>
+                    <div style="font-size: 4rem;">🎉</div>
+                    <h1 class="welcome-title">Completed!</h1>
+                    <p>You are a Python Beginner Master.</p>
                 </div>
             `
             }
@@ -571,10 +573,12 @@
 
         const app = {
             currentIndex: 0,
+            score: 0,
             mainEl: document.getElementById('main-content'),
             barEl: document.getElementById('progress-bar'),
             badgeEl: document.getElementById('lesson-badge'),
             headerEl: document.getElementById('app-header'),
+            scoreEl: document.getElementById('score-val'),
             prevBtn: document.getElementById('btn-prev'),
             nextBtn: document.getElementById('btn-next'),
 
@@ -585,19 +589,20 @@
             renderSlide() {
                 const slide = curriculum[this.currentIndex];
 
-                // Toggle Header Visibility
-                if (slide.type === 'welcome' || slide.type === 'finish') {
-                    this.headerEl.style.opacity = '0';
+                // Header Visibility
+                this.headerEl.style.opacity = (slide.type === 'welcome') ? '0' : '1';
+
+                // Buttons Visibility for Welcome
+                if (slide.type === 'welcome') {
+                    document.querySelector('footer').style.display = 'none';
                 } else {
-                    this.headerEl.style.opacity = '1';
+                    document.querySelector('footer').style.display = 'flex';
                 }
 
-                // Update Header Info
                 this.badgeEl.textContent = slide.lessonTitle;
-                const progressPercent = ((this.currentIndex) / (curriculum.length - 1)) * 100;
+                const progressPercent = (this.currentIndex / (curriculum.length - 1)) * 100;
                 this.barEl.style.width = `${progressPercent}%`;
 
-                // Render Body
                 this.mainEl.innerHTML = '';
                 const container = document.createElement('div');
                 container.className = 'slide active';
@@ -605,30 +610,16 @@
                 if (slide.type === 'welcome' || slide.type === 'finish') {
                     container.innerHTML = slide.html;
                 } else if (slide.type === 'quiz') {
-                    container.innerHTML = `
-                    <h2>${slide.title}</h2>
-                    <p style="color: var(--text-secondary);">Answer correctly to unlock the next level.</p>
-                    <div id="quiz-container"></div>
-                `;
+                    container.innerHTML = `<h2>${slide.title}</h2><div id="quiz-container"></div>`;
                     this.renderQuiz(slide.questions, container.querySelector('#quiz-container'));
                 } else {
-                    container.innerHTML = slide.title && slide.type !== 'welcome' ? `<h2>${slide.title}</h2>${slide.html}` : slide.html;
+                    container.innerHTML = `<h2>${slide.title}</h2>${slide.html}`;
                 }
 
                 this.mainEl.appendChild(container);
 
-                // Button Logic
-                this.prevBtn.style.visibility = this.currentIndex === 0 ? 'hidden' : 'visible';
-
-                if (this.currentIndex === 0) {
-                    this.nextBtn.innerHTML = "Start Journey →";
-                } else if (this.currentIndex === curriculum.length - 1) {
-                    this.nextBtn.innerHTML = "Restart ⟳";
-                } else {
-                    this.nextBtn.innerHTML = "Next →";
-                }
-
-                this.mainEl.scrollTop = 0;
+                this.prevBtn.style.visibility = (this.currentIndex <= 1) ? 'hidden' : 'visible';
+                this.nextBtn.innerHTML = (this.currentIndex === curriculum.length - 1) ? "Restart ⟳" : "Next →";
             },
 
             renderQuiz(questions, parent) {
@@ -637,17 +628,11 @@
                     qCard.className = 'question-card';
                     qCard.id = `q-card-${qIdx}`;
 
-                    let optionsHtml = '';
-                    q.options.forEach((opt, optIdx) => {
-                        optionsHtml += `
-                        <label class="option-label">
-                            <input type="radio" name="q${qIdx}" value="${optIdx}">
-                            ${opt}
-                        </label>
-                    `;
+                    let opts = '';
+                    q.options.forEach((opt, idx) => {
+                        opts += `<label class="option-label"><input type="radio" name="q${qIdx}" value="${idx}"> ${opt}</label>`;
                     });
-
-                    qCard.innerHTML = `<div style="font-weight:600; margin-bottom:10px;">${qIdx + 1}. ${q.q}</div>${optionsHtml}`;
+                    qCard.innerHTML = `<div style="font-weight:600; margin-bottom:10px;">${qIdx + 1}. ${q.q}</div>${opts}`;
                     parent.appendChild(qCard);
                 });
             },
@@ -661,6 +646,11 @@
 
             nextSlide() {
                 const slide = curriculum[this.currentIndex];
+                if (slide.type === 'welcome') {
+                    this.currentIndex++;
+                    this.renderSlide();
+                    return;
+                }
                 if (slide.type === 'finish') {
                     location.reload();
                     return;
@@ -668,8 +658,12 @@
 
                 if (slide.type === 'quiz') {
                     if (this.validateQuiz()) {
-                        this.currentIndex++;
-                        this.renderSlide();
+                        // Reward!
+                        this.triggerReward();
+                        setTimeout(() => {
+                            this.currentIndex++;
+                            this.renderSlide();
+                        }, 1500); // Wait for animation
                     }
                 } else {
                     this.currentIndex++;
@@ -684,7 +678,6 @@
                     const card = document.getElementById(`q-card-${qIdx}`);
                     const selected = document.querySelector(`input[name="q${qIdx}"]:checked`);
                     card.classList.remove('correct', 'incorrect');
-
                     if (!selected || parseInt(selected.value) !== q.a) {
                         allCorrect = false;
                         card.classList.add('incorrect');
@@ -692,12 +685,39 @@
                         card.classList.add('correct');
                     }
                 });
-
                 if (!allCorrect) {
                     if (navigator.vibrate) navigator.vibrate(200);
-                    alert("Keep trying! Get all answers correct to proceed.");
+                    alert("Incorrect. Try again!");
                 }
                 return allCorrect;
+            },
+
+            triggerReward() {
+                // 1. Popup Animation
+                const popup = document.getElementById('points-popup');
+                popup.style.animation = 'none';
+                popup.offsetHeight; /* trigger reflow */
+                popup.style.animation = 'popupAnim 1.5s ease-out forwards';
+
+                // 2. Score Update
+                this.score += 100;
+                this.scoreEl.innerText = this.score;
+
+                // 3. Confetti
+                this.fireConfetti();
+            },
+
+            fireConfetti() {
+                const colors = ['#FFD700', '#FF6347', '#00BFFF', '#32CD32'];
+                for (let i = 0; i < 50; i++) {
+                    const conf = document.createElement('div');
+                    conf.className = 'confetti-piece';
+                    conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    conf.style.left = Math.random() * 100 + 'vw';
+                    conf.style.animationDuration = (Math.random() * 2 + 1) + 's';
+                    document.body.appendChild(conf);
+                    setTimeout(() => conf.remove(), 3000);
+                }
             }
         };
 
