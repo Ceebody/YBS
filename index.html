@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YBS Prefects System | Yeriel Bracha School</title>
+
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/x-icon" href="assets/favico.ico">
+</head>
+
+<body>
+
+    <header id="mainHeader" class="role-header" style="display: none;">
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <img src="assets/favico.ico" alt="YBS Logo" class="school-logo" style="width: 40px; height: 40px;">
+            <div>
+                <h2 style="font-size: 1.2rem; margin: 0; color: #fff;">YBS Prefects System</h2>
+                <span id="roleBadge"
+                    style="font-size: 0.7rem; background: var(--primary); color: var(--accent); padding: 2px 8px; border-radius: 10px; font-weight: 700; text-transform: uppercase;">ADMIN</span>
+            </div>
+        </div>
+        <button onclick="location.reload()" class="btn-logout" style="padding: 8px 15px; font-size: 0.8rem;">Logout /
+            Exit</button>
+    </header>
+
+    <!-- WELCOME PAGE -->
+    <section id="welcome" class="welcome-container">
+        <div class="welcome-card">
+            <img src="assets/favico.ico" alt="YBS Logo" class="welcome-logo">
+            <h1>Yeriel Bracha School</h1>
+            <p>Prefects Management & Vetting System</p>
+
+            <div class="role-selector">
+                <select id="roleDropdown" onchange="handleRoleSelection()">
+                    <option value="" disabled selected>Select your portal...</option>
+                    <option value="admin">Administrator Portal</option>
+                    <option value="vetting">Vetting Officer Portal</option>
+                    <option value="voting">Student Voting Portal</option>
+                </select>
+            </div>
+
+            <div class="welcome-footer">
+                <p>Ensuring transparency and integrity in leadership.</p>
+                <p style="margin-top: 10px;">&copy; 2026 YBS Administration</p>
+            </div>
+        </div>
+    </section>
+
+    <div id="systemContent" style="display: none;">
+        <main style="max-width: 1200px; margin: 0 auto; padding: 1rem;">
+            <!-- ADMIN DASHBOARD -->
+            <section id="admin" class="page">
+                <div class="dashboard-grid">
+                    <div class="stat-card">
+                        <h4>Total Candidates</h4>
+                        <div id="statCandidates" class="value">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Total Votes Cast</h4>
+                        <div id="statVotes" class="value">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Vetting Progress</h4>
+                        <div id="statVetting" class="value">0%</div>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 2rem; display: flex; justify-content: flex-end;">
+                    <button onclick="toggleModal('candidateModal', true)" class="btn-primary"
+                        style="display: flex; align-items: center; gap: 8px;">
+                        <span>➕</span> Register New Candidate
+                    </button>
+                </div>
+
+                <div class="card" style="min-height: 500px;">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; border-bottom: 2px solid var(--glass-border); padding-bottom: 15px;">
+                        <h3 style="margin: 0;">Live Election Results</h3>
+                        <span class="status-badge"
+                            style="margin: 0; background: rgba(43, 108, 176, 0.1); color: #2b6cb0;">Real-time
+                            Comparison</span>
+                    </div>
+                    <div id="groupedResults" class="results-grid">
+                        <!-- Grouped results rendered dynamically -->
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Recent System Activity</h3>
+                    <div id="activityLog" class="activity-log">
+                        <div class="log-entry"><span>System Initialized</span><span class="timestamp">Just now</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CANDIDATE ENTRY MODAL -->
+            <div id="candidateModal" class="modal-overlay">
+                <div class="modal-content card">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <h3 style="margin: 0;">Register New Candidate</h3>
+                        <button onclick="toggleModal('candidateModal', false)"
+                            style="background: none; color: var(--text-light); font-size: 1.5rem; padding: 0; box-shadow: none;">&times;</button>
+                    </div>
+                    <div class="form-group">
+                        <input id="name" placeholder="Student Full Name">
+                        <select id="position">
+                            <option value="" disabled selected>Select Position</option>
+                            <option>Headprefect</option>
+                            <option>Chaplain</option>
+                            <option>Sports & Health</option>
+                            <option>Sanitation</option>
+                            <option>Library & ICT Lab</option>
+                        </select>
+                        <button onclick="addCandidate(); toggleModal('candidateModal', false);"
+                            style="width: 100%;">Register Candidate</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VETTING PORTAL -->
+            <section id="vetting" class="page" style="max-width: 1000px;">
+                <div class="dashboard-grid">
+                    <div class="stat-card" style="border-top-color: var(--accent);">
+                        <h4>Officer Status</h4>
+                        <div id="authStatus" class="value" style="font-size: 1.2rem;">Guest</div>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Candidates Vetted</h4>
+                        <div id="statVettedCount" class="value">0</div>
+                    </div>
+                </div>
+
+                <!-- AUTH SECTION -->
+                <div id="authSection" class="card">
+                    <h3>Officer Access</h3>
+                    <p style="font-size: 0.85rem; color: var(--text-light); margin-bottom: 1.5rem;">Please register or
+                        login with your official credentials to begin evaluation.</p>
+                    <div class="form-group">
+                        <input id="offName" placeholder="Full Name">
+                        <input id="offContact" type="tel" placeholder="Contact Number">
+                        <div style="display: flex; gap: 10px;">
+                            <button onclick="registerOfficer()"
+                                style="flex: 1; background: var(--accent);">Register</button>
+                            <button onclick="loginOfficer()" style="flex: 1;">Login</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VETTING SECTION -->
+                <div id="vettingSection" style="display: none;">
+                    <div style="display: grid; grid-template-columns: 1fr 300px; gap: 20px;">
+                        <div>
+                            <h3>Candidate Evaluation</h3>
+                            <div id="candidates"></div>
+                        </div>
+                        <div class="card" style="height: fit-content;">
+                            <h3>Vetting Criteria</h3>
+                            <ul
+                                style="font-size: 0.85rem; list-style: none; padding: 0; display: flex; flex-direction: column; gap: 10px;">
+                                <li>✨ <b>Academic:</b> Academic performance & potential.</li>
+                                <li>👗 <b>Appearance:</b> Neatness and discipline in dress.</li>
+                                <li>🛂 <b>Discipline:</b> Past conduct and school record.</li>
+                                <li>🗣️ <b>Communication:</b> Confidence and clarity.</li>
+                                <li>🏃 <b>Participation:</b> Involvement in school activities.</li>
+                            </ul>
+                            <div
+                                style="margin-top: 1.5rem; padding: 10px; background: rgba(212, 175, 55, 0.1); border-radius: 8px; border: 1px dashed var(--primary);">
+                                <p style="font-size: 0.75rem;"><b>Note:</b> Scores are final once submitted. Ensure
+                                    evaluations are objective.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- EVALUATION RESULT VIEW -->
+                <div id="evaluationResultView" style="display: none;">
+                    <button onclick="backToVetting()"
+                        style="background: var(--text-light); margin-bottom: 1.5rem; padding: 8px 15px; font-size: 0.85rem;">←
+                        Back to Candidates</button>
+
+                    <div class="card" style="text-align: center; padding: 2rem;">
+                        <div id="resPhoto" class="candidate-photo-large"></div>
+                        <h2 id="resName" style="margin-top: 1rem;">Candidate Name</h2>
+                        <p id="resPosition"
+                            style="color: var(--text-light); font-weight: 600; text-transform: uppercase;">
+                            Position</p>
+
+                        <div class="status-badge" id="resStatus">Awaiting Evaluation</div>
+                    </div>
+
+                    <div class="card">
+                        <h3>Officer Evaluation Breakdown</h3>
+                        <div id="officerScores" class="results-list"></div>
+
+                        <div
+                            style="margin-top: 2rem; padding-top: 1rem; border-top: 2px dashed #eee; display: flex; justify-content: space-between; align-items: center;">
+                            <b style="font-size: 1.2rem;">Grand Total Score</b>
+                            <b id="grandTotal" style="font-size: 2rem; color: var(--primary);">0</b>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VOTING PORTAL (WIZARD) -->
+            <section id="voting" class="page" style="max-width: 600px;">
+                <div class="card wizard-header"
+                    style="text-align: center; border-bottom: 4px solid var(--primary); margin-bottom: 1rem; position: relative;">
+                    <div id="voterIdBadge"
+                        style="position: absolute; top: 15px; right: 15px; background: var(--primary); color: white; padding: 4px 8px; border-radius: 6px; font-size: 0.7rem; font-weight: 700;">
+                        ID: --</div>
+                    <div id="voterStepIndicator"
+                        style="font-size: 0.75rem; color: var(--primary); font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 0.5rem;">
+                        Step 1 of 5</div>
+                    <h2 id="currentPositionTitle" style="margin: 0; color: var(--primary-dark);">Headprefect</h2>
+                    <p style="font-size: 0.85rem; color: var(--text-light); margin-top: 5px;">Choose your candidate for
+                        this position.</p>
+                </div>
+
+                <div id="voteList" style="min-height: 200px; margin-bottom: 2rem;">
+                    <!-- Candidates rendered dynamically -->
+                </div>
+
+                <div class="wizard-nav" style="display: flex; gap: 10px;">
+                    <button id="btnNextPosition" onclick="changeVoterStep(1)" style="flex: 2;" disabled>Select a
+                        candidate to continue</button>
+                </div>
+
+                <div id="finishVoting" style="display: none; text-align: center; padding: 2rem;">
+                    <div style="font-size: 4rem; margin-bottom: 1rem;">🗳️</div>
+                    <h2 style="color: var(--primary-dark);">Voting Complete!</h2>
+                    <p style="color: var(--text-light); margin-bottom: 2rem;">Thank you for exercising your right to
+                        vote.</p>
+                    <button onclick="location.reload()" style="width: 100%;">Return to Landing Page</button>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
