@@ -14,6 +14,7 @@ const db = firebase.database();
 // GLOBAL SESSION
 let currentOfficer = JSON.parse(localStorage.getItem("currentOfficer")) || null;
 let activeResultsListener = null;
+let returnPage = 'admin'; // Track which page to return to from detailed view
 
 // WIZARD STATE
 let allCandidates = [];
@@ -95,9 +96,16 @@ function showPage(id, bypassAuth = false) {
 
 function backToVetting() {
     document.getElementById("evaluationResultView").style.display = "none";
-    document.getElementById("vettingSection").style.display = "block";
+
+    if (returnPage === 'admin') {
+        showPage('admin', true);
+    } else {
+        document.getElementById("vettingSection").style.display = "block";
+    }
+
     if (activeResultsListener) {
         activeResultsListener();
+        activeResultsListener = null;
     }
 }
 
@@ -132,7 +140,11 @@ function renderAdminCandidates() {
                 <span style="font-weight: 600;">${c.name}</span>
             </td>
             <td style="padding: 12px; font-size: 0.85rem; color: var(--text-light);">${c.position}</td>
-            <td style="padding: 12px; text-align: right;">
+            <td style="padding: 12px; text-align: right; display: flex; gap: 5px; justify-content: flex-end;">
+                <button onclick="viewCandidateResults('${c.id}')" 
+                    style="background: var(--primary); padding: 5px 12px; font-size: 0.8rem; box-shadow: none;">
+                    Scores
+                </button>
                 <button onclick="deleteCandidate('${c.id}', '${c.name}')" 
                     style="background: #f56565; padding: 5px 12px; font-size: 0.8rem; box-shadow: none;">
                     Delete
@@ -140,6 +152,70 @@ function renderAdminCandidates() {
             </td>
         </tr>
     `).join('');
+}
+
+function viewCandidateResults(candidateId) {
+    const candidate = allCandidates.find(c => c.id === candidateId);
+    if (!candidate) return;
+
+    // Track where we are coming from
+    const adminPage = document.getElementById("admin");
+    returnPage = (adminPage.style.display === "block") ? 'admin' : 'vetting';
+
+    // Switch to vetting page but show detailed results
+    // We bypass auth prompt if already in admin, otherwise it's fine
+    showPage('vetting', true);
+    document.getElementById("vettingSection").style.display = "none";
+    document.getElementById("evaluationResultView").style.display = "block";
+
+    // Populate candidate info
+    document.getElementById("resName").innerText = candidate.name;
+    document.getElementById("resPosition").innerText = candidate.position;
+    document.getElementById("resPhoto").style.backgroundImage = `url('${candidate.photoUrl || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'}')`;
+
+    // Fetch and display scores
+    const officerScoresDiv = document.getElementById("officerScores");
+    const grandTotalEl = document.getElementById("grandTotal");
+    const resStatusEl = document.getElementById("resStatus");
+
+    officerScoresDiv.innerHTML = "Loading scores...";
+    grandTotalEl.innerText = "0";
+
+    if (activeResultsListener) activeResultsListener();
+
+    activeResultsListener = db.ref(`scores/${candidateId}`).on("value", snap => {
+        officerScoresDiv.innerHTML = "";
+        let grandTotal = 0;
+        let count = 0;
+
+        snap.forEach(child => {
+            const data = child.val();
+            grandTotal += data.total || 0;
+            count++;
+
+            officerScoresDiv.innerHTML += `
+                <div style="background: #fff; padding: 15px; border-radius: 12px; margin-bottom: 10px; border-left: 5px solid var(--primary); display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                    <div>
+                        <div style="font-weight: 700; color: var(--accent);">${data.officer || 'Unknown Officer'}</div>
+                        <div style="font-size: 0.75rem; color: var(--text-light);">
+                            Acad: ${data.academic} | App: ${data.appearance} | Disc: ${data.discipline} | Comm: ${data.communication} | Part: ${data.participation}
+                        </div>
+                    </div>
+                    <div style="font-size: 1.2rem; font-weight: 800; color: var(--primary-dark);">${data.total}</div>
+                </div>
+            `;
+        });
+
+        if (count === 0) {
+            officerScoresDiv.innerHTML = `<p style="text-align: center; color: var(--text-light);">No evaluations yet.</p>`;
+            resStatusEl.innerText = "Awaiting Evaluation";
+            resStatusEl.className = "status-badge";
+        } else {
+            grandTotalEl.innerText = grandTotal;
+            resStatusEl.innerText = "Vetted";
+            resStatusEl.className = "status-badge status-qualified";
+        }
+    });
 }
 
 function deleteCandidate(id, name) {
@@ -281,19 +357,43 @@ function submitScore(candidateId, position, candidateName) {
         addActivityLog(`Vetting submitted for ${candidateName} by ${currentOfficer.name}`);
         updateStats();
 
-        // Optional: Move to next candidate after submission
-        const filtered = allCandidates.filter(c => c.position === currentVettingPos);
-        if (currentVettingCandidateIndex < filtered.length - 1) {
-            changeVettingIndex(1);
-        } else {
-            // If last candidate, go back to positions
-            currentVettingPos = null;
-            renderVettingStep();
-        }
+        // Trigger the score summary popup
+        const candidate = allCandidates.find(c => c.id === candidateId);
+        showTotalScore(candidateId, candidateName, position, candidate.photoUrl);
+
     }).catch(err => {
         console.error("Submission error:", err);
         showToast("Error submitting evaluation.", "fail");
     });
+}
+
+function showTotalScore(candidateId, candidateName, position, photoUrl) {
+    db.ref(`scores/${candidateId}`).once("value", snap => {
+        let totalSum = 0;
+        snap.forEach(child => {
+            totalSum += child.val().total || 0;
+        });
+
+        document.getElementById("scoreResName").innerText = candidateName;
+        document.getElementById("scoreResPosition").innerText = position;
+        document.getElementById("scoreResTotal").innerText = totalSum;
+        document.getElementById("scoreResPhoto").style.backgroundImage = `url('${photoUrl || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'}')`;
+
+        toggleModal('scoreSummaryModal', true);
+    });
+}
+
+function closeScoreSummary() {
+    toggleModal('scoreSummaryModal', false);
+
+    // After closing summary, move to next candidate or positions
+    const filtered = allCandidates.filter(c => c.position === currentVettingPos);
+    if (currentVettingCandidateIndex < filtered.length - 1) {
+        changeVettingIndex(1);
+    } else {
+        currentVettingPos = null;
+        renderVettingStep();
+    }
 }
 
 function renderVoterStep() {

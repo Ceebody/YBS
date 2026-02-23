@@ -272,6 +272,30 @@
 
     <div id="toast" class="toast"></div>
 
+    <!-- SCORE SUMMARY MODAL (Added) -->
+    <div id="scoreSummaryModal" class="modal-overlay">
+        <div class="modal-content card"
+            style="text-align: center; border-top: 8px solid var(--primary); padding: 2.5rem;">
+            <div id="scoreResPhoto" class="candidate-photo-large" style="margin-bottom: 1.5rem;"></div>
+            <h2 id="scoreResName">Candidate Name</h2>
+            <p id="scoreResPosition"
+                style="color: var(--text-light); text-transform: uppercase; font-weight: 700; font-size: 0.8rem; letter-spacing: 1px; margin-top: 5px;">
+                Position</p>
+
+            <div
+                style="margin: 2rem 0; padding: 1.5rem; background: rgba(212, 175, 55, 0.05); border-radius: 20px; border: 1px dashed var(--glass-border);">
+                <p style="font-size: 0.9rem; color: var(--text-light); margin-bottom: 10px;">Total Vetting Score</p>
+                <div id="scoreResTotal"
+                    style="font-size: 4rem; font-weight: 900; color: var(--primary-dark); line-height: 1;">0</div>
+                <p style="font-size: 0.8rem; color: var(--text-light); margin-top: 10px;">Accumulated from all officers
+                </p>
+            </div>
+
+            <button onclick="closeScoreSummary()" style="width: 100%; padding: 15px; font-size: 1rem;">Continue to
+                Next</button>
+        </div>
+    </div>
+
     <script src="script.js"></script>
 </body>
 
