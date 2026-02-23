@@ -352,40 +352,46 @@ function renderVettingStep() {
         const candidate = filtered[currentVettingCandidateIndex];
         const isLastCandidate = currentVettingCandidateIndex === filtered.length - 1;
 
-        candidatesDiv.innerHTML = `
-            <div class="candidate-vetting-card">
-                <div class="card" style="border-left: 8px solid var(--primary); border-radius: 20px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
-                        <button onclick="currentVettingPos = null; renderVettingStep();" style="background: none; color: var(--text-light); box-shadow: none; padding: 0;">← Back to Positions</button>
-                        <span style="font-size: 0.75rem; font-weight: 700; color: var(--primary-dark);">${currentVettingPos}</span>
-                    </div>
+        // FETCH EXISTING SCORES FOR THIS OFFICER
+        db.ref(`scores/${candidate.id}/${currentOfficer.id}`).once("value", snap => {
+            const data = snap.val() || {};
 
-                    <div style="text-align: center; margin-bottom: 2rem;">
-                        <div class="candidate-photo-large" style="margin-bottom: 1rem; background-image: url('${candidate.photoUrl || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'}');"></div>
-                        <h2 style="color: var(--primary-dark); margin: 0;">${candidate.name}</h2>
-                        <p style="font-size: 0.8rem; margin-top: 10px; color: var(--text-light);">Candidate ${currentVettingCandidateIndex + 1} of ${filtered.length}</p>
-                    </div>
+            candidatesDiv.innerHTML = `
+                <div class="candidate-vetting-card">
+                    <div class="card" style="border-left: 8px solid var(--primary); border-radius: 20px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                            <button onclick="currentVettingPos = null; renderVettingStep();" style="background: none; color: var(--text-light); box-shadow: none; padding: 0;">← Back to Positions</button>
+                            <span style="font-size: 0.75rem; font-weight: 700; color: var(--primary-dark);">${currentVettingPos}</span>
+                        </div>
 
-                    <div class="score-inputs">
-                        <div class="score-field"><label>Academic</label><input type="number" max="4" min="0" id="a${candidate.id}" placeholder="0-4"></div>
-                        <div class="score-field"><label>Appearance</label><input type="number" max="4" min="0" id="b${candidate.id}" placeholder="0-4"></div>
-                        <div class="score-field"><label>Discipline</label><input type="number" max="4" min="0" id="c${candidate.id}" placeholder="0-4"></div>
-                        <div class="score-field"><label>Communication</label><input type="number" max="4" min="0" id="d${candidate.id}" placeholder="0-4"></div>
-                        <div class="score-field"><label>Participation</label><input type="number" max="4" min="0" id="e${candidate.id}" placeholder="0-4"></div>
-                    </div>
+                        <div style="text-align: center; margin-bottom: 2rem;">
+                            <div class="candidate-photo-large" style="margin-bottom: 1rem; background-image: url('${candidate.photoUrl || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'}');"></div>
+                            <h2 style="color: var(--primary-dark); margin: 0;">${candidate.name}</h2>
+                            <p style="font-size: 0.8rem; margin-top: 10px; color: var(--text-light);">Candidate ${currentVettingCandidateIndex + 1} of ${filtered.length}</p>
+                            ${data.total ? `<div style="margin-top: 5px; font-weight: 700; color: var(--primary); font-size: 0.9rem;">Evaluation Status: Submitted (${data.total} pts)</div>` : ''}
+                        </div>
 
-                    <div class="navigation-controls">
-                        <button onclick="changeVettingIndex(-1)" style="background: var(--accent); flex: 1;" ${currentVettingCandidateIndex === 0 ? 'disabled' : ''}>← Previous</button>
-                        <button onclick="submitScore('${candidate.id}','${candidate.position}', '${candidate.name}')" style="flex: 2;">Submit Evaluation</button>
-                        
-                        ${isLastCandidate ?
-                `<button onclick="currentVettingPos = null; renderVettingStep();" style="background: #27ae60; flex: 1;">Done ✓</button>` :
-                `<button onclick="changeVettingIndex(1)" style="background: var(--accent); flex: 1;">Next →</button>`
-            }
+                        <div class="score-inputs">
+                            <div class="score-field"><label>Academic</label><input type="number" max="4" min="0" id="a${candidate.id}" value="${data.academic || 0}" placeholder="0-4"></div>
+                            <div class="score-field"><label>Appearance</label><input type="number" max="4" min="0" id="b${candidate.id}" value="${data.appearance || 0}" placeholder="0-4"></div>
+                            <div class="score-field"><label>Discipline</label><input type="number" max="4" min="0" id="c${candidate.id}" value="${data.discipline || 0}" placeholder="0-4"></div>
+                            <div class="score-field"><label>Communication</label><input type="number" max="4" min="0" id="d${candidate.id}" value="${data.communication || 0}" placeholder="0-4"></div>
+                            <div class="score-field"><label>Participation</label><input type="number" max="4" min="0" id="e${candidate.id}" value="${data.participation || 0}" placeholder="0-4"></div>
+                        </div>
+
+                        <div class="navigation-controls">
+                            <button onclick="changeVettingIndex(-1)" style="background: var(--accent); flex: 1;" ${currentVettingCandidateIndex === 0 ? 'disabled' : ''}>← Previous</button>
+                            <button onclick="submitScore('${candidate.id}','${candidate.position}', '${candidate.name}')" style="flex: 2;">${data.total ? 'Update Evaluation' : 'Submit Evaluation'}</button>
+                            
+                            ${isLastCandidate ?
+                    `<button onclick="currentVettingPos = null; renderVettingStep();" style="background: #27ae60; flex: 1;">Done ✓</button>` :
+                    `<button onclick="changeVettingIndex(1)" style="background: var(--accent); flex: 1;">Next →</button>`
+                }
+                        </div>
                     </div>
                 </div>
-            </div>
-        `;
+            `;
+        });
     }
 }
 
