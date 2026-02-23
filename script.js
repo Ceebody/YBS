@@ -112,8 +112,49 @@ db.ref("candidates").on("value", snap => {
 
     renderVettingStep();
     renderVoterStep();
+    renderAdminCandidates();
     updateStats();
 });
+
+function renderAdminCandidates() {
+    const listDiv = document.getElementById("adminCandidateList");
+    if (!listDiv) return;
+
+    if (allCandidates.length === 0) {
+        listDiv.innerHTML = `<tr><td colspan="3" style="text-align: center; padding: 20px; color: var(--text-light);">No candidates registered.</td></tr>`;
+        return;
+    }
+
+    listDiv.innerHTML = allCandidates.map(c => `
+        <tr style="border-bottom: 1px solid var(--glass-border);">
+            <td style="padding: 12px; font-weight: 600;">${c.name}</td>
+            <td style="padding: 12px; font-size: 0.85rem; color: var(--text-light);">${c.position}</td>
+            <td style="padding: 12px; text-align: right;">
+                <button onclick="deleteCandidate('${c.id}', '${c.name}')" 
+                    style="background: #f56565; padding: 5px 12px; font-size: 0.8rem; box-shadow: none;">
+                    Delete
+                </button>
+            </td>
+        </tr>
+    `).join('');
+}
+
+function deleteCandidate(id, name) {
+    if (!confirm(`Are you sure you want to delete candidate "${name}"? This will also remove any votes they have received.`)) return;
+
+    // Delete candidate
+    db.ref("candidates/" + id).remove().then(() => {
+        // Also delete their votes and scores
+        db.ref("votes/" + id).remove();
+        db.ref("scores/" + id).remove();
+
+        showToast("Candidate Deleted Successfully", "success");
+        addActivityLog(`Candidate Deleted: ${name}`);
+        updateStats();
+    }).catch(err => {
+        showToast("Error deleting candidate", "fail");
+    });
+}
 
 let currentVettingPos = null;
 let currentVettingCandidateIndex = 0;
@@ -350,6 +391,13 @@ function logoutOfficer() {
     showToast("Logged out successfully", "success");
 }
 
+function handleGlobalLogout() {
+    logoutOfficer();
+    setTimeout(() => {
+        location.reload();
+    }, 500);
+}
+
 function addCandidate() {
     const nameInput = document.getElementById("name");
     const posInput = document.getElementById("position");
@@ -375,20 +423,20 @@ function addCandidate() {
 
 function registerOfficer() {
     const name = document.getElementById("offName").value.trim();
-    const contact = document.getElementById("offContact").value.trim();
+    const password = document.getElementById("offPassword").value.trim();
 
-    if (!name || !contact) {
-        showToast("Fill Name and Contact", "fail");
+    if (!name || !password) {
+        showToast("Fill Name and Password", "fail");
         return;
     }
 
-    const officerId = btoa(name + contact).replace(/=/g, "");
+    const officerId = btoa(name + password).replace(/=/g, "");
 
     db.ref("officers/" + officerId).get().then(snap => {
         if (snap.exists()) {
             showToast("Officer already registered. Please login.", "fail");
         } else {
-            db.ref("officers/" + officerId).set({ name, contact })
+            db.ref("officers/" + officerId).set({ name, password })
                 .then(() => {
                     showToast("Officer Registered!", "success");
                     addActivityLog(`New Officer Registered: ${name}`);
@@ -399,18 +447,23 @@ function registerOfficer() {
 
 function loginOfficer() {
     const name = document.getElementById("offName").value.trim();
-    const contact = document.getElementById("offContact").value.trim();
+    const password = document.getElementById("offPassword").value.trim();
 
-    if (!name || !contact) {
-        showToast("Fill Name and Contact", "fail");
+    if (!name || !password) {
+        showToast("Fill Name and Password", "fail");
         return;
     }
 
-    const officerId = btoa(name + contact).replace(/=/g, "");
+    const officerId = btoa(name + password).replace(/=/g, "");
 
     db.ref("officers/" + officerId).get().then(snap => {
         if (snap.exists()) {
-            currentOfficer = { id: officerId, ...snap.val() };
+            const officerData = snap.val();
+            if (officerData.password !== password) {
+                showToast("Incorrect password.", "fail");
+                return;
+            }
+            currentOfficer = { id: officerId, ...officerData };
             localStorage.setItem("currentOfficer", JSON.stringify(currentOfficer));
             updateAuthUI();
             showToast("Login Successful", "success");

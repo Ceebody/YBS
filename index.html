@@ -25,7 +25,7 @@
                     style="font-size: 0.7rem; background: var(--primary); color: var(--accent); padding: 2px 8px; border-radius: 10px; font-weight: 700; text-transform: uppercase;">ADMIN</span>
             </div>
         </div>
-        <button onclick="location.reload()" class="btn-logout" style="padding: 8px 15px; font-size: 0.8rem;">Logout /
+        <button onclick="handleGlobalLogout()" class="btn-logout" style="padding: 8px 15px; font-size: 0.8rem;">Logout /
             Exit</button>
     </header>
 
@@ -98,6 +98,30 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- MANAGE CANDIDATES SECTION -->
+                <div class="card">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <h3 style="margin: 0;">Manage Candidates</h3>
+                        <span style="font-size: 0.8rem; color: var(--text-light);">Delete or edit registered
+                            candidates</span>
+                    </div>
+                    <div style="overflow-x: auto;">
+                        <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
+                            <thead>
+                                <tr style="text-align: left; border-bottom: 2px solid var(--glass-border);">
+                                    <th style="padding: 12px;">Candidate Name</th>
+                                    <th style="padding: 12px;">Position</th>
+                                    <th style="padding: 12px; text-align: right;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminCandidateList">
+                                <!-- Candidates will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </section>
 
             <!-- CANDIDATE ENTRY MODAL -->
@@ -145,7 +169,7 @@
                         login with your official credentials to begin evaluation.</p>
                     <div class="form-group">
                         <input id="offName" placeholder="Full Name">
-                        <input id="offContact" type="tel" placeholder="Contact Number">
+                        <input id="offPassword" type="password" placeholder="Password">
                         <div style="display: flex; gap: 10px;">
                             <button onclick="registerOfficer()"
                                 style="flex: 1; background: var(--accent);">Register</button>
