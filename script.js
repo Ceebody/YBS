@@ -249,6 +249,50 @@ function changeVettingIndex(dir) {
     renderVettingStep();
 }
 
+function submitScore(candidateId, position, candidateName) {
+    if (!currentOfficer) {
+        showToast("Session expired. Please login again.", "fail");
+        logoutOfficer();
+        return;
+    }
+
+    const a = parseInt(document.getElementById(`a${candidateId}`).value) || 0;
+    const b = parseInt(document.getElementById(`b${candidateId}`).value) || 0;
+    const c = parseInt(document.getElementById(`c${candidateId}`).value) || 0;
+    const d = parseInt(document.getElementById(`d${candidateId}`).value) || 0;
+    const e = parseInt(document.getElementById(`e${candidateId}`).value) || 0;
+
+    const total = a + b + c + d + e;
+
+    db.ref(`scores/${candidateId}/${currentOfficer.id}`).set({
+        officer: currentOfficer.name,
+        academic: a,
+        appearance: b,
+        discipline: c,
+        communication: d,
+        participation: e,
+        total: total,
+        timestamp: Date.now()
+    }).then(() => {
+        showToast(`Evaluation for ${candidateName} submitted!`, "success");
+        addActivityLog(`Vetting submitted for ${candidateName} by ${currentOfficer.name}`);
+        updateStats();
+
+        // Optional: Move to next candidate after submission
+        const filtered = allCandidates.filter(c => c.position === currentVettingPos);
+        if (currentVettingCandidateIndex < filtered.length - 1) {
+            changeVettingIndex(1);
+        } else {
+            // If last candidate, go back to positions
+            currentVettingPos = null;
+            renderVettingStep();
+        }
+    }).catch(err => {
+        console.error("Submission error:", err);
+        showToast("Error submitting evaluation.", "fail");
+    });
+}
+
 function renderVoterStep() {
     const voteListDiv = document.getElementById("voteList");
     const stepIndicator = document.getElementById("voterStepIndicator");
