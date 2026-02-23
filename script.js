@@ -127,7 +127,10 @@ function renderAdminCandidates() {
 
     listDiv.innerHTML = allCandidates.map(c => `
         <tr style="border-bottom: 1px solid var(--glass-border);">
-            <td style="padding: 12px; font-weight: 600;">${c.name}</td>
+            <td style="padding: 12px; display: flex; align-items: center; gap: 10px;">
+                <div class="candidate-photo" style="width: 30px; height: 30px; background-image: url('${c.photoUrl || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'}');"></div>
+                <span style="font-weight: 600;">${c.name}</span>
+            </td>
             <td style="padding: 12px; font-size: 0.85rem; color: var(--text-light);">${c.position}</td>
             <td style="padding: 12px; text-align: right;">
                 <button onclick="deleteCandidate('${c.id}', '${c.name}')" 
@@ -210,7 +213,7 @@ function renderVettingStep() {
                     </div>
 
                     <div style="text-align: center; margin-bottom: 2rem;">
-                        <div class="candidate-photo-large" style="margin-bottom: 1rem;"></div>
+                        <div class="candidate-photo-large" style="margin-bottom: 1rem; background-image: url('${candidate.photoUrl || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'}');"></div>
                         <h2 style="color: var(--primary-dark); margin: 0;">${candidate.name}</h2>
                         <p style="font-size: 0.8rem; margin-top: 10px; color: var(--text-light);">Candidate ${currentVettingCandidateIndex + 1} of ${filtered.length}</p>
                     </div>
@@ -331,7 +334,7 @@ function renderVoterStep() {
             const isSelected = selectedId === c.id;
             voteListDiv.innerHTML += `
                 <div class="card candidate-card ${isSelected ? 'selected-candidate' : ''}" style="display: flex; gap: 15px; align-items: center; border-radius: 12px; animation: fadeIn 0.3s ease-out; border-left: 5px solid var(--primary); cursor: pointer;" onclick="selectCandidate('${c.id}', '${pos}')">
-                    <div class="candidate-photo" style="width: 45px; height: 45px; border-color: var(--primary);"></div>
+                    <div class="candidate-photo" style="width: 45px; height: 45px; border-color: var(--primary); background-image: url('${c.photoUrl || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'}');"></div>
                     <div style="flex: 1;">
                         <div style="font-weight: 700; color: var(--primary-dark); font-size: 1.1rem;">${c.name}</div>
                     </div>
@@ -444,6 +447,7 @@ function handleGlobalLogout() {
 
 function addCandidate() {
     const nameInput = document.getElementById("name");
+    const photoUrlInput = document.getElementById("photoUrl");
     const posInput = document.getElementById("position");
 
     if (!nameInput.value || !posInput.value) {
@@ -454,11 +458,13 @@ function addCandidate() {
     let id = Date.now();
     db.ref("candidates/" + id).set({
         name: nameInput.value,
+        photoUrl: photoUrlInput.value || "",
         position: posInput.value
     }).then(() => {
         showToast("Candidate Saved Successfully", "success");
         addActivityLog(`Candidate Added: ${nameInput.value}`);
         nameInput.value = "";
+        photoUrlInput.value = "";
         updateStats();
     }).catch(err => {
         showToast("Error saving candidate", "fail");
