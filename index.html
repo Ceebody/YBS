@@ -71,7 +71,11 @@
                     </div>
                 </div>
 
-                <div style="margin-bottom: 2rem; display: flex; justify-content: flex-end;">
+                <div style="margin-bottom: 2rem; display: flex; justify-content: flex-end; gap: 10px;">
+                    <button onclick="showPage('vettingSummary')" class="btn-primary"
+                        style="background: var(--accent); color: var(--primary-dark);">
+                        📊 Vetting Summary
+                    </button>
                     <button onclick="toggleModal('candidateModal', true)" class="btn-primary"
                         style="display: flex; align-items: center; gap: 8px;">
                         <span>➕</span> Register New Candidate
@@ -265,6 +269,48 @@
                     <p style="color: var(--text-light); margin-bottom: 2rem;">Thank you for exercising your right to
                         vote.</p>
                     <button onclick="location.reload()" style="width: 100%;">Return to Landing Page</button>
+                </div>
+            </section>
+
+            <!-- VETTING SUMMARY SECTION -->
+            <section id="vettingSummary" class="page">
+                <div class="no-print"
+                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <button onclick="showPage('admin')"
+                        style="background: var(--text-light); margin: 0; padding: 8px 15px; font-size: 0.85rem;">←
+                        Back to Dashboard</button>
+                    <button onclick="window.print()" class="btn-primary"
+                        style="background: var(--primary-dark); color: #fff; display: flex; align-items: center; gap: 8px;">
+                        <span>🖨️</span> Print Summary Report
+                    </button>
+                </div>
+
+                <div class="card">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; border-bottom: 2px solid var(--glass-border); padding-bottom: 15px;">
+                        <h2 style="margin: 0;">Vetting Performance Summary</h2>
+                        <div id="summaryStats" style="font-size: 0.9rem; color: var(--text-light);">
+                            Calculating results...
+                        </div>
+                    </div>
+
+                    <div style="overflow-x: auto;">
+                        <table class="summary-table">
+                            <thead>
+                                <tr>
+                                    <th>Candidate</th>
+                                    <th>Position</th>
+                                    <th>Officers</th>
+                                    <th>Total Score</th>
+                                    <th>Percentage</th>
+                                    <th>Remark</th>
+                                </tr>
+                            </thead>
+                            <tbody id="vettingSummaryList">
+                                <!-- Summary data rendered dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </section>
         </main>

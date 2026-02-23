@@ -819,3 +819,111 @@ select:focus {
         height: 80px;
     }
 }
+
+/* SUMMARY TABLE */
+.summary-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+    font-size: 0.9rem;
+}
+
+.summary-table th {
+    text-align: left;
+    padding: 15px;
+    background: rgba(212, 175, 55, 0.05);
+    color: var(--primary-dark);
+    font-weight: 700;
+    border-bottom: 2px solid var(--glass-border);
+}
+
+.summary-table td {
+    padding: 15px;
+    border-bottom: 1px solid var(--glass-border);
+    vertical-align: middle;
+}
+
+.summary-table tr:hover {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+.status-qualified {
+    background: #c6f6d5;
+    color: #22543d;
+}
+
+.status-disqualified {
+    background: #fed7d7;
+    color: #822727;
+}
+
+.percentage-badge {
+    font-weight: 800;
+    padding: 4px 10px;
+    border-radius: 8px;
+    display: inline-block;
+}
+
+/* PRINT STYLES */
+@media print {
+    body {
+        background: white !important;
+        color: black !important;
+        padding: 0 !important;
+    }
+
+    .no-print,
+    header,
+    .btn-logout,
+    #mainHeader,
+    #welcome {
+        display: none !important;
+    }
+
+    .page {
+        display: block !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    .card {
+        box-shadow: none !important;
+        border: 1px solid #eee !important;
+        padding: 0 !important;
+        background: white !important;
+    }
+
+    .summary-table {
+        font-size: 10pt;
+        border: 1px solid #ccc;
+    }
+
+    .summary-table th {
+        background: #f8f8f8 !important;
+        color: black !important;
+        border-bottom: 2px solid black !important;
+    }
+
+    .summary-table td {
+        border-bottom: 1px solid #eee !important;
+    }
+
+    .status-badge {
+        border: 1px solid #ccc !important;
+        color: black !important;
+        padding: 2px 5px !important;
+        background: transparent !important;
+    }
+
+    .percentage-badge {
+        background: transparent !important;
+        color: black !important;
+        font-weight: bold;
+    }
+
+    /* Force background colors for some browsers if user selects 'Background Graphics' */
+    * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+}

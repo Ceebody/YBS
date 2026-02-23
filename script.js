@@ -92,6 +92,7 @@ function showPage(id, bypassAuth = false) {
     if (activePage) activePage.style.display = "block";
 
     if (id === 'vetting') updateAuthUI();
+    if (id === 'vettingSummary') renderVettingSummary();
 }
 
 function backToVetting() {
@@ -217,6 +218,77 @@ function viewCandidateResults(candidateId) {
         }
     });
 }
+
+function renderVettingSummary() {
+    const listDiv = document.getElementById("vettingSummaryList");
+    const statsDiv = document.getElementById("summaryStats");
+    if (!listDiv) return;
+
+    listDiv.innerHTML = "<tr><td colspan='6' style='text-align: center; padding: 2rem;'>Loading summary data...</td></tr>";
+
+    db.ref("scores").once("value", snap => {
+        const scoresData = snap.val() || {};
+        listDiv.innerHTML = "";
+        let qualifiedCount = 0;
+        let totalCount = 0;
+
+        allCandidates.forEach(candidate => {
+            const candidateScores = scoresData[candidate.id] || {};
+            const officers = Object.keys(candidateScores);
+            const numOfficers = officers.length;
+
+            let grandTotal = 0;
+            officers.forEach(offId => {
+                grandTotal += candidateScores[offId].total || 0;
+            });
+
+            // Calculate percentage based on max 20 per officer
+            const maxPossible = numOfficers * 20;
+            const percentage = maxPossible > 0 ? (grandTotal / maxPossible) * 100 : 0;
+
+            // Qualification Logic
+            // Head Prefect: 70%, Others: 50%
+            const isHeadPrefect = candidate.position && candidate.position.toLowerCase().includes("headprefect");
+            const threshold = isHeadPrefect ? 70 : 50;
+            const isQualified = percentage >= threshold;
+            if (isQualified) qualifiedCount++;
+            totalCount++;
+
+            const statusClass = isQualified ? "status-qualified" : "status-disqualified";
+            const statusText = isQualified ? "Qualified" : "Disqualified";
+
+            listDiv.innerHTML += `
+                <tr>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <div style="width: 35px; height: 35px; border-radius: 50%; background-size: cover; background-position: center; background-image: url('${candidate.photoUrl || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'}')"></div>
+                            <span style="font-weight: 700;">${candidate.name}</span>
+                        </div>
+                    </td>
+                    <td style="color: var(--text-light); font-size: 0.8rem;">${candidate.position}</td>
+                    <td style="text-align: center;">${numOfficers}</td>
+                    <td style="text-align: center; font-weight: 700;">${grandTotal} <span style="font-size: 0.7rem; color: var(--text-light); font-weight: 400;">/ ${maxPossible}</span></td>
+                    <td style="text-align: center;">
+                        <span class="percentage-badge" style="background: ${isQualified ? 'rgba(72, 187, 120, 0.1)' : 'rgba(245, 101, 101, 0.1)'}; color: ${isQualified ? '#2f855a' : '#c53030'};">
+                            ${percentage.toFixed(1)}%
+                        </span>
+                    </td>
+                    <td>
+                        <span class="status-badge ${statusClass}" style="margin: 0; width: 100%; text-align: center;">${statusText}</span>
+                    </td>
+                </tr>
+            `;
+        });
+
+        if (totalCount === 0) {
+            listDiv.innerHTML = "<tr><td colspan='6' style='text-align: center; padding: 2rem; color: var(--text-light);'>No candidates registered yet.</td></tr>";
+            statsDiv.innerText = "No data available";
+        } else {
+            statsDiv.innerText = `${qualifiedCount} of ${totalCount} Candidates Qualified`;
+        }
+    });
+}
+
 
 function deleteCandidate(id, name) {
     if (!confirm(`Are you sure you want to delete candidate "${name}"? This will also remove any votes they have received.`)) return;
