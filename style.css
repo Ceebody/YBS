@@ -1210,8 +1210,14 @@ select:focus {
         top: 0 !important;
         width: 100% !important;
         background: white !important;
-        display: block !important;
+        /* Remove forced display: block to let JS control visibility */
         z-index: 9999 !important;
+    }
+
+    /* Only force display if the modal is currently being shown by JS */
+    #resultsPrintModal[style*="display: flex"],
+    #idCardModal[style*="display: flex"] {
+        display: block !important;
     }
 
     .modal-overlay {
@@ -1226,6 +1232,8 @@ select:focus {
         width: 100% !important;
         max-width: none !important;
         padding: 0 !important;
+        height: auto !important;
+        /* Ensure content isn't cut off */
     }
 
     .modal-content h3,
@@ -1241,11 +1249,13 @@ select:focus {
 
     #resultsPrintContainer {
         padding: 0 !important;
+        overflow: visible !important;
     }
 
     .results-print-table {
         font-size: 10pt !important;
         -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
     }
 
     /* ID Card Specific */
@@ -1256,6 +1266,7 @@ select:focus {
         padding: 0 !important;
         background: white !important;
         overflow: visible !important;
+        height: auto !important;
     }
 
     .id-card-wrapper {
@@ -1263,6 +1274,7 @@ select:focus {
         box-shadow: none !important;
         border: 1px solid #eee !important;
         -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
     }
 
     .id-card-wrapper:hover {
@@ -1270,19 +1282,7 @@ select:focus {
         box-shadow: none !important;
     }
 
-    .id-card-wrapper:active {
-        transform: none !important;
-    }
-
-    .id-card-wrapper:focus {
-        outline: none !important;
-    }
-
-    .id-card-wrapper .id-card-footer {
-        background: none !important;
-    }
-
-    /* Force background colors if the user enables it in settings */
+    /* Force background colors */
     * {
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
