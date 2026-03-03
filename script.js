@@ -1132,13 +1132,14 @@ function generatePrintableResults() {
                 const total = yesVotes + noVotes;
                 const yesPercent = total > 0 ? Math.round((yesVotes / total) * 100) : 0;
                 const noPercent = total > 0 ? Math.round((noVotes / total) * 100) : 0;
+                const isWinner = yesVotes > noVotes;
 
                 tableHtml += `
                     <tr>
                         <td rowspan="2" style="font-weight: 700;">${pos}</td>
                         <td style="display: flex; align-items: center; gap: 10px;">
                             <div class="print-table-photo" style="background-image: url('${getCandidatePhoto(c)}'); ${getCandidatePhotoStyle(c)}"></div>
-                            <span>${c.name} (YES)</span>
+                            <span>${c.name} (YES) ${isWinner ? '<span class="winner-tick">✔️</span>' : ''}</span>
                         </td>
                         <td>${yesVotes}</td>
                         <td>${yesPercent}%</td>
@@ -1154,15 +1155,19 @@ function generatePrintableResults() {
                 `;
             } else {
                 candidatesInPos.sort((a, b) => (votesByCandidate[b.id] || 0) - (votesByCandidate[a.id] || 0));
+                const maxVotes = votesByCandidate[candidatesInPos[0].id] || 0;
+
                 candidatesInPos.forEach((c, index) => {
                     const votes = votesByCandidate[c.id] || 0;
                     const percent = totalPosVotes > 0 ? Math.round((votes / totalPosVotes) * 100) : 0;
+                    const isWinner = votes > 0 && votes === maxVotes;
+
                     tableHtml += `
                         <tr>
                             ${index === 0 ? `<td rowspan="${candidatesInPos.length}" style="font-weight: 700;">${pos}</td>` : ''}
                             <td style="display: flex; align-items: center; gap: 10px;">
                                 <div class="print-table-photo" style="background-image: url('${getCandidatePhoto(c)}'); ${getCandidatePhotoStyle(c)}"></div>
-                                <span>${c.name}</span>
+                                <span>${c.name} ${isWinner ? '<span class="winner-tick">✔️</span>' : ''}</span>
                             </td>
                             <td>${votes}</td>
                             <td>${percent}%</td>

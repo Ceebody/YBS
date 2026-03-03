@@ -1219,6 +1219,13 @@ select:focus {
     display: inline-block;
 }
 
+.winner-tick {
+    color: #48bb78;
+    font-weight: 900;
+    margin-left: 8px;
+    font-size: 1.1rem;
+}
+
 .results-print-table th {
     background: #f7fafc;
     font-weight: 700;
