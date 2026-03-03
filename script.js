@@ -1136,12 +1136,18 @@ function generatePrintableResults() {
                 tableHtml += `
                     <tr>
                         <td rowspan="2" style="font-weight: 700;">${pos}</td>
-                        <td>${c.name} (YES)</td>
+                        <td style="display: flex; align-items: center; gap: 10px;">
+                            <div class="print-table-photo" style="background-image: url('${getCandidatePhoto(c)}'); ${getCandidatePhotoStyle(c)}"></div>
+                            <span>${c.name} (YES)</span>
+                        </td>
                         <td>${yesVotes}</td>
                         <td>${yesPercent}%</td>
                     </tr>
                     <tr>
-                        <td>${c.name} (NO)</td>
+                        <td style="display: flex; align-items: center; gap: 10px;">
+                            <div class="print-table-photo" style="background-image: url('${getCandidatePhoto(c)}'); ${getCandidatePhotoStyle(c)}"></div>
+                            <span>${c.name} (NO)</span>
+                        </td>
                         <td>${noVotes}</td>
                         <td>${noPercent}%</td>
                     </tr>
@@ -1154,7 +1160,10 @@ function generatePrintableResults() {
                     tableHtml += `
                         <tr>
                             ${index === 0 ? `<td rowspan="${candidatesInPos.length}" style="font-weight: 700;">${pos}</td>` : ''}
-                            <td>${c.name}</td>
+                            <td style="display: flex; align-items: center; gap: 10px;">
+                                <div class="print-table-photo" style="background-image: url('${getCandidatePhoto(c)}'); ${getCandidatePhotoStyle(c)}"></div>
+                                <span>${c.name}</span>
+                            </td>
                             <td>${votes}</td>
                             <td>${percent}%</td>
                         </tr>

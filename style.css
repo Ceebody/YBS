@@ -1206,6 +1206,17 @@ select:focus {
     border: 1px solid #e2e8f0;
     padding: 12px;
     text-align: left;
+    vertical-align: middle;
+}
+
+.print-table-photo {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    background-size: cover;
+    background-position: center;
+    border: 1px solid #e2e8f0;
+    display: inline-block;
 }
 
 .results-print-table th {
