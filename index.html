@@ -89,10 +89,13 @@
                 <div class="card" style="min-height: 500px;">
                     <div
                         style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; border-bottom: 2px solid var(--glass-border); padding-bottom: 15px;">
-                        <h3 style="margin: 0;">Live Election Results</h3>
+                        <h3 style="margin: 0; display: flex; align-items: center; gap: 10px;">
+                            Live Election Results
+                            <span class="live-pulse"></span>
+                        </h3>
                         <span class="status-badge"
-                            style="margin: 0; background: rgba(43, 108, 176, 0.1); color: #2b6cb0;">Real-time
-                            Comparison</span>
+                            style="margin: 0; background: rgba(43, 108, 176, 0.1); color: #2b6cb0;">Auto-refreshing
+                            every 3s</span>
                     </div>
                     <div id="groupedResults" class="results-grid">
                         <!-- Grouped results rendered dynamically -->

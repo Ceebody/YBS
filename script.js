@@ -702,27 +702,47 @@ function addActivityLog(msg) {
 }
 
 function updateStats() {
-    // Admin Stats
+    // Admin Stats (Candidates & Vetting)
     db.ref("candidates").once("value", snap => {
         const count = snap.numChildren();
-        document.getElementById("statCandidates").innerText = count;
+        if (document.getElementById("statCandidates")) {
+            document.getElementById("statCandidates").innerText = count;
+        }
 
         db.ref("scores").once("value", scoreSnap => {
             const vettedCount = scoreSnap.numChildren();
             const progress = count > 0 ? Math.round((vettedCount / count) * 100) : 0;
-            document.getElementById("statVetting").innerText = progress + "%";
+            if (document.getElementById("statVetting")) {
+                document.getElementById("statVetting").innerText = progress + "%";
+            }
 
             // Vetting Page Stats
-            document.getElementById("statVettedCount").innerText = vettedCount;
+            if (document.getElementById("statVettedCount")) {
+                document.getElementById("statVettedCount").innerText = vettedCount;
+            }
         });
     });
 
-    db.ref("votes").on("value", snap => {
+    // Real-time Vote Stats
+    db.ref("votes").once("value", snap => {
         let totalVotes = 0;
         snap.forEach(d => totalVotes += d.numChildren());
-        document.getElementById("statVotes").innerText = totalVotes;
+        if (document.getElementById("statVotes")) {
+            document.getElementById("statVotes").innerText = totalVotes;
+        }
     });
 }
+
+// SETUP PERIODIC REFRESH (Every 3 Seconds)
+setInterval(() => {
+    // Only refresh if Admin portal is visible
+    const adminPage = document.getElementById("admin");
+    if (adminPage && adminPage.style.display !== "none") {
+        updateStats();
+        renderAdminCandidates();
+        // Live Results listener is already real-time (db.ref("votes").on("value", ...))
+    }
+}, 3000);
 
 function updateAuthUI() {
     const statusDiv = document.getElementById("authStatus");
