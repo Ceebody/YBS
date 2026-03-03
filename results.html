@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Results | Yeriel Bracha School</title>
+
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/x-icon" href="assets/favico.ico">
+    <style>
+        body {
+            background: #f7fafc;
+        }
+
+        .results-container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .results-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .results-header h1 {
+            font-size: 2.5rem;
+            color: var(--primary-dark);
+            margin-bottom: 10px;
+        }
+
+        .results-header p {
+            color: var(--text-light);
+            font-size: 1.1rem;
+        }
+
+        @media (max-width: 768px) {
+            .results-header h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="results-container">
+        <div class="results-header">
+            <img src="assets/favico.ico" alt="YBS Logo" style="width: 80px; height: 80px; margin-bottom: 20px;">
+            <h1>Yeriel Bracha School</h1>
+            <p>Standalone Live Election Results Portal</p>
+            <div style="display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 15px;">
+                <span class="live-pulse"></span>
+                <span class="status-badge" style="background: rgba(43, 108, 176, 0.1); color: #2b6cb0;">Auto-refreshing
+                    in real-time</span>
+            </div>
+        </div>
+
+        <div id="groupedResults" class="results-grid">
+            <div style="text-align: center; padding: 4rem; grid-column: 1/-1; color: var(--text-light);">
+                <h3>Loading official results...</h3>
+            </div>
+        </div>
+
+        <div
+            style="text-align: center; margin-top: 60px; padding-top: 20px; border-top: 1px solid #e2e8f0; color: var(--text-light); font-size: 0.9rem;">
+            &copy; 2026 Yeriel Bracha School Administration. All rights reserved.
+        </div>
+    </div>
+
+    <script src="results-script.js"></script>
+</body>
+
+</html>
