@@ -1087,3 +1087,92 @@ function renderIDCards(winners) {
     toggleModal('idCardModal', true);
 }
 
+function generatePrintableResults() {
+    db.ref("votes").once("value", snap => {
+        const votesByCandidate = {};
+        snap.forEach(d => {
+            votesByCandidate[d.key] = d.numChildren();
+        });
+
+        let tableHtml = `
+            <div class="results-print-header">
+                <img src="assets/favico.ico" style="width: 60px; height: 60px; margin-bottom: 10px;">
+                <h1 style="color: var(--primary-dark); margin: 0; font-size: 1.8rem;">Yeriel Bracha School</h1>
+                <p style="color: var(--text-light); margin: 5px 0;">Official 2026/27 Prefect Election Results</p>
+                <div style="font-size: 0.8rem; color: #718096; margin-top: 5px;">Generated on: ${new Date().toLocaleString()}</div>
+            </div>
+            <table class="results-print-table">
+                <thead>
+                    <tr>
+                        <th>Position</th>
+                        <th>Candidate Name</th>
+                        <th>Votes</th>
+                        <th>Percentage</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+
+        voterPositions.forEach(pos => {
+            const candidatesInPos = allCandidates.filter(c => c.position === pos);
+            if (candidatesInPos.length === 0) return;
+
+            let totalPosVotes = 0;
+            candidatesInPos.forEach(c => {
+                totalPosVotes += (votesByCandidate[c.id] || 0);
+                if (candidatesInPos.length === 1) {
+                    totalPosVotes += (votesByCandidate[c.id + "_no"] || 0);
+                }
+            });
+
+            if (candidatesInPos.length === 1) {
+                const c = candidatesInPos[0];
+                const yesVotes = votesByCandidate[c.id] || 0;
+                const noVotes = votesByCandidate[c.id + "_no"] || 0;
+                const total = yesVotes + noVotes;
+                const yesPercent = total > 0 ? Math.round((yesVotes / total) * 100) : 0;
+                const noPercent = total > 0 ? Math.round((noVotes / total) * 100) : 0;
+
+                tableHtml += `
+                    <tr>
+                        <td rowspan="2" style="font-weight: 700;">${pos}</td>
+                        <td>${c.name} (YES)</td>
+                        <td>${yesVotes}</td>
+                        <td>${yesPercent}%</td>
+                    </tr>
+                    <tr>
+                        <td>${c.name} (NO)</td>
+                        <td>${noVotes}</td>
+                        <td>${noPercent}%</td>
+                    </tr>
+                `;
+            } else {
+                candidatesInPos.sort((a, b) => (votesByCandidate[b.id] || 0) - (votesByCandidate[a.id] || 0));
+                candidatesInPos.forEach((c, index) => {
+                    const votes = votesByCandidate[c.id] || 0;
+                    const percent = totalPosVotes > 0 ? Math.round((votes / totalPosVotes) * 100) : 0;
+                    tableHtml += `
+                        <tr>
+                            ${index === 0 ? `<td rowspan="${candidatesInPos.length}" style="font-weight: 700;">${pos}</td>` : ''}
+                            <td>${c.name}</td>
+                            <td>${votes}</td>
+                            <td>${percent}%</td>
+                        </tr>
+                    `;
+                });
+            }
+        });
+
+        tableHtml += `
+                </tbody>
+            </table>
+            <div style="margin-top: 40px; text-align: right; font-size: 0.8rem; color: #718096;">
+                <p>___________________________</p>
+                <p>Electoral Commissioner Signature</p>
+            </div>
+        `;
+
+        document.getElementById("resultsPrintContainer").innerHTML = tableHtml;
+        toggleModal('resultsPrintModal', true);
+    });
+}

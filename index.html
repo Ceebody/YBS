@@ -76,6 +76,10 @@
                         style="background: #2b6cb0; color: #fff; display: flex; align-items: center; gap: 8px;">
                         <span>🔗</span> Share Live Results
                     </button>
+                    <button onclick="generatePrintableResults()" class="btn-primary"
+                        style="background: #4a5568; color: #fff; display: flex; align-items: center; gap: 8px;">
+                        <span>🖨️</span> Print Results Table
+                    </button>
                     <button onclick="generateWinnerIDCards()" class="btn-primary"
                         style="background: var(--gold-gradient); color: #fff; display: flex; align-items: center; gap: 8px;">
                         <span>🪪</span> Generate Winner ID Cards
@@ -370,6 +374,24 @@
             <div id="idCardContainer"
                 style="flex: 1; overflow-y: auto; padding: 20px; background: #f7fafc; border-radius: 12px; display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; align-content: start; border: 1px inset rgba(0,0,0,0.05);">
                 <!-- ID Cards rendered here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- RESULTS PRINT MODAL -->
+    <div id="resultsPrintModal" class="modal-overlay">
+        <div class="modal-content card"
+            style="max-width: 800px; width: 95%; height: 90vh; display: flex; flex-direction: column;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h3 style="margin: 0;">Election Results Table</h3>
+                <div style="display: flex; gap: 10px;">
+                    <button onclick="window.print()" style="background: var(--primary-dark);">🖨️ Print Results</button>
+                    <button onclick="toggleModal('resultsPrintModal', false)"
+                        style="background: none; color: var(--text-light); font-size: 1.5rem; padding: 0; box-shadow: none;">&times;</button>
+                </div>
+            </div>
+            <div id="resultsPrintContainer" style="flex: 1; overflow-y: auto; padding: 20px;">
+                <!-- Results Table rendered here -->
             </div>
         </div>
     </div>
