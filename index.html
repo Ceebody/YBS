@@ -72,6 +72,10 @@
                 </div>
 
                 <div style="margin-bottom: 2rem; display: flex; justify-content: flex-end; gap: 10px;">
+                    <button onclick="generateWinnerIDCards()" class="btn-primary"
+                        style="background: var(--gold-gradient); color: #fff; display: flex; align-items: center; gap: 8px;">
+                        <span>🪪</span> Generate Winner ID Cards
+                    </button>
                     <button onclick="showPage('vettingSummary')" class="btn-primary"
                         style="background: var(--accent); color: var(--primary-dark);">
                         📊 Vetting Summary
@@ -242,10 +246,15 @@
             <!-- VOTING PORTAL (WIZARD) -->
             <section id="voting" class="page" style="max-width: 600px;">
                 <div class="card wizard-header"
-                    style="text-align: center; border-bottom: 4px solid var(--primary); margin-bottom: 1rem; position: relative;">
+                    style="text-align: center; border-bottom: 4px solid var(--primary); margin-bottom: 1rem; position: relative; padding-top: 3rem;">
                     <div id="voterIdBadge"
-                        style="position: absolute; top: 15px; right: 15px; background: var(--primary); color: white; padding: 4px 8px; border-radius: 6px; font-size: 0.7rem; font-weight: 700;">
+                        style="position: absolute; top: 10px; left: 15px; background: rgba(0,0,0,0.05); color: var(--text-light); padding: 4px 8px; border-radius: 6px; font-size: 0.7rem; font-weight: 700; border: 1px solid var(--glass-border);">
                         ID: --</div>
+                    <button id="btnNextPosition" onclick="changeVoterStep(1)"
+                        style="position: absolute; top: 10px; right: 10px; padding: 10px 15px; font-size: 0.85rem; min-height: auto; width: auto;"
+                        disabled>
+                        Confirm & Next →
+                    </button>
                     <div id="voterStepIndicator"
                         style="font-size: 0.75rem; color: var(--primary); font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 0.5rem;">
                         Step 1 of 5</div>
@@ -258,10 +267,7 @@
                     <!-- Candidates rendered dynamically -->
                 </div>
 
-                <div class="wizard-nav" style="display: flex; gap: 10px;">
-                    <button id="btnNextPosition" onclick="changeVoterStep(1)" style="flex: 2;" disabled>Select a
-                        candidate to continue</button>
-                </div>
+                <!-- Bottom nav removed, button moved to top right -->
 
                 <div id="finishVoting" style="display: none; text-align: center; padding: 2rem;">
                     <div style="font-size: 4rem; margin-bottom: 1rem;">🗳️</div>
@@ -300,7 +306,7 @@
                                 <tr>
                                     <th>Candidate</th>
                                     <th>Position</th>
-                                    <th>Officers</th>
+                                    <th class="hide-on-print">Officers</th>
                                     <th>Total Score</th>
                                     <th>Percentage</th>
                                     <th>Remark</th>
@@ -339,6 +345,25 @@
 
             <button onclick="closeScoreSummary()" style="width: 100%; padding: 15px; font-size: 1rem;">Continue to
                 Next</button>
+        </div>
+    </div>
+
+    <!-- ID CARD MODAL -->
+    <div id="idCardModal" class="modal-overlay">
+        <div class="modal-content card"
+            style="max-width: 900px; width: 95%; height: 90vh; display: flex; flex-direction: column;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h3 style="margin: 0;">Election Winner ID Cards</h3>
+                <div style="display: flex; gap: 10px;">
+                    <button onclick="window.print()" style="background: var(--primary-dark);">🖨️ Print Cards</button>
+                    <button onclick="toggleModal('idCardModal', false)"
+                        style="background: none; color: var(--text-light); font-size: 1.5rem; padding: 0; box-shadow: none;">&times;</button>
+                </div>
+            </div>
+            <div id="idCardContainer"
+                style="flex: 1; overflow-y: auto; padding: 20px; background: #f7fafc; border-radius: 12px; display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; align-content: start; border: 1px inset rgba(0,0,0,0.05);">
+                <!-- ID Cards rendered here -->
+            </div>
         </div>
     </div>
 

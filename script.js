@@ -23,6 +23,45 @@ let currentVoterStep = 0;
 let voterSessionId = null;
 let temporarySelections = {}; // Stores { positionName: candidateId }
 
+const PHOTO_MAPPING = {
+    "Addo, Yaa Koramah": { url: "assets/Addo, Yaa Koramah.png" },
+    "Adu Darko, Samuel": { url: "assets/Adu Darko, Samuel.png" },
+    "Agbleke, Elinam": { url: "assets/Agbleke, Elinam.png" },
+    "Asante, Diana": { url: "assets/Asante, Diana.png" },
+    "Awumah, Emmanuella Yayra": { url: "assets/Awumah, Emmanuella Yayra.png", zoomOut: true },
+    "Boampong, Justina Nyameye Adebi": { url: "assets/Boampong, Justina Nyameye Adebi.png", zoomOut: true },
+    "Kpabitey, Cheryl": { url: "assets/Kpabitey, Cheryl.png" },
+    "Maaweh, Jayden": { url: "assets/Maaweh, Jayden.png" },
+    "Nartey, Shallom": { url: "assets/Nartey, Shallom.png" },
+    "Ntiakoh, Efya Aboagyewaa": { url: "assets/Ntiakoh, Efya Aboagyewaa.png" },
+    "Odamtten, Christabel": { url: "assets/Odamtten, Christabel.png", zoomOut: true },
+    "Shahid, Aqeelatu Sufiyah": { url: "assets/Shahid, Aqeelatu Sufiyah.png" }
+};
+
+function getCandidatePhoto(candidate) {
+    if (candidate.photoUrl && candidate.photoUrl.startsWith("http")) return candidate.photoUrl;
+
+    const name = candidate.name.trim();
+    if (PHOTO_MAPPING[name]) return PHOTO_MAPPING[name].url;
+
+    return candidate.photoUrl || 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+}
+
+function getCandidatePhotoStyle(candidate) {
+    if (!candidate || !candidate.name) return "";
+    const name = candidate.name.trim();
+    const mapping = PHOTO_MAPPING[name];
+    if (mapping) {
+        if (mapping.zoom) {
+            return `background-size: ${mapping.zoom}; background-repeat: no-repeat; background-position: center;`;
+        }
+        if (mapping.zoomOut) {
+            return "background-size: contain; background-repeat: no-repeat; background-position: center;";
+        }
+    }
+    return "";
+}
+
 function generateVoterId() {
     voterSessionId = Math.floor(10 + Math.random() * 90); // 2-digit ID
     document.getElementById("voterIdBadge").innerText = `ID: ${voterSessionId}`;
@@ -137,7 +176,7 @@ function renderAdminCandidates() {
     listDiv.innerHTML = allCandidates.map(c => `
         <tr style="border-bottom: 1px solid var(--glass-border);">
             <td style="padding: 12px; display: flex; align-items: center; gap: 10px;">
-                <div class="candidate-photo" style="width: 30px; height: 30px; background-image: url('${c.photoUrl || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'}');"></div>
+                <div class="candidate-photo" style="width: 30px; height: 30px; background-image: url('${getCandidatePhoto(c)}'); ${getCandidatePhotoStyle(c)}"></div>
                 <span style="font-weight: 600;">${c.name}</span>
             </td>
             <td style="padding: 12px; font-size: 0.85rem; color: var(--text-light);">${c.position}</td>
@@ -172,7 +211,9 @@ function viewCandidateResults(candidateId) {
     // Populate candidate info
     document.getElementById("resName").innerText = candidate.name;
     document.getElementById("resPosition").innerText = candidate.position;
-    document.getElementById("resPhoto").style.backgroundImage = `url('${candidate.photoUrl || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'}')`;
+    const resPhoto = document.getElementById("resPhoto");
+    resPhoto.style.backgroundImage = `url('${getCandidatePhoto(candidate)}')`;
+    resPhoto.style.cssText += getCandidatePhotoStyle(candidate);
 
     // Fetch and display scores
     const officerScoresDiv = document.getElementById("officerScores");
@@ -232,53 +273,84 @@ function renderVettingSummary() {
         let qualifiedCount = 0;
         let totalCount = 0;
 
-        allCandidates.forEach(candidate => {
-            const candidateScores = scoresData[candidate.id] || {};
-            const officers = Object.keys(candidateScores);
-            const numOfficers = officers.length;
+        // Group candidates by position
+        const groupedCandidates = {};
+        voterPositions.forEach(pos => {
+            groupedCandidates[pos] = allCandidates.filter(c => c.position === pos);
+        });
 
-            let grandTotal = 0;
-            officers.forEach(offId => {
-                grandTotal += candidateScores[offId].total || 0;
-            });
+        voterPositions.forEach(pos => {
+            let candidates = groupedCandidates[pos];
+            if (candidates.length === 0) return;
 
-            // Calculate percentage based on max 20 per officer
-            const maxPossible = numOfficers * 20;
-            const percentage = maxPossible > 0 ? (grandTotal / maxPossible) * 100 : 0;
+            // Pre-calculate scores and sort descending
+            candidates = candidates.map(c => {
+                const candidateScores = scoresData[c.id] || {};
+                const officers = Object.keys(candidateScores);
+                const numOfficers = officers.length;
+                let grandTotal = 0;
+                officers.forEach(offId => grandTotal += candidateScores[offId].total || 0);
+                const maxPossible = numOfficers * 20;
+                const percentage = maxPossible > 0 ? (grandTotal / maxPossible) * 100 : 0;
 
-            // Qualification Logic
-            // Head Prefect: 70%, Others: 50%
-            const isHeadPrefect = candidate.position && candidate.position.toLowerCase().includes("headprefect");
-            const threshold = isHeadPrefect ? 70 : 50;
-            const isQualified = percentage >= threshold;
-            if (isQualified) qualifiedCount++;
-            totalCount++;
+                const isHeadPrefect = c.position && c.position.toLowerCase().includes("headprefect");
+                const threshold = isHeadPrefect ? 70 : 50;
+                const isQualified = percentage >= threshold && numOfficers > 0;
 
-            const statusClass = isQualified ? "status-qualified" : "status-disqualified";
-            const statusText = isQualified ? "Qualified" : "Disqualified";
+                return { ...c, grandTotal, numOfficers, percentage, maxPossible, isQualified, threshold };
+            }).sort((a, b) => b.percentage - a.percentage);
 
+            // Add Position Header Row
             listDiv.innerHTML += `
-                <tr>
-                    <td>
-                        <div style="display: flex; align-items: center; gap: 10px;">
-                            <div style="width: 35px; height: 35px; border-radius: 50%; background-size: cover; background-position: center; background-image: url('${candidate.photoUrl || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'}')"></div>
-                            <span style="font-weight: 700;">${candidate.name}</span>
-                        </div>
-                    </td>
-                    <td style="color: var(--text-light); font-size: 0.8rem;">${candidate.position}</td>
-                    <td style="text-align: center;">${numOfficers}</td>
-                    <td style="text-align: center; font-weight: 700;">${grandTotal} <span style="font-size: 0.7rem; color: var(--text-light); font-weight: 400;">/ ${maxPossible}</span></td>
-                    <td style="text-align: center;">
-                        <span class="percentage-badge" style="background: ${isQualified ? 'rgba(72, 187, 120, 0.1)' : 'rgba(245, 101, 101, 0.1)'}; color: ${isQualified ? '#2f855a' : '#c53030'};">
-                            ${percentage.toFixed(1)}%
-                        </span>
-                    </td>
-                    <td>
-                        <span class="status-badge ${statusClass}" style="margin: 0; width: 100%; text-align: center;">${statusText}</span>
+                <tr style="background: rgba(43, 108, 176, 0.05); border-left: 5px solid var(--primary);">
+                    <td colspan="6" style="padding: 15px; font-weight: 800; color: var(--primary-dark); text-transform: uppercase; letter-spacing: 1px;">
+                        ${pos}
                     </td>
                 </tr>
             `;
+
+            candidates.forEach(candidate => {
+                let disqualificationReason = "";
+                if (!candidate.isQualified) {
+                    if (candidate.numOfficers === 0) {
+                        disqualificationReason = "Candidate has not been evaluated by any vetting officers yet.";
+                    } else if (candidate.percentage < candidate.threshold) {
+                        const diff = (candidate.threshold - candidate.percentage).toFixed(1);
+                        disqualificationReason = `Scored ${candidate.percentage.toFixed(1)}%. Requires ${candidate.threshold}% to qualify (Short by ${diff}%).`;
+                    }
+                }
+
+                if (candidate.isQualified) qualifiedCount++;
+                totalCount++;
+
+                const statusClass = candidate.isQualified ? "status-qualified" : "status-disqualified";
+                const statusText = candidate.isQualified ? "Qualified" : "Disqualified";
+
+                listDiv.innerHTML += `
+                    <tr>
+                        <td style="padding-left: 25px;">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <div style="width: 35px; height: 35px; border-radius: 50%; background-size: cover; background-position: center; background-image: url('${getCandidatePhoto(candidate)}'); ${getCandidatePhotoStyle(candidate)}"></div>
+                                <span style="font-weight: 700;">${candidate.name}</span>
+                            </div>
+                        </td>
+                        <td style="color: var(--text-light); font-size: 0.8rem;">${candidate.position}</td>
+                        <td class="hide-on-print" style="text-align: center;">${candidate.numOfficers}</td>
+                        <td style="text-align: center; font-weight: 700;">${candidate.grandTotal} <span style="font-size: 0.7rem; color: var(--text-light); font-weight: 400;">/ ${candidate.maxPossible}</span></td>
+                        <td style="text-align: center;">
+                            <span class="percentage-badge" style="background: ${candidate.isQualified ? 'rgba(72, 187, 120, 0.1)' : 'rgba(245, 101, 101, 0.1)'}; color: ${candidate.isQualified ? '#2f855a' : '#c53030'};">
+                                ${candidate.percentage.toFixed(1)}%
+                            </span>
+                        </td>
+                        <td>
+                            <span class="status-badge ${statusClass}" style="margin: 0; width: 100%; text-align: center;">${statusText}</span>
+                            ${!candidate.isQualified ? `<div style="font-size: 0.7rem; color: #c53030; text-align: center; margin-top: 4px; font-weight: 600;">${disqualificationReason}</div>` : ""}
+                        </td>
+                    </tr>
+                `;
+            });
         });
+
 
         if (totalCount === 0) {
             listDiv.innerHTML = "<tr><td colspan='6' style='text-align: center; padding: 2rem; color: var(--text-light);'>No candidates registered yet.</td></tr>";
@@ -290,6 +362,7 @@ function renderVettingSummary() {
 }
 
 
+
 function deleteCandidate(id, name) {
     if (!confirm(`Are you sure you want to delete candidate "${name}"? This will also remove any votes they have received.`)) return;
 
@@ -297,6 +370,7 @@ function deleteCandidate(id, name) {
     db.ref("candidates/" + id).remove().then(() => {
         // Also delete their votes and scores
         db.ref("votes/" + id).remove();
+        db.ref("votes/" + id + "_no").remove();
         db.ref("scores/" + id).remove();
 
         showToast("Candidate Deleted Successfully", "success");
@@ -365,7 +439,7 @@ function renderVettingStep() {
                         </div>
 
                         <div style="text-align: center; margin-bottom: 2rem;">
-                            <div class="candidate-photo-large" style="margin-bottom: 1rem; background-image: url('${candidate.photoUrl || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'}');"></div>
+                            <div class="candidate-photo-large" style="margin-bottom: 1rem; background-image: url('${getCandidatePhoto(candidate)}'); ${getCandidatePhotoStyle(candidate)}"></div>
                             <h2 style="color: var(--primary-dark); margin: 0;">${candidate.name}</h2>
                             <p style="font-size: 0.8rem; margin-top: 10px; color: var(--text-light);">Candidate ${currentVettingCandidateIndex + 1} of ${filtered.length}</p>
                             ${data.total ? `<div style="margin-top: 5px; font-weight: 700; color: var(--primary); font-size: 0.9rem;">Evaluation Status: Submitted (${data.total} pts)</div>` : ''}
@@ -455,7 +529,9 @@ function showTotalScore(candidateId, candidateName, position, photoUrl) {
         document.getElementById("scoreResName").innerText = candidateName;
         document.getElementById("scoreResPosition").innerText = position;
         document.getElementById("scoreResTotal").innerText = totalSum;
-        document.getElementById("scoreResPhoto").style.backgroundImage = `url('${photoUrl || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'}')`;
+        const scorePhoto = document.getElementById("scoreResPhoto");
+        scorePhoto.style.backgroundImage = `url('${getCandidatePhoto({ name: candidateName, photoUrl: photoUrl })}')`;
+        scorePhoto.style.cssText += getCandidatePhotoStyle({ name: candidateName });
 
         toggleModal('scoreSummaryModal', true);
     });
@@ -489,51 +565,112 @@ function renderVoterStep() {
     const selectedId = temporarySelections[pos];
 
     // Reset view
-    voteListDiv.innerHTML = "";
+    voteListDiv.innerHTML = "<div style='text-align: center; padding: 2rem;'>Checking qualified candidates...</div>";
     voteListDiv.style.display = "block";
     finishView.style.display = "none";
     if (wizardHeader) wizardHeader.style.display = "block";
-    if (wizardNav) wizardNav.style.display = "flex";
 
     if (positionTitle) positionTitle.innerText = pos;
     if (stepIndicator) stepIndicator.innerText = `Step ${currentVoterStep + 1} of ${voterPositions.length}`;
 
-    // Filter candidates for this position
-    const filtered = allCandidates.filter(c => c.position === pos);
+    // Fetch scores to check qualification
+    db.ref("scores").once("value", snap => {
+        const scoresData = snap.val() || {};
+        voteListDiv.innerHTML = "";
 
-    if (filtered.length === 0) {
-        voteListDiv.innerHTML = `<div class="card" style="text-align: center; color: var(--text-light); padding: 3rem;">No candidates registered for ${pos}.</div>`;
-        if (btnNext) {
-            btnNext.disabled = false;
-            btnNext.innerText = "Skip Position →";
-        }
-    } else {
-        filtered.forEach(c => {
-            const isSelected = selectedId === c.id;
-            voteListDiv.innerHTML += `
-                <div class="card candidate-card ${isSelected ? 'selected-candidate' : ''}" style="display: flex; gap: 15px; align-items: center; border-radius: 12px; animation: fadeIn 0.3s ease-out; border-left: 5px solid var(--primary); cursor: pointer;" onclick="selectCandidate('${c.id}', '${pos}')">
-                    <div class="candidate-photo" style="width: 45px; height: 45px; border-color: var(--primary); background-image: url('${c.photoUrl || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'}');"></div>
-                    <div style="flex: 1;">
-                        <div style="font-weight: 700; color: var(--primary-dark); font-size: 1.1rem;">${c.name}</div>
-                    </div>
-                    <button class="btn-vote" style="padding: 10px 20px;">${isSelected ? 'Selected' : 'Vote'}</button>
-                </div>
-            `;
+        // Filter qualified candidates for this position
+        const filtered = allCandidates.filter(c => {
+            if (c.position !== pos) return false;
+
+            const candidateScores = scoresData[c.id] || {};
+            const officers = Object.keys(candidateScores);
+            const numOfficers = officers.length;
+
+            let grandTotal = 0;
+            officers.forEach(offId => {
+                grandTotal += candidateScores[offId].total || 0;
+            });
+
+            const maxPossible = numOfficers * 20;
+            const percentage = maxPossible > 0 ? (grandTotal / maxPossible) * 100 : 0;
+
+            const isHeadPrefect = c.position && c.position.toLowerCase().includes("headprefect");
+            const threshold = isHeadPrefect ? 70 : 50;
+
+            return percentage >= threshold;
         });
 
-        if (btnNext) {
-            btnNext.disabled = !selectedId;
-            btnNext.innerText = selectedId ?
-                (currentVoterStep === voterPositions.length - 1 ? "Finish Voting ✓" : "Confirm & Next Position →") :
-                "Select a candidate to continue";
+        if (filtered.length === 0) {
+            voteListDiv.innerHTML = `<div class="card" style="text-align: center; color: var(--text-light); padding: 3rem;">No qualified candidates for ${pos}.</div>`;
+            if (btnNext) {
+                btnNext.disabled = false;
+                btnNext.innerText = "Skip Position →";
+            }
+        } else {
+            if (filtered.length === 1) {
+                const c = filtered[0];
+                const selection = temporarySelections[pos]; // This could be candidateId or candidateId + "_no"
+                const isYes = selection === c.id;
+                const isNo = selection === c.id + "_no";
+
+                voteListDiv.innerHTML = `
+                    <div class="card candidate-card-square ${isYes || isNo ? 'selected-candidate' : ''}" style="cursor: default;">
+                        <div class="candidate-photo-square" style="background-image: url('${getCandidatePhoto(c)}'); ${getCandidatePhotoStyle(c)}"></div>
+                        <div style="width: 100%;">
+                            <div style="font-weight: 700; color: var(--primary-dark); font-size: 1.1rem; margin-bottom: 5px;">${c.name}</div>
+                            <div style="font-size: 0.85rem; color: var(--text-light); margin-bottom: 15px;">Single Candidate Position</div>
+                            
+                            <div class="btn-vote-container">
+                                <button class="btn-vote btn-yes" style="flex: 1; border-radius: 12px; ${isYes ? 'border: 3px solid #fff; box-shadow: 0 0 10px rgba(0,0,0,0.2);' : 'opacity: 0.7;'}" 
+                                    onclick="selectCandidate('${c.id}', '${pos}', 'yes')">
+                                    ${isYes ? 'Selected YES' : 'YES'}
+                                </button>
+                                <button class="btn-vote btn-no" style="flex: 1; border-radius: 12px; ${isNo ? 'border: 3px solid #fff; box-shadow: 0 0 10px rgba(0,0,0,0.2);' : 'opacity: 0.7;'}" 
+                                    onclick="selectCandidate('${c.id}', '${pos}', 'no')">
+                                    ${isNo ? 'Selected NO' : 'NO'}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                voteListDiv.className = "candidate-grid";
+                filtered.forEach(c => {
+                    const isSelected = selectedId === c.id;
+                    voteListDiv.innerHTML += `
+                        <div class="card candidate-card-square ${isSelected ? 'selected-candidate' : ''}" onclick="selectCandidate('${c.id}', '${pos}')">
+                            <div class="candidate-photo-square" style="background-image: url('${getCandidatePhoto(c)}'); ${getCandidatePhotoStyle(c)}"></div>
+                            <div style="width: 100%;">
+                                <div style="font-weight: 700; color: var(--primary-dark); font-size: 1.1rem; margin-bottom: 10px;">${c.name}</div>
+                                <button class="btn-vote" style="width: 100%; border-radius: 12px;">${isSelected ? 'Selected' : 'Vote'}</button>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+
+            if (btnNext) {
+                const hasSelection = temporarySelections[pos];
+                btnNext.disabled = !hasSelection;
+                btnNext.innerText = hasSelection ?
+                    (currentVoterStep === voterPositions.length - 1 ? "Finish Voting ✓" : "Confirm & Next →") :
+                    "Select an option";
+            }
         }
-    }
+    });
 }
 
-function selectCandidate(candidateId, position) {
-    temporarySelections[position] = candidateId;
+
+function selectCandidate(candidateId, position, voteType = 'standard') {
+    if (voteType === 'no') {
+        temporarySelections[position] = candidateId + "_no";
+    } else {
+        temporarySelections[position] = candidateId;
+    }
     renderVoterStep();
-    showToast("Selected: " + allCandidates.find(c => c.id === candidateId).name, "success");
+    const name = allCandidates.find(c => c.id === candidateId).name;
+    const msg = voteType === 'standard' ? name : `${name} (${voteType.toUpperCase()})`;
+    showToast("Selected: " + msg, "success");
 }
 
 function changeVoterStep(dir) {
@@ -716,9 +853,7 @@ function submitAllVotes() {
         document.getElementById("voteList").style.display = "none";
         document.getElementById("finishVoting").style.display = "block";
         const wizardHeader = document.querySelector(".wizard-header");
-        const wizardNav = document.querySelector(".wizard-nav");
         if (wizardHeader) wizardHeader.style.display = "none";
-        if (wizardNav) wizardNav.style.display = "none";
         addActivityLog(`Voter ${voterSessionId} successfully cast votes.`);
     }).catch(err => {
         showToast("Error submitting votes", "fail");
@@ -763,7 +898,12 @@ db.ref("votes").on("value", snap => {
         if (candidatesInPos.length === 0) return;
 
         let totalPosVotes = 0;
-        candidatesInPos.forEach(c => totalPosVotes += (votesByCandidate[c.id] || 0));
+        candidatesInPos.forEach(c => {
+            totalPosVotes += (votesByCandidate[c.id] || 0);
+            if (candidatesInPos.length === 1) {
+                totalPosVotes += (votesByCandidate[c.id + "_no"] || 0);
+            }
+        });
 
         let groupHtml = `
             <div class="position-group-card card">
@@ -773,24 +913,71 @@ db.ref("votes").on("value", snap => {
                 </div>
         `;
 
-        candidatesInPos.sort((a, b) => (votesByCandidate[b.id] || 0) - (votesByCandidate[a.id] || 0));
-
-        candidatesInPos.forEach(c => {
-            const votes = votesByCandidate[c.id] || 0;
-            const percent = totalPosVotes > 0 ? Math.round((votes / totalPosVotes) * 100) : 0;
+        if (candidatesInPos.length === 1) {
+            const c = candidatesInPos[0];
+            const yesVotes = votesByCandidate[c.id] || 0;
+            const noVotes = votesByCandidate[c.id + "_no"] || 0;
+            const total = yesVotes + noVotes;
+            const yesPercent = total > 0 ? Math.round((yesVotes / total) * 100) : 0;
+            const noPercent = total > 0 ? Math.round((noVotes / total) * 100) : 0;
 
             groupHtml += `
-                <div class="candidate-result-item">
-                    <div class="vote-info">
-                        <span>${c.name}</span>
-                        <span>${votes} <small>(${percent}%)</small></span>
-                    </div>
-                    <div class="vote-bar-container">
-                        <div class="vote-bar-fill" style="width: ${percent}%"></div>
+                <div class="candidate-result-item" style="display: flex; flex-direction: column; gap: 12px;">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <div class="candidate-photo" style="width: 50px; height: 50px; border-radius: 12px; background-image: url('${getCandidatePhoto(c)}'); ${getCandidatePhotoStyle(c)}"></div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 700; color: var(--primary-dark); font-size: 1.1rem; margin-bottom: 10px;">${c.name} <small style="font-weight: 400; color: var(--text-light);">(Single Candidate)</small></div>
+                            
+                            <!-- YES RESULTS -->
+                            <div style="margin-bottom: 10px;">
+                                <div class="vote-info">
+                                    <span style="color: #2f855a;">YES Votes</span>
+                                    <span style="color: #2f855a;">${yesVotes} <small>(${yesPercent}%)</small></span>
+                                </div>
+                                <div class="vote-bar-container" style="background: rgba(72, 187, 120, 0.1);">
+                                    <div class="vote-bar-fill" style="width: ${yesPercent}%; background: #48bb78;"></div>
+                                </div>
+                            </div>
+
+                            <!-- NO RESULTS -->
+                            <div>
+                                <div class="vote-info">
+                                    <span style="color: #c53030;">NO Votes</span>
+                                    <span style="color: #c53030;">${noVotes} <small>(${noPercent}%)</small></span>
+                                </div>
+                                <div class="vote-bar-container" style="background: rgba(245, 101, 101, 0.1);">
+                                    <div class="vote-bar-fill" style="width: ${noPercent}%; background: #f56565;"></div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             `;
-        });
+        } else {
+            candidatesInPos.sort((a, b) => (votesByCandidate[b.id] || 0) - (votesByCandidate[a.id] || 0));
+
+            candidatesInPos.forEach(c => {
+                const votes = votesByCandidate[c.id] || 0;
+                const percent = totalPosVotes > 0 ? Math.round((votes / totalPosVotes) * 100) : 0;
+
+                groupHtml += `
+                    <div class="candidate-result-item" style="display: flex; flex-direction: column; gap: 8px;">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div class="candidate-photo" style="width: 40px; height: 40px; border-radius: 8px; background-image: url('${getCandidatePhoto(c)}'); ${getCandidatePhotoStyle(c)}"></div>
+                            <div style="flex: 1;">
+                                <div class="vote-info">
+                                    <span>${c.name}</span>
+                                    <span>${votes} <small>(${percent}%)</small></span>
+                                </div>
+                                <div class="vote-bar-container">
+                                    <div class="vote-bar-fill" style="width: ${percent}%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
 
         groupHtml += `</div>`;
         resultsDiv.innerHTML += groupHtml;
@@ -800,3 +987,83 @@ db.ref("votes").on("value", snap => {
         resultsDiv.innerHTML = `<div style="text-align: center; color: var(--text-light); padding: 3rem; grid-column: 1/-1;">Waiting for candidate registration...</div>`;
     }
 });
+
+function generateWinnerIDCards() {
+    db.ref("votes").once("value", snap => {
+        const votesByCandidate = {};
+        snap.forEach(d => {
+            votesByCandidate[d.key] = d.numChildren();
+        });
+
+        const winners = [];
+
+        voterPositions.forEach(pos => {
+            const candidatesInPos = allCandidates.filter(c => c.position === pos);
+            if (candidatesInPos.length === 0) return;
+
+            if (candidatesInPos.length === 1) {
+                // Single Candidate (Yes/No)
+                const c = candidatesInPos[0];
+                const yesVotes = votesByCandidate[c.id] || 0;
+                const noVotes = votesByCandidate[c.id + "_no"] || 0;
+                if (yesVotes > noVotes) {
+                    winners.push({ ...c, winnerType: 'Yes/No' });
+                }
+            } else {
+                // Multi Candidate
+                let winner = null;
+                let maxVotes = -1;
+                candidatesInPos.forEach(c => {
+                    const votes = votesByCandidate[c.id] || 0;
+                    if (votes > maxVotes) {
+                        maxVotes = votes;
+                        winner = c;
+                    } else if (votes === maxVotes && maxVotes > 0) {
+                        // Tie - could handle specifically, for now just picking the first
+                    }
+                });
+                if (winner && maxVotes > 0) {
+                    winners.push({ ...winner, winnerType: 'Standard' });
+                }
+            }
+        });
+
+        renderIDCards(winners);
+    });
+}
+
+function renderIDCards(winners) {
+    const container = document.getElementById("idCardContainer");
+    if (!container) return;
+
+    if (winners.length === 0) {
+        container.innerHTML = `
+            <div style="grid-column: 1/-1; text-align: center; padding: 4rem; color: var(--text-light);">
+                <div style="font-size: 3rem; opacity: 0.3; margin-bottom: 1rem;">🪪</div>
+                <h3>No winners identified yet</h3>
+                <p>Wait for voting to conclude or ensure there are candidates with positive results.</p>
+            </div>
+        `;
+    } else {
+        container.innerHTML = winners.map(w => `
+            <div class="id-card-wrapper">
+                <div class="id-card-left">
+                    <div class="id-card-photo" style="background-image: url('${getCandidatePhoto(w)}'); ${getCandidatePhotoStyle(w)}"></div>
+                    <div class="id-card-year">2026/27</div>
+                </div>
+                <div class="id-card-right">
+                    <div class="id-card-logo-bg"></div>
+                    <div class="id-card-school">Yeriel Bracha School</div>
+                    <div class="id-card-name">${w.name}</div>
+                    <div class="id-card-position">${w.position}</div>
+                    <div class="id-card-footer">
+                        <span>OFFICIAL PREFECT ID</span>
+                        <img src="assets/favico.ico" alt="Logo" style="width: 24px; height: 24px; border-radius: 50%; border: 1px solid #eee;">
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+    toggleModal('idCardModal', true);
+}
+
