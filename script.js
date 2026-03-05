@@ -18,7 +18,7 @@ let returnPage = 'admin'; // Track which page to return to from detailed view
 
 // WIZARD STATE
 let allCandidates = [];
-const voterPositions = ['Headprefect', 'Chaplain', 'Sports & Health', 'Sanitation', 'Library & ICT Lab'];
+const voterPositions = ['Headprefect', 'Assistant Headprefect', 'Chaplain', 'Assistant Chaplain', 'Sports & Health', 'Sanitation', 'Library & ICT Lab'];
 let currentVoterStep = 0;
 let voterSessionId = null;
 let temporarySelections = {}; // Stores { positionName: candidateId }
@@ -1067,18 +1067,28 @@ function renderIDCards(winners) {
     } else {
         container.innerHTML = winners.map(w => `
             <div class="id-card-wrapper">
-                <div class="id-card-left">
-                    <div class="id-card-photo" style="background-image: url('${getCandidatePhoto(w)}'); ${getCandidatePhotoStyle(w)}"></div>
-                    <div class="id-card-year">2026/27</div>
+                <!-- Header -->
+                <div class="id-card-header">
+                    <img src="assets/favico.ico" alt="YBS Logo" class="id-card-header-logo">
+                    <div class="id-card-school">
+                        Yeriel Bracha School
+                        <small>Official Prefect Identification</small>
+                    </div>
                 </div>
-                <div class="id-card-right">
+
+                <!-- Photo -->
+                <div class="id-card-photo-area">
                     <div class="id-card-logo-bg"></div>
-                    <div class="id-card-school">Yeriel Bracha School</div>
+                    <div class="id-card-photo" style="background-image: url('${getCandidatePhoto(w)}'); ${getCandidatePhotoStyle(w)}"></div>
+                </div>
+
+                <!-- Details -->
+                <div class="id-card-details">
                     <div class="id-card-name">${w.name}</div>
                     <div class="id-card-position">${w.position}</div>
                     <div class="id-card-footer">
                         <span>OFFICIAL PREFECT ID</span>
-                        <img src="assets/favico.ico" alt="Logo" style="width: 24px; height: 24px; border-radius: 50%; border: 1px solid #eee;">
+                        <div class="id-card-year">2026/27</div>
                     </div>
                 </div>
             </div>

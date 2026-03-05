@@ -9,7 +9,7 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-const voterPositions = ['Headprefect', 'Chaplain', 'Sports & Health', 'Sanitation', 'Library & ICT Lab'];
+const voterPositions = ['Headprefect', 'Assistant Headprefect', 'Chaplain', 'Assistant Chaplain', 'Sports & Health', 'Sanitation', 'Library & ICT Lab'];
 
 const PHOTO_MAPPING = {
     "Addo, Yaa Koramah": { url: "assets/Addo, Yaa Koramah.png" },
