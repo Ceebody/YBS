@@ -15,6 +15,7 @@ const PHOTO_MAPPING = {
     "Addo, Yaa Koramah": { url: "assets/Addo, Yaa Koramah.png" },
     "Adu Darko, Samuel": { url: "assets/Adu Darko, Samuel.png" },
     "Agbleke, Elinam": { url: "assets/Agbleke, Elinam.png" },
+    "Amponsah-Sam, Johnson Chris": { url: "assets/Amponsah-Sam, Johnson Chris.png" },
     "Asante, Diana": { url: "assets/Asante, Diana.png" },
     "Awumah, Emmanuella Yayra": { url: "assets/Awumah, Emmanuella Yayra.png", zoomOut: true },
     "Boampong, Justina Nyameye Adebi": { url: "assets/Boampong, Justina Nyameye Adebi.png", zoomOut: true },
