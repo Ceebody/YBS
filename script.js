@@ -1066,36 +1066,82 @@ function renderIDCards(winners) {
             </div>
         `;
     } else {
-        container.innerHTML = winners.map(w => `
-            <div class="id-card-wrapper">
-                <!-- Header -->
-                <div class="id-card-header">
-                    <img src="assets/favico.ico" alt="YBS Logo" class="id-card-header-logo">
-                    <div class="id-card-school">
-                        Yeriel Bracha School
-                        <small>Official Prefect Identification</small>
+        container.innerHTML = winners.map((w, index) => `
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 10px;">
+                <div class="id-card-wrapper" id="id-card-${index}">
+                    <!-- Header -->
+                    <div class="id-card-header">
+                        <img src="assets/favico.ico" alt="YBS Logo" class="id-card-header-logo">
+                        <div class="id-card-school">
+                            Yeriel Bracha School
+                            <small>Official Prefect Identification</small>
+                        </div>
+                    </div>
+
+                    <!-- Photo -->
+                    <div class="id-card-photo-area">
+                        <div class="id-card-logo-bg"></div>
+                        <div class="id-card-photo" style="background-image: url('${getCandidatePhoto(w)}'); ${getCandidatePhotoStyle(w)}"></div>
+                    </div>
+
+                    <!-- Details -->
+                    <div class="id-card-details">
+                        <div class="id-card-name">${w.name}</div>
+                        <div class="id-card-position">${w.position}</div>
+                        <div class="id-card-footer">
+                            <span>OFFICIAL PREFECT ID</span>
+                            <div class="id-card-year">2026/27</div>
+                        </div>
                     </div>
                 </div>
-
-                <!-- Photo -->
-                <div class="id-card-photo-area">
-                    <div class="id-card-logo-bg"></div>
-                    <div class="id-card-photo" style="background-image: url('${getCandidatePhoto(w)}'); ${getCandidatePhotoStyle(w)}"></div>
-                </div>
-
-                <!-- Details -->
-                <div class="id-card-details">
-                    <div class="id-card-name">${w.name}</div>
-                    <div class="id-card-position">${w.position}</div>
-                    <div class="id-card-footer">
-                        <span>OFFICIAL PREFECT ID</span>
-                        <div class="id-card-year">2026/27</div>
-                    </div>
-                </div>
+                <button onclick="downloadIDCard('${w.name.replace(/'/g, "\\'")}', 'id-card-${index}')" class="btn-primary no-print" style="padding: 5px 10px; font-size: 0.8rem; background: var(--accent);">⬇️ Download JPG</button>
             </div>
         `).join('');
     }
     toggleModal('idCardModal', true);
+}
+
+function downloadIDCard(candidateName, cardId) {
+    const cardElement = document.getElementById(cardId);
+    if (!cardElement) return;
+
+    // Remove the background logo temporarily to prevent html2canvas .ico parsing errors
+    const bgLogos = cardElement.querySelectorAll('.id-card-logo-bg');
+    bgLogos.forEach(logo => logo.style.display = 'none');
+    
+    const headerLogos = cardElement.querySelectorAll('.id-card-header-logo');
+    headerLogos.forEach(logo => logo.style.display = 'none');
+
+    // Use allowTaint true to allow loading local file:// images without CORS errors
+    html2canvas(cardElement, {
+        scale: 3, 
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff'
+    }).then(canvas => {
+        // Restore logos
+        bgLogos.forEach(logo => logo.style.display = 'block');
+        headerLogos.forEach(logo => logo.style.display = 'block');
+
+        try {
+            const imgData = canvas.toDataURL('image/jpeg', 0.95);
+            const link = document.createElement('a');
+            link.download = `${candidateName.replace(/[^a-z0-9]/gi, '_')}_ID_Card.jpg`;
+            link.href = imgData;
+            link.click();
+        } catch (e) {
+            console.error("toDataURL error:", e);
+            alert("Security Error: Your browser is blocking the image download because you are running the app directly from your computer (file://). Please launch the app through a local web server (like VS Code Live Server) to fix this.");
+        }
+    }).catch(err => {
+        // Restore logos in case of error
+        bgLogos.forEach(logo => logo.style.display = 'block');
+        headerLogos.forEach(logo => logo.style.display = 'block');
+        
+        console.error("Error generating ID card image:", err);
+        alert("html2canvas Error: " + err.message);
+        showToast("Failed to download ID card", "fail");
+    });
 }
 
 function generatePrintableResults() {
