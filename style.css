@@ -1101,7 +1101,7 @@ select:focus {
     width: 100%;
     height: 100%;
     background-size: cover;
-    background-position: top center;
+    background-position: center 10%; /* Center horizontally, slightly above center vertically to focus on faces */
     z-index: 1;
 }
 
