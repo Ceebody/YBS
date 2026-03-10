@@ -25,15 +25,15 @@ let temporarySelections = {}; // Stores { positionName: candidateId }
 
 const PHOTO_MAPPING = {
     "Addo, Yaa Koramah": { url: "assets/Addo, Yaa Koramah.png" },
-    "Adu Darko, Samuel": { url: "assets/Adu Darko, Samuel.png", position: "center 10%" },
+    "Adu Darko, Samuel": { url: "assets/Adu Darko, Samuel.png", position: "center 50%" },
     "Agbleke, Elinam": { url: "assets/Agbleke, Elinam.png" },
     "Amponsah-Sam, Johnson Chris": { url: "assets/Amponsah-Sam, Johnson Chris.png" },
-    "Asante, Diana": { url: "assets/Asante, Diana.png", position: "center 7%" },
+    "Asante, Diana": { url: "assets/Asante, Diana.png", position: "center 52%" },
     "Awumah, Emmanuella Yayra": { url: "assets/Awumah, Emmanuella Yayra.png", zoomOut: true },
     "Boampong, Justina Nyameye Adebi": { url: "assets/Boampong, Justina Nyameye Adebi.png", zoomOut: true },
     "Kpabitey, Cheryl": { url: "assets/Kpabitey, Cheryl.png" },
     "Maaweh, Jayden": { url: "assets/Maaweh, Jayden.png" },
-    "Nartey, Shallom": { url: "assets/Nartey, Shallom.png", position: "center 3%" },
+    "Nartey, Shallom": { url: "assets/Nartey, Shallom.png", position: "center 35%" },
     "Ntiakoh, Efya Aboagyewaa": { url: "assets/Ntiakoh, Efya Aboagyewaa.png" },
     "Odamtten, Christabel": { url: "assets/Odamtten, Christabel.png", zoomOut: true },
     "Shahid, Aqeelatu Sufiyah": { url: "assets/Shahid, Aqeelatu Sufiyah.png" }
