@@ -1067,34 +1067,36 @@ function renderIDCards(winners) {
         `;
     } else {
         container.innerHTML = winners.map((w, index) => `
-            <div style="display: flex; flex-direction: column; align-items: center; gap: 10px;">
-                <div class="id-card-wrapper" id="id-card-${index}">
-                    <!-- Header -->
-                    <div class="id-card-header">
-                        <img src="assets/favico.ico" alt="YBS Logo" class="id-card-header-logo">
-                        <div class="id-card-school">
-                            Yeriel Bracha School
-                            <small>Official Prefect Identification</small>
-                        </div>
-                    </div>
-
-                    <!-- Photo -->
-                    <div class="id-card-photo-area">
-                        <div class="id-card-logo-bg"></div>
-                        <div class="id-card-photo" style="background-image: url('${getCandidatePhoto(w)}'); ${getCandidatePhotoStyle(w)}"></div>
-                    </div>
-
-                    <!-- Details -->
-                    <div class="id-card-details">
-                        <div class="id-card-name">${w.name}</div>
-                        <div class="id-card-position">${w.position}</div>
-                        <div class="id-card-footer">
-                            <span>OFFICIAL PREFECT ID</span>
-                            <div class="id-card-year">2026/27</div>
-                        </div>
+            <div class="id-card-wrapper" id="id-card-${index}">
+                <!-- Header -->
+                <div class="id-card-header">
+                    <img src="assets/favico.ico" alt="YBS Logo" class="id-card-header-logo">
+                    <div class="id-card-school">
+                        Yeriel Bracha School
+                        <small>Official Prefect Identification</small>
                     </div>
                 </div>
-                <button onclick="downloadIDCard('${w.name.replace(/'/g, "\\'")}', 'id-card-${index}')" class="btn-primary no-print" style="padding: 5px 10px; font-size: 0.8rem; background: var(--accent);">⬇️ Download JPG</button>
+
+                <!-- Photo -->
+                <div class="id-card-photo-area">
+                    <div class="id-card-logo-bg"></div>
+                    <div class="id-card-photo" style="background-image: url('${getCandidatePhoto(w)}'); ${getCandidatePhotoStyle(w)}"></div>
+                </div>
+
+                <!-- Details -->
+                <div class="id-card-details">
+                    <div class="id-card-name">${w.name}</div>
+                    <div class="id-card-position">${w.position}</div>
+                    <div class="id-card-footer">
+                        <span>OFFICIAL PREFECT ID</span>
+                        <div class="id-card-year">2026/27</div>
+                    </div>
+                </div>
+                
+                <!-- Action Bar -->
+                <div class="no-print" style="position: absolute; bottom: 0; left: 0; width: 100%; padding: 8px; background: rgba(255,255,255,0.9); border-top: 1px solid #e2e8f0; display: flex; justify-content: center;">
+                    <button onclick="downloadIDCard('${w.name.replace(/'/g, "\\'")}', 'id-card-${index}')" class="btn-primary" style="padding: 5px 15px; font-size: 0.75rem; background: var(--accent); width: 100%;">⬇️ Download JPG</button>
+                </div>
             </div>
         `).join('');
     }
@@ -1112,6 +1114,10 @@ function downloadIDCard(candidateName, cardId) {
     const headerLogos = cardElement.querySelectorAll('.id-card-header-logo');
     headerLogos.forEach(logo => logo.style.display = 'none');
 
+    // Hide the action bar specifically during capture
+    const actionBar = cardElement.querySelector('.no-print');
+    if (actionBar) actionBar.style.display = 'none';
+
     // Use allowTaint true to allow loading local file:// images without CORS errors
     html2canvas(cardElement, {
         scale: 3, 
@@ -1119,9 +1125,10 @@ function downloadIDCard(candidateName, cardId) {
         allowTaint: true,
         backgroundColor: '#ffffff'
     }).then(canvas => {
-        // Restore logos
+        // Restore elements
         bgLogos.forEach(logo => logo.style.display = 'block');
         headerLogos.forEach(logo => logo.style.display = 'block');
+        if (actionBar) actionBar.style.display = 'flex';
 
         try {
             const imgData = canvas.toDataURL('image/jpeg', 0.95);
@@ -1134,9 +1141,10 @@ function downloadIDCard(candidateName, cardId) {
             alert("Security Error: Your browser is blocking the image download because you are running the app directly from your computer (file://). Please launch the app through a local web server (like VS Code Live Server) to fix this.");
         }
     }).catch(err => {
-        // Restore logos in case of error
+        // Restore elements in case of error
         bgLogos.forEach(logo => logo.style.display = 'block');
         headerLogos.forEach(logo => logo.style.display = 'block');
+        if (actionBar) actionBar.style.display = 'flex';
         
         console.error("Error generating ID card image:", err);
         alert("html2canvas Error: " + err.message);
